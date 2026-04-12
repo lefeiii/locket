@@ -226,29 +226,43 @@
     .c4{background:#FCDAC8;}.c5{background:#D0EEE0;}.c6{background:#FFE8D0;}
     .c7{background:#DDD0F8;}.c8{background:#FFF0C0;}.c9{background:#C0D8F4;}
 
-    /* ── VIBE ── */
-    .vibe-card { background: #1a1028; border-radius: 20px; padding: 18px; transform: rotate(-0.5deg); box-shadow: 0 8px 24px rgba(26,16,40,0.25); }
-    .sp-row { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
-    .sp-badge { width: 34px; height: 34px; border-radius: 50%; background: #1DB954; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .sp-badge svg { width: 18px; height: 18px; fill: #fff; }
-    .sp-name { font-family: var(--font-b); font-size: 14px; font-weight: 700; color: #fff; }
-    .sp-sub { font-size: 10px; color: rgba(255,255,255,0.4); }
-    .trows { display: grid; gap: 5px; }
-    .trow { display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.06); border-radius: 10px; padding: 7px 10px; cursor: pointer; transition: background 0.12s; }
-    .trow:hover { background: rgba(255,255,255,0.11); }
-    .trow.now { background: rgba(29,185,84,0.14); }
-    .tnum { font-size: 10.5px; color: rgba(255,255,255,0.3); width: 13px; flex-shrink: 0; font-weight: 800; }
-    .now .tnum { color: #1DB954; }
-    .tinfo { flex: 1; min-width: 0; }
-    .tname { font-size: 12.5px; font-weight: 800; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .now .tname { color: #1DB954; }
-    .tartist { font-size: 10px; color: rgba(255,255,255,0.38); }
-    .ttag { font-size: 9.5px; background: rgba(255,255,255,0.08); border-radius: 999px; padding: 2px 9px; color: rgba(255,255,255,0.4); font-weight: 800; flex-shrink: 0; }
-    .sug-row { display: flex; gap: 7px; margin-top: 12px; }
-    .sug-in { flex: 1; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 12px; font-size: 13px; font-family: var(--font-n); background: rgba(255,255,255,0.07); color: #fff; outline: none; }
-    .sug-in::placeholder { color: rgba(255,255,255,0.25); }
-    .sug-in:focus { border-color: rgba(29,185,84,0.5); }
-    .sug-btn { background: #1DB954; color: #fff; border: none; border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: 800; cursor: pointer; font-family: var(--font-n); }
+    /* ── SONG SKETCHBOOK ── */
+    .sketchbook-card {
+      background: #fff; border-radius: 20px; padding: 18px;
+      border: 2px solid rgba(200,180,190,0.18);
+      box-shadow: 2px 4px 14px rgba(180,120,140,0.1);
+      transform: rotate(-0.4deg);
+    }
+    .sketchbook-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+    .sketchbook-title { font-family: var(--font-b); font-size: 18px; font-weight: 800; color: var(--ink); }
+    .sketchbook-sub { font-size: 11px; color: var(--mid); font-weight: 700; margin-top: 2px; }
+    .sketchbook-count-pill { background: rgba(254,248,242,0.9); border: 1.5px solid rgba(200,180,190,0.2); border-radius: 999px; padding: 4px 12px; font-size: 11px; font-weight: 800; color: var(--mid); white-space: nowrap; }
+    .sketchbook-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .sketchbook-input {
+      flex: 1; border: 2px solid rgba(200,160,180,0.2); border-radius: 12px;
+      padding: 9px 12px; font-size: 13px; font-family: var(--font-n);
+      background: rgba(254,248,242,0.7); color: var(--ink); outline: none;
+    }
+    .sketchbook-input:focus { border-color: rgba(220,120,140,0.4); }
+    .sketchbook-add-btn {
+      background: var(--tomato); color: #fff; border: none;
+      border-radius: 12px; padding: 9px 14px; font-size: 12px;
+      font-weight: 800; cursor: pointer; font-family: var(--font-n); white-space: nowrap;
+    }
+    .sketchbook-list { display: flex; flex-direction: column; gap: 8px; }
+    .sketchbook-empty { font-size: 12px; color: var(--mid); font-weight: 700; text-align: center; padding: 16px 0; }
+    .sketchbook-item {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(254,248,242,0.7); border-radius: 12px;
+      padding: 10px 12px; border: 1.5px solid rgba(200,180,190,0.15);
+      position: relative;
+    }
+    .sketchbook-num { font-size: 11px; font-weight: 900; color: var(--mid); width: 18px; flex-shrink: 0; text-align: center; }
+    .sketchbook-info { flex: 1; min-width: 0; }
+    .sketchbook-song { font-size: 13px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sketchbook-by { font-size: 10px; color: var(--mid); font-weight: 700; margin-top: 1px; }
+    .sketchbook-delete { background: none; border: none; font-size: 14px; cursor: pointer; color: var(--mid); opacity: 0.5; padding: 2px 4px; }
+    .sketchbook-delete:hover { opacity: 1; color: var(--tomato); }
 
     /* ── INVITE ── */
     .heart-hero { display: block; margin: 10px auto 18px; }
@@ -288,6 +302,108 @@
     }
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
+
+    /* ── GROUPS HUB ── */
+    #groups-screen {
+      flex: 1; display: flex; flex-direction: column;
+      padding: 32px 24px 24px; gap: 14px;
+    }
+    .groups-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .groups-title { font-family: var(--font-b); font-size: 26px; font-weight: 800; color: var(--ink); }
+    .groups-sub { font-size: 12px; color: var(--mid); font-weight: 700; margin-bottom: 6px; }
+    .group-card-row {
+      background: #fff; border-radius: 18px; padding: 14px 16px;
+      border: 1.5px solid rgba(200,180,190,0.2);
+      display: flex; align-items: center; gap: 12px; cursor: pointer;
+      transition: transform 0.12s;
+    }
+    .group-card-row:hover { transform: scale(1.01); }
+    .group-card-av {
+      width: 42px; height: 42px; border-radius: 14px; flex-shrink: 0;
+      background: linear-gradient(135deg, #FCCDD5, #F5A8B8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .group-card-info { flex: 1; min-width: 0; }
+    .group-card-name { font-family: var(--font-b); font-size: 15px; font-weight: 800; color: var(--ink); }
+    .group-card-meta { font-size: 11px; color: var(--mid); font-weight: 700; margin-top: 2px; }
+    .group-card-arrow { font-size: 16px; color: var(--mid); }
+    .hub-divider { font-size: 10px; font-weight: 900; color: var(--mid); text-transform: uppercase; letter-spacing: 0.1em; }
+    .signout-btn {
+      width: 100%; background: transparent; border: 1.5px solid rgba(200,160,180,0.25);
+      border-radius: 999px; padding: 10px; font-family: var(--font-n);
+      font-size: 12px; font-weight: 800; color: var(--mid); cursor: pointer; margin-top: auto;
+    }
+    .signout-btn:hover { border-color: var(--tomato); color: var(--tomato); }
+
+    /* ── SETTINGS SCREEN ── */
+    #settings-screen {
+      flex: 1; display: flex; flex-direction: column; padding: 0;
+    }
+    .settings-topbar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px 12px;
+    }
+    .back-btn {
+      background: rgba(255,255,255,0.7); border: 1.5px solid rgba(200,180,190,0.2);
+      border-radius: 999px; padding: 6px 14px;
+      font-family: var(--font-n); font-size: 12px; font-weight: 800;
+      color: var(--mid); cursor: pointer;
+    }
+    .settings-title { font-family: var(--font-b); font-size: 20px; font-weight: 800; color: var(--ink); }
+    .settings-body { padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .settings-section-label { font-size: 10px; font-weight: 900; color: var(--mid); text-transform: uppercase; letter-spacing: 0.1em; margin: 8px 0 4px; }
+    .settings-row {
+      background: #fff; border-radius: 16px; padding: 14px 16px;
+      border: 1.5px solid rgba(200,180,190,0.15);
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: background 0.12s;
+    }
+    .settings-row:hover { background: rgba(255,255,255,0.85); }
+    .settings-row-left { display: flex; flex-direction: column; gap: 2px; }
+    .settings-row-label { font-size: 14px; font-weight: 800; color: var(--ink); }
+    .settings-row-sub { font-size: 11px; color: var(--mid); font-weight: 700; }
+    .settings-row-icon { font-size: 18px; }
+    .settings-danger { border-color: rgba(232,115,106,0.2); }
+    .settings-danger .settings-row-label { color: var(--tomato); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(46,32,48,0.4); z-index: 100;
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--cream); border-radius: 24px; padding: 24px;
+      width: 100%; max-width: 340px;
+      box-shadow: 0 20px 60px rgba(46,32,48,0.2);
+    }
+    .modal-title { font-family: var(--font-b); font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+    .modal-sub { font-size: 12px; color: var(--mid); font-weight: 700; margin-bottom: 16px; }
+    .modal-input {
+      width: 100%; border: 2px solid rgba(200,160,180,0.2); border-radius: 14px;
+      padding: 11px 14px; font-family: var(--font-n); font-size: 14px;
+      background: rgba(255,255,255,0.8); color: var(--ink); outline: none; margin-bottom: 12px;
+    }
+    .modal-input:focus { border-color: rgba(220,120,140,0.4); }
+    .modal-btns { display: flex; gap: 8px; }
+    .modal-cancel { flex: 1; background: transparent; border: 1.5px solid rgba(200,160,180,0.25); border-radius: 999px; padding: 10px; font-family: var(--font-n); font-size: 13px; font-weight: 800; color: var(--mid); cursor: pointer; }
+    .modal-confirm { flex: 2; background: var(--tomato); color: #fff; border: none; border-radius: 999px; padding: 10px; font-family: var(--font-b); font-size: 13px; font-weight: 700; cursor: pointer; }
+
+    /* ── VIBE SUGGESTIONS (real-time) ── */
+    .vibe-suggestions { margin-top: 14px; }
+    .vibe-sug-label { font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .sug-item {
+      display: flex; align-items: center; gap: 9px;
+      background: rgba(255,255,255,0.06); border-radius: 10px;
+      padding: 7px 10px; margin-bottom: 5px;
+    }
+    .sug-item-info { flex: 1; min-width: 0; }
+    .sug-item-name { font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sug-item-by { font-size: 10px; color: rgba(255,255,255,0.35); }
+    .sug-item-num { font-size: 11px; color: rgba(255,255,255,0.25); font-weight: 800; width: 18px; text-align: center; flex-shrink: 0; }
+
   </style>
 </head>
 <body>
@@ -353,6 +469,157 @@
     <div class="auth-err" id="group-err"></div>
   </div>
 
+  <!-- ── GROUPS HUB ── -->
+  <div id="groups-screen" style="display:none">
+    <div class="groups-header">
+      <div>
+        <div class="groups-title">your lockets 🩷</div>
+        <div class="groups-sub">tap one to open it</div>
+      </div>
+      <button class="back-btn" onclick="openSettings()">settings</button>
+    </div>
+    <div id="groups-list"></div>
+    <div class="hub-divider">or start fresh</div>
+    <button class="big-btn big-btn-primary" onclick="showGroupJoin()">
+      + start a new group
+      <span>you'll get an invite code to share</span>
+    </button>
+    <div class="or-row">— or join one —</div>
+    <input class="join-input" id="hub-join-input" type="text" placeholder="paste invite code here..." />
+    <button class="big-btn big-btn-secondary" onclick="joinGroupFromHub()">
+      join group
+      <span>enter the code your friend sent you</span>
+    </button>
+    <div class="auth-err" id="hub-err"></div>
+    <button class="signout-btn" onclick="signOut()">sign out</button>
+  </div>
+
+  <!-- ── SETTINGS SCREEN ── -->
+  <div id="settings-screen" style="display:none">
+    <div class="settings-topbar">
+      <button class="back-btn" onclick="showGroupsHub()">← back</button>
+      <div class="settings-title">settings</div>
+    </div>
+    <div class="settings-body">
+      <div class="settings-section-label">your group</div>
+      <div class="settings-row" onclick="showRenameModal()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">rename group</div>
+          <div class="settings-row-sub" id="settings-group-name-sub">change your group's name</div>
+        </div>
+        <div class="settings-row-icon">✏️</div>
+      </div>
+      <div class="settings-row" onclick="copyCodeFromSettings()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">copy invite code</div>
+          <div class="settings-row-sub" id="settings-code-sub">share with friends</div>
+        </div>
+        <div class="settings-row-icon">🔗</div>
+      </div>
+
+      <div class="settings-section-label">support</div>
+      <div class="settings-row" onclick="contactFounder()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">contact the founder</div>
+          <div class="settings-row-sub">questions, feedback, bugs — say hi!</div>
+        </div>
+        <div class="settings-row-icon">💌</div>
+      </div>
+      <div class="settings-row" onclick="showTroubleshooting()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">troubleshooting</div>
+          <div class="settings-row-sub">common fixes for common problems</div>
+        </div>
+        <div class="settings-row-icon">🛠️</div>
+      </div>
+
+      <div class="settings-section-label">account</div>
+      <div class="settings-row settings-danger" onclick="leaveGroupFromSettings()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">leave this group</div>
+          <div class="settings-row-sub">you can rejoin with the code anytime</div>
+        </div>
+        <div class="settings-row-icon">🚪</div>
+      </div>
+      <div class="settings-row settings-danger" onclick="signOut()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">sign out</div>
+          <div class="settings-row-sub" id="settings-email-sub"></div>
+        </div>
+        <div class="settings-row-icon">👋</div>
+      </div>
+      <div class="settings-row settings-danger" onclick="deactivateAccount()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">deactivate account</div>
+          <div class="settings-row-sub">pauses your account for 30 days then deletes it</div>
+        </div>
+        <div class="settings-row-icon">😴</div>
+      </div>
+      <div class="settings-row settings-danger" onclick="deleteAccount()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">delete account permanently</div>
+          <div class="settings-row-sub">this cannot be undone</div>
+        </div>
+        <div class="settings-row-icon">🗑️</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RENAME MODAL ── -->
+  <div class="modal-overlay" id="rename-modal">
+    <div class="modal-box">
+      <div class="modal-title">rename your group</div>
+      <div class="modal-sub">pick something that feels like you !</div>
+      <input class="modal-input" id="rename-input" type="text" placeholder="e.g. castle hill girls" maxlength="30" />
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeModal('rename-modal')">cancel</button>
+        <button class="modal-confirm" onclick="confirmRename()">save it !</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DEACTIVATE MODAL ── -->
+  <div class="modal-overlay" id="deactivate-modal">
+    <div class="modal-box">
+      <div class="modal-title">deactivate account 😴</div>
+      <div class="modal-sub">your account will be hidden for 30 days. if you don't log back in, it gets permanently deleted. you can cancel by logging in anytime.</div>
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeModal('deactivate-modal')">cancel</button>
+        <button class="modal-confirm" onclick="confirmDeactivate()">deactivate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DELETE MODAL ── -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-box">
+      <div class="modal-title">delete account 🗑️</div>
+      <div class="modal-sub">this will permanently delete your account and all your posts. this cannot be undone. type DELETE to confirm.</div>
+      <input class="modal-input" id="delete-confirm-input" type="text" placeholder="type DELETE to confirm" />
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeModal('delete-modal')">cancel</button>
+        <button class="modal-confirm" style="background:#c0392b" onclick="confirmDelete()">delete forever</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TROUBLESHOOTING MODAL ── -->
+  <div class="modal-overlay" id="trouble-modal">
+    <div class="modal-box">
+      <div class="modal-title">troubleshooting 🛠️</div>
+      <div style="font-size:13px;color:var(--mid);font-weight:700;line-height:1.8;">
+        <b style="color:var(--ink)">posts not showing?</b><br>pull down to refresh the page<br><br>
+        <b style="color:var(--ink)">friend can't join?</b><br>make sure they type the code in ALL CAPS<br><br>
+        <b style="color:var(--ink)">app looks weird?</b><br>try clearing your browser cache and reopening<br><br>
+        <b style="color:var(--ink)">still broken?</b><br>email us and we'll fix it fast 🩷
+      </div>
+      <div class="modal-btns" style="margin-top:16px;">
+        <button class="modal-cancel" onclick="closeModal('trouble-modal')">close</button>
+        <button class="modal-confirm" onclick="contactFounder()">email us</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── MAIN APP ── -->
   <div id="app-shell" style="display:none; flex-direction:column; flex:1;">
     <div class="topbar">
@@ -365,7 +632,7 @@
           <rect x="13" y="0" width="2" height="3" rx="0.8" fill="#b04048"/>
         </svg>
       </div>
-      <div class="group-chip" onclick="goTab('invite')">
+      <div class="group-chip" onclick="openSettings()">
         <div class="live-dot"></div>
         <span id="group-chip-name">my group</span>
       </div>
@@ -428,26 +695,20 @@
 
       <!-- VIBE -->
       <div class="screen" id="screen-vibe">
-        <div class="vibe-card">
-          <div class="sp-row">
-            <div class="sp-badge">
-              <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-            </div>
+        <div class="sketchbook-card">
+          <div class="sketchbook-header">
             <div>
-              <div class="sp-name">locket base playlist</div>
-              <div class="sp-sub">everyone can add · <span id="song-count">5</span> songs</div>
+              <div class="sketchbook-title">song sketchbook 🎵</div>
+              <div class="sketchbook-sub">songs everyone's been into lately</div>
             </div>
+            <div class="sketchbook-count-pill"><span id="song-count">0</span> songs</div>
           </div>
-          <div class="trows" id="tracks">
-            <div class="trow now" onclick="playT(this)"><div class="tnum">▶</div><div class="tinfo"><div class="tname">Slow Burn</div><div class="tartist">Kacey Musgraves</div></div><div class="ttag">base</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">2</div><div class="tinfo"><div class="tname">Motion Sickness</div><div class="tartist">Phoebe Bridgers</div></div><div class="ttag">base</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">3</div><div class="tinfo"><div class="tname">Glimpse of Us</div><div class="tartist">Joji</div></div><div class="ttag">base</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">4</div><div class="tinfo"><div class="tname">death bed</div><div class="tartist">Powfu ft. beabadoobee</div></div><div class="ttag">base</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">5</div><div class="tinfo"><div class="tname">BIRDS OF A FEATHER</div><div class="tartist">Billie Eilish</div></div><div class="ttag">base</div></div>
+          <div class="sketchbook-input-row">
+            <input class="sketchbook-input" id="sug-in" placeholder="song name + artist..." />
+            <button class="sketchbook-add-btn" onclick="addSong()">+ add</button>
           </div>
-          <div class="sug-row">
-            <input class="sug-in" id="sug-in" placeholder="suggest a song..." />
-            <button class="sug-btn" onclick="addSong()">add</button>
+          <div id="vibe-list" class="sketchbook-list">
+            <div class="sketchbook-empty">no songs yet — be the first !</div>
           </div>
         </div>
       </div>
@@ -481,7 +742,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    onAuthStateChanged, updateProfile
+    onAuthStateChanged, updateProfile, signOut as firebaseSignOut
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, getDocs, onSnapshot,
@@ -521,10 +782,112 @@
 
   // ── SCREENS ──────────────────────────────────────
   function showScreen(name) {
-    document.getElementById('auth-screen').style.display  = name === 'auth'  ? 'flex' : 'none';
-    document.getElementById('group-screen').style.display = name === 'group' ? 'flex' : 'none';
-    document.getElementById('app-shell').style.display    = name === 'app'   ? 'flex' : 'none';
+    document.getElementById('auth-screen').style.display     = name === 'auth'     ? 'flex' : 'none';
+    document.getElementById('group-screen').style.display    = name === 'group'    ? 'flex' : 'none';
+    document.getElementById('groups-screen').style.display   = name === 'groups'   ? 'flex' : 'none';
+    document.getElementById('settings-screen').style.display = name === 'settings' ? 'flex' : 'none';
+    document.getElementById('app-shell').style.display       = name === 'app'      ? 'flex' : 'none';
   }
+
+  window.showGroupsHub = () => {
+    if (unsubscribeGroup) unsubscribeGroup();
+    if (unsubscribePosts) unsubscribePosts();
+    if (unsubscribeVibe) unsubscribeVibe();
+    currentGroupId = null;
+    showScreen('groups');
+    loadUserGroups();
+  };
+
+  window.openSettings = () => {
+    document.getElementById('settings-group-name-sub').textContent =
+      currentGroupData ? currentGroupData.name : 'change your group name';
+    document.getElementById('settings-code-sub').textContent =
+      currentGroupId ? 'code: ' + currentGroupId : 'no group selected';
+    document.getElementById('settings-email-sub').textContent =
+      currentUser ? currentUser.email : '';
+    showScreen('settings');
+  };
+
+  window.showGroupJoin = () => showScreen('group');
+  window.joinGroupFromHub = () => {
+    const code = document.getElementById('hub-join-input').value.trim().toUpperCase();
+    document.getElementById('join-code-input').value = code;
+    joinGroup();
+  };
+
+  async function loadUserGroups() {
+    const el = document.getElementById('groups-list');
+    el.innerHTML = '<div style="color:var(--mid);font-size:13px;font-weight:700;padding:8px 0;">loading your groups...</div>';
+    try {
+      // find all groups where user is a member
+      const snap = await getDoc(doc(db, 'users', currentUser.uid));
+      const groupId = snap.exists() ? snap.data().groupId : null;
+      if (!groupId) { el.innerHTML = '<div style="color:var(--mid);font-size:12px;font-weight:700;padding:8px 0;">no groups yet — start one below!</div>'; return; }
+      const gSnap = await getDoc(doc(db, 'groups', groupId));
+      if (!gSnap.exists()) { el.innerHTML = ''; return; }
+      const g = gSnap.data();
+      el.innerHTML = \`<div class="group-card-row" onclick="enterGroup('\${groupId}')">
+        <div class="group-card-av">🩷</div>
+        <div class="group-card-info">
+          <div class="group-card-name">\${esc(g.name)}</div>
+          <div class="group-card-meta">\${g.members ? g.members.length : 1} members · code: \${groupId}</div>
+        </div>
+        <div class="group-card-arrow">›</div>
+      </div>\`;
+    } catch(e) {
+      el.innerHTML = '<div style="color:var(--mid);font-size:12px;">could not load groups</div>';
+    }
+  }
+
+  window.enterGroup = async (groupId) => {
+    await loadGroup(groupId);
+  };
+
+  window.signOut = async () => {
+    if (!confirm('sign out?')) return;
+    if (unsubscribeGroup) unsubscribeGroup();
+    if (unsubscribePosts) unsubscribePosts();
+    if (unsubscribeVibe) unsubscribeVibe();
+    await firebaseSignOut(auth);
+    showScreen('auth');
+  };
+
+  window.showRenameModal = () => {
+    document.getElementById('rename-input').value = currentGroupData ? currentGroupData.name : '';
+    document.getElementById('rename-modal').classList.add('open');
+  };
+  window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+  window.confirmRename = async () => {
+    const val = document.getElementById('rename-input').value.trim();
+    if (!val || !currentGroupId) return;
+    await updateDoc(doc(db, 'groups', currentGroupId), { name: val });
+    closeModal('rename-modal');
+  };
+
+  window.copyCodeFromSettings = () => {
+    if (!currentGroupId) return;
+    if (navigator.clipboard) navigator.clipboard.writeText(currentGroupId).catch(()=>{});
+    alert('code copied: ' + currentGroupId);
+  };
+
+  window.contactFounder = () => {
+    window.location.href = 'mailto:hellokayleec@gmail.com?subject=locket app feedback';
+  };
+
+  window.showTroubleshooting = () => {
+    document.getElementById('trouble-modal').classList.add('open');
+  };
+
+  window.leaveGroupFromSettings = async () => {
+    if (!confirm('leave this group? you can rejoin with the code anytime.')) return;
+    await setDoc(doc(db, 'users', currentUser.uid), { groupId: null }, { merge: true });
+    if (unsubscribeGroup) unsubscribeGroup();
+    if (unsubscribePosts) unsubscribePosts();
+    if (unsubscribeVibe) unsubscribeVibe();
+    currentGroupId = null; currentGroupData = null;
+    showScreen('groups');
+    loadUserGroups();
+  };
 
   // ── AUTH ─────────────────────────────────────────
   // switchAuthTab defined at top of module
@@ -574,7 +937,8 @@
         name: currentUser.displayName,
         uid: currentUser.uid
       }, { merge: true });
-      await loadGroup(code);
+      showScreen('groups');
+      loadUserGroups();
     } catch(e) {
       errEl.textContent = 'something went wrong, try again !';
     }
@@ -605,6 +969,8 @@
 
   let unsubscribeGroup = null;
 
+  let unsubscribeVibe = null;
+
   async function loadGroup(groupId) {
     const snap = await getDoc(doc(db, 'groups', groupId));
     if (!snap.exists()) return;
@@ -612,8 +978,9 @@
     showScreen('app');
     document.getElementById('invite-code-display').textContent = groupId;
     loadFeed();
+    loadVibeSuggestions();
 
-    // live listener so members update in real time when anyone joins
+    // live listener on group doc for real-time member + name updates
     if (unsubscribeGroup) unsubscribeGroup();
     unsubscribeGroup = onSnapshot(doc(db, 'groups', groupId), (groupSnap) => {
       if (!groupSnap.exists()) return;
@@ -624,6 +991,40 @@
       renderMembers(members);
     });
   }
+
+  function loadVibeSuggestions() {
+    if (unsubscribeVibe) unsubscribeVibe();
+    const q = query(collection(db, 'groups', currentGroupId, 'songs'), orderBy('createdAt', 'desc'));
+    unsubscribeVibe = onSnapshot(q, (snap) => {
+      const el = document.getElementById('vibe-list');
+      const countEl = document.getElementById('song-count');
+      if (countEl) countEl.textContent = snap.size;
+      if (snap.empty) {
+        el.innerHTML = '<div class="sketchbook-empty">no songs yet — add the first one !</div>';
+        return;
+      }
+      el.innerHTML = snap.docs.map((d, i) => {
+        const s = d.data();
+        const isMe = s.uid === currentUser.uid;
+        return '<div class="sketchbook-item">' +
+          '<div class="sketchbook-num">' + (i+1) + '</div>' +
+          '<div class="sketchbook-info">' +
+            '<div class="sketchbook-song">' + esc(s.song) + '</div>' +
+            '<div class="sketchbook-by">added by ' + esc(s.addedBy) + '</div>' +
+          '</div>' +
+          (isMe ? '<button class="sketchbook-delete" onclick="deleteSong('' + d.id + '')">✕</button>' : '') +
+        '</div>';
+      }).join('');
+    });
+  }
+
+  window.deleteSong = async (songId) => {
+    if (!currentGroupId) return;
+    try {
+      const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
+      await deleteDoc(doc(db, 'groups', currentGroupId, 'songs', songId));
+    } catch(e) { alert('could not delete song'); }
+  };
 
   function renderMembers(members) {
     const colors = ['#F4A890','#8ED4B0','#E090A8','#F0C070','#C0A8E8','#90B8E8','#A8D4F0','#F0A8C0'];
@@ -639,9 +1040,10 @@
     await setDoc(doc(db, 'users', currentUser.uid), { groupId: null }, { merge: true });
     if (unsubscribePosts) unsubscribePosts();
     if (unsubscribeGroup) unsubscribeGroup();
-    currentGroupId = null;
-    currentGroupData = null;
-    showScreen('group');
+    if (unsubscribeVibe) unsubscribeVibe();
+    currentGroupId = null; currentGroupData = null;
+    showScreen('groups');
+    loadUserGroups();
   };
 
   // ── FEED ─────────────────────────────────────────
@@ -758,12 +1160,9 @@
   onAuthStateChanged(auth, async (user) => {
     if (!user) { showScreen('auth'); return; }
     currentUser = user;
-    const userSnap = await getDoc(doc(db, 'users', user.uid));
-    if (userSnap.exists() && userSnap.data().groupId) {
-      await loadGroup(userSnap.data().groupId);
-    } else {
-      showScreen('group');
-    }
+    await checkAndClearDeactivation(user.uid);
+    showScreen('groups');
+    loadUserGroups();
   });
 
   // ── TAB NAV ──────────────────────────────────────
@@ -786,16 +1185,18 @@
     document.querySelectorAll('.trow').forEach((t,i) => { t.classList.remove('now'); t.querySelector('.tnum').textContent = i+1; });
     el.classList.add('now'); el.querySelector('.tnum').textContent = '▶';
   };
-  window.addSong = () => {
+  window.addSong = async () => {
     const inp = document.getElementById('sug-in');
-    const v = inp.value.trim(); if (!v) return;
-    const tracks = document.getElementById('tracks');
-    const n = tracks.querySelectorAll('.trow').length + 1;
-    const d = document.createElement('div'); d.className = 'trow';
-    d.onclick = function(){ window.playT(this); };
-    d.innerHTML = '<div class="tnum">' + n + '</div><div class="tinfo"><div class="tname">' + esc(v) + '</div><div class="tartist">added by ' + esc(currentUser.displayName) + '</div></div><div class="ttag">you</div>';
-    tracks.appendChild(d); inp.value = '';
-    document.getElementById('song-count').textContent = n;
+    const v = inp.value.trim(); if (!v || !currentGroupId) return;
+    inp.value = '';
+    try {
+      await addDoc(collection(db, 'groups', currentGroupId, 'songs'), {
+        song: v,
+        addedBy: currentUser.displayName,
+        uid: currentUser.uid,
+        createdAt: serverTimestamp()
+      });
+    } catch(e) { alert('could not add song, try again!'); }
   };
 
   // ── ALBUM ────────────────────────────────────────
@@ -816,6 +1217,79 @@
   // ── UTILS ────────────────────────────────────────
   function esc(str) {
     return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // ── DEACTIVATE / DELETE ACCOUNT ────────────────
+  window.deactivateAccount = () => {
+    document.getElementById('deactivate-modal').classList.add('open');
+  };
+
+  window.confirmDeactivate = async () => {
+    try {
+      // Mark account as deactivated with a timestamp in Firestore
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        deactivated: true,
+        deactivatedAt: serverTimestamp(),
+        deleteAfter: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      }, { merge: true });
+      closeModal('deactivate-modal');
+      alert('your account is deactivated. log in within 30 days to reactivate. after that it will be permanently deleted.');
+      await firebaseSignOut(auth);
+      showScreen('auth');
+    } catch(e) {
+      alert('something went wrong. please email hellokayleec@gmail.com for help.');
+    }
+  };
+
+  window.deleteAccount = () => {
+    document.getElementById('delete-confirm-input').value = '';
+    document.getElementById('delete-modal').classList.add('open');
+  };
+
+  window.confirmDelete = async () => {
+    const val = document.getElementById('delete-confirm-input').value.trim();
+    if (val !== 'DELETE') {
+      alert('please type DELETE in all caps to confirm');
+      return;
+    }
+    try {
+      // Remove from group members list
+      if (currentGroupId) {
+        const gSnap = await getDoc(doc(db, 'groups', currentGroupId));
+        if (gSnap.exists()) {
+          const members = (gSnap.data().members || []).filter(m => m.uid !== currentUser.uid);
+          await updateDoc(doc(db, 'groups', currentGroupId), { members });
+        }
+      }
+      // Delete user doc
+      const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
+      await deleteDoc(doc(db, 'users', currentUser.uid));
+      // Delete Firebase auth account
+      await currentUser.delete();
+      closeModal('delete-modal');
+      alert('your account has been permanently deleted. goodbye 🩷');
+      showScreen('auth');
+    } catch(e) {
+      if (e.code === 'auth/requires-recent-login') {
+        alert('for security, please sign out and sign back in before deleting your account.');
+      } else {
+        alert('something went wrong. please email hellokayleec@gmail.com for help.');
+      }
+      closeModal('delete-modal');
+    }
+  };
+
+  // ── REACTIVATE ON LOGIN ──────────────────────────
+  // If a deactivated user logs back in, clear the deactivation flag
+  async function checkAndClearDeactivation(uid) {
+    const snap = await getDoc(doc(db, 'users', uid));
+    if (snap.exists() && snap.data().deactivated) {
+      await updateDoc(doc(db, 'users', uid), {
+        deactivated: false,
+        deactivatedAt: null,
+        deleteAfter: null
+      });
+    }
   }
 
   // INSTALL BANNER

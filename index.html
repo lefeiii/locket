@@ -569,7 +569,11 @@
         members: [{ uid: currentUser.uid, name: currentUser.displayName }],
         createdAt: serverTimestamp()
       });
-      await setDoc(doc(db, 'users', currentUser.uid), { groupId: code }, { merge: true });
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        groupId: code,
+        name: currentUser.displayName,
+        uid: currentUser.uid
+      }, { merge: true });
       await loadGroup(code);
     } catch(e) {
       errEl.textContent = 'something went wrong, try again !';
@@ -588,24 +592,37 @@
       await updateDoc(groupRef, {
         members: arrayUnion({ uid: currentUser.uid, name: currentUser.displayName })
       });
-      await setDoc(doc(db, 'users', currentUser.uid), { groupId: code }, { merge: true });
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        groupId: code,
+        name: currentUser.displayName,
+        uid: currentUser.uid
+      }, { merge: true });
       await loadGroup(code);
     } catch(e) {
       errEl.textContent = 'something went wrong, try again !';
     }
   };
 
+  let unsubscribeGroup = null;
+
   async function loadGroup(groupId) {
     const snap = await getDoc(doc(db, 'groups', groupId));
     if (!snap.exists()) return;
-    currentGroupId   = groupId;
-    currentGroupData = snap.data();
-    document.getElementById('group-chip-name').textContent = currentGroupData.name + ' · ' + currentGroupData.members.length;
-    document.getElementById('album-title').textContent = currentGroupData.name;
-    document.getElementById('invite-code-display').textContent = groupId;
-    renderMembers(currentGroupData.members);
+    currentGroupId = groupId;
     showScreen('app');
+    document.getElementById('invite-code-display').textContent = groupId;
     loadFeed();
+
+    // live listener so members update in real time when anyone joins
+    if (unsubscribeGroup) unsubscribeGroup();
+    unsubscribeGroup = onSnapshot(doc(db, 'groups', groupId), (groupSnap) => {
+      if (!groupSnap.exists()) return;
+      currentGroupData = groupSnap.data();
+      const members = currentGroupData.members || [];
+      document.getElementById('group-chip-name').textContent = currentGroupData.name + ' · ' + members.length;
+      document.getElementById('album-title').textContent = currentGroupData.name;
+      renderMembers(members);
+    });
   }
 
   function renderMembers(members) {
@@ -621,7 +638,9 @@
     if (!confirm('leave this group? you can rejoin with the code anytime.')) return;
     await setDoc(doc(db, 'users', currentUser.uid), { groupId: null }, { merge: true });
     if (unsubscribePosts) unsubscribePosts();
+    if (unsubscribeGroup) unsubscribeGroup();
     currentGroupId = null;
+    currentGroupData = null;
     showScreen('group');
   };
 

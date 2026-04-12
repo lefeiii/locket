@@ -303,6 +303,112 @@
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
 
+    /* ── CUSTOM PROMPT ── */
+    .custom-prompt-banner {
+      background: linear-gradient(135deg, #F5D8E8, #FFE8D8);
+      border-radius: 16px; padding: 12px 14px; margin-bottom: 12px;
+      border: 1.5px solid rgba(200,160,180,0.2);
+    }
+    .custom-prompt-label { font-size: 9px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: #c07090; margin-bottom: 5px; }
+    .custom-prompt-row { display: flex; gap: 7px; }
+    .custom-prompt-input {
+      flex: 1; border: 1.5px solid rgba(200,160,180,0.2); border-radius: 10px;
+      padding: 8px 11px; font-size: 12px; font-family: var(--font-n);
+      background: rgba(255,255,255,0.7); color: var(--ink); outline: none;
+    }
+    .custom-prompt-input:focus { border-color: rgba(220,120,140,0.4); }
+    .custom-prompt-btn {
+      background: var(--ink); color: #fff; border: none;
+      border-radius: 10px; padding: 8px 13px; font-size: 11px;
+      font-weight: 800; cursor: pointer; font-family: var(--font-n); white-space: nowrap;
+    }
+    .custom-prompts-list { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .custom-prompt-item {
+      background: rgba(255,255,255,0.6); border-radius: 10px;
+      padding: 8px 11px; font-size: 12px; font-weight: 700; color: var(--ink);
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .custom-prompt-item-text { flex: 1; line-height: 1.4; }
+    .custom-prompt-item-by { font-size: 9.5px; color: var(--mid); font-weight: 800; }
+    .custom-prompt-del { background: none; border: none; color: var(--mid); cursor: pointer; font-size: 13px; opacity: 0.5; padding: 0 2px; }
+    .custom-prompt-del:hover { opacity: 1; color: var(--tomato); }
+
+    /* ── AI PROMPT BADGE ── */
+    .ai-prompt-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(232,115,106,0.1); border-radius: 999px;
+      padding: 3px 9px; font-size: 9px; font-weight: 900;
+      color: var(--tomato); letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+
+    /* ── ALBUM EDITING ── */
+    .album-cover {
+      width: 100%; aspect-ratio: 16/9; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; margin-bottom: 14px; position: relative;
+      background: linear-gradient(135deg, #FFE4B0, #FCCDD5);
+      cursor: pointer; overflow: hidden;
+    }
+    .album-cover-edit {
+      position: absolute; bottom: 8px; right: 10px;
+      background: rgba(46,32,48,0.55); color: #fff; border: none;
+      border-radius: 999px; padding: 5px 11px; font-size: 10px;
+      font-weight: 800; cursor: pointer; font-family: var(--font-n);
+    }
+    .album-cover-name {
+      position: absolute; bottom: 10px; left: 12px;
+      font-family: var(--font-b); font-size: 16px; font-weight: 800;
+      color: rgba(255,255,255,0.92); text-shadow: 0 1px 4px rgba(46,32,48,0.3);
+    }
+    .album-actions-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .album-action-btn {
+      flex: 1; background: rgba(255,255,255,0.7);
+      border: 1.5px solid rgba(200,180,190,0.2); border-radius: 12px;
+      padding: 9px 8px; font-size: 11px; font-weight: 800;
+      color: var(--mid); cursor: pointer; font-family: var(--font-n); text-align: center;
+    }
+    .album-action-btn:hover { background: #fff; color: var(--ink); }
+    .album-action-danger { color: var(--tomato); }
+    .album-action-danger:hover { border-color: rgba(232,115,106,0.3); }
+    .photo-select-mode .ctile { cursor: pointer; }
+    .photo-select-mode .ctile.selected { outline: 3px solid var(--tomato); outline-offset: 2px; border-radius: 12px; }
+    .select-bar {
+      display: none; background: var(--ink); color: #fff;
+      padding: 12px 16px; border-radius: 16px; margin-bottom: 10px;
+      align-items: center; justify-content: space-between;
+    }
+    .select-bar.visible { display: flex; }
+    .select-bar-txt { font-size: 13px; font-weight: 800; }
+    .select-bar-del { background: var(--tomato); border: none; color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 11px; font-weight: 800; cursor: pointer; font-family: var(--font-n); }
+
+    /* ── GAMES TAB ── */
+    .games-header { font-family: var(--font-b); font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .games-sub { font-size: 12px; color: var(--mid); font-weight: 700; margin-bottom: 16px; }
+    .game-card {
+      background: #fff; border-radius: 20px; padding: 16px;
+      border: 1.5px solid rgba(200,180,190,0.18); margin-bottom: 12px;
+      cursor: pointer; transition: transform 0.12s;
+    }
+    .game-card:hover { transform: scale(1.01); }
+    .game-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .game-icon { font-size: 32px; width: 52px; height: 52px; background: linear-gradient(135deg,#FFE4B0,#FCCDD5); border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .game-name { font-family: var(--font-b); font-size: 16px; font-weight: 800; color: var(--ink); }
+    .game-desc { font-size: 11px; color: var(--mid); font-weight: 700; margin-top: 2px; }
+    .game-play-btn {
+      width: 100%; background: var(--tomato); color: #fff; border: none;
+      border-radius: 999px; padding: 10px; font-family: var(--font-b);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    /* PONG GAME */
+    .pong-container { background: #1a1028; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+    .pong-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .pong-title { font-family: var(--font-b); font-size: 14px; font-weight: 800; color: #fff; }
+    .pong-score { font-family: var(--font-b); font-size: 18px; font-weight: 800; color: #fff; letter-spacing: 0.1em; }
+    .pong-close { background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.6); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer; font-family: var(--font-n); }
+    canvas#pong { width: 100%; border-radius: 8px; display: block; touch-action: none; }
+    .pong-hint { text-align: center; font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 700; margin-top: 7px; }
+
+
     /* ── GROUPS HUB ── */
     #groups-screen {
       flex: 1; display: flex; flex-direction: column;
@@ -565,6 +671,19 @@
     </div>
   </div>
 
+  <!-- ── RENAME ALBUM MODAL ── -->
+  <div class="modal-overlay" id="rename-album-modal">
+    <div class="modal-box">
+      <div class="modal-title">rename album</div>
+      <div class="modal-sub">give your memories a name !</div>
+      <input class="modal-input" id="rename-album-input" type="text" placeholder="e.g. summer 2024" maxlength="30" />
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeModal('rename-album-modal')">cancel</button>
+        <button class="modal-confirm" onclick="confirmAlbumRename()">save</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── RENAME MODAL ── -->
   <div class="modal-overlay" id="rename-modal">
     <div class="modal-box">
@@ -643,6 +762,7 @@
       <button class="tab" onclick="goTab('album',this)">album</button>
       <button class="tab" onclick="goTab('vibe',this)">vibe</button>
       <button class="tab" onclick="goTab('invite',this)">+ invite</button>
+      <button class="tab" onclick="goTab('games',this)">🎮 games</button>
     </div>
 
     <div class="body">
@@ -652,11 +772,22 @@
         <div class="prompt-polo">
           <div class="polo-tape"></div>
           <div class="prompt-inner">
-            <div class="prompt-label">this week's prompt</div>
-            <div class="prompt-q">"drop one photo that feels like your life lately — one sentence you'd say if we were all in the same car rn"</div>
+            <div class="ai-prompt-badge">✨ ai-generated</div>
+            <div class="prompt-label" id="prompt-week-label">this week's prompt</div>
+            <div class="prompt-q" id="weekly-prompt-text">loading this week's prompt...</div>
           </div>
           <div class="polo-caption">answer below ↓</div>
         </div>
+
+        <div class="custom-prompt-banner">
+          <div class="custom-prompt-label">+ add your own prompt</div>
+          <div class="custom-prompt-row">
+            <input class="custom-prompt-input" id="custom-prompt-input" type="text" placeholder="ask the group something..." maxlength="120" />
+            <button class="custom-prompt-btn" onclick="addCustomPrompt()">post</button>
+          </div>
+          <div class="custom-prompts-list" id="custom-prompts-list"></div>
+        </div>
+
         <textarea class="answer-ta" id="answer-ta" placeholder="what's going on with you lately..."></textarea>
         <div class="post-row">
           <span class="char-hint" id="char-count">0 / 200</span>
@@ -672,12 +803,21 @@
 
       <!-- ALBUM -->
       <div class="screen" id="screen-album">
-        <div class="album-hd">
-          <div>
-            <div class="album-title" id="album-title">our group</div>
-            <div class="album-sub" id="album-sub">0 memories</div>
-          </div>
-          <button class="make-btn">make album ✨</button>
+        <div class="album-cover" id="album-cover" onclick="changeCover()">
+          <span id="album-cover-emoji">🩷</span>
+          <div class="album-cover-name" id="album-cover-name">our group</div>
+          <button class="album-cover-edit" onclick="changeCover(); event.stopPropagation();">change cover</button>
+        </div>
+        <span id="album-title" style="display:none">our group</span>
+        <span id="album-sub" style="display:none">0 memories</span>
+        <div class="album-actions-row">
+          <button class="album-action-btn" onclick="renameAlbum()">✏️ rename</button>
+          <button class="album-action-btn" onclick="toggleSelectMode()">☑️ select</button>
+          <button class="album-action-btn album-action-danger" onclick="confirmDeleteAlbum()">🗑️ delete all</button>
+        </div>
+        <div class="select-bar" id="select-bar">
+          <span class="select-bar-txt" id="select-bar-txt">0 selected</span>
+          <button class="select-bar-del" onclick="deleteSelected()">delete selected</button>
         </div>
         <div class="colgrid" id="colgrid">
           <div class="ctile"><div class="tface c1">🌧️</div><div class="tlabel">campus walk</div></div>
@@ -690,6 +830,9 @@
             <div style="font-size:22px;line-height:1;font-weight:300;">+</div>
             <span>add</span>
           </div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--mid);font-weight:700;text-align:center;line-height:1.6;">
+          📸 real photo uploads coming soon!<br>for now, save your faves to your camera roll and add them here as memories.
         </div>
       </div>
 
@@ -734,6 +877,63 @@
         </div>
       </div>
 
+      <!-- GAMES -->
+      <div class="screen" id="screen-games">
+        <div class="games-header">games 🎮</div>
+        <div class="games-sub">take a break and play with the group</div>
+
+        <div id="pong-game-area" style="display:none">
+          <div class="pong-container">
+            <div class="pong-header">
+              <div class="pong-title">table tennis</div>
+              <div class="pong-score" id="pong-score">0 — 0</div>
+              <button class="pong-close" onclick="closePong()">close</button>
+            </div>
+            <canvas id="pong" height="260"></canvas>
+            <div class="pong-hint">drag left side to move your paddle · right paddle is AI</div>
+          </div>
+        </div>
+
+        <div id="games-list-area">
+          <div class="game-card">
+            <div class="game-card-top">
+              <div class="game-icon">🏓</div>
+              <div>
+                <div class="game-name">table tennis</div>
+                <div class="game-desc">you vs the computer · drag to move your paddle</div>
+              </div>
+            </div>
+            <button class="game-play-btn" onclick="startPong()">play now</button>
+          </div>
+
+          <div class="game-card">
+            <div class="game-card-top">
+              <div class="game-icon">🎯</div>
+              <div>
+                <div class="game-name">tap challenge</div>
+                <div class="game-desc">tap as fast as you can in 10 seconds · share your score</div>
+              </div>
+            </div>
+            <button class="game-play-btn" onclick="startTapGame()">play now</button>
+          </div>
+
+          <div id="tap-game-area" style="display:none;margin-top:4px;">
+            <div class="pong-container">
+              <div class="pong-header">
+                <div class="pong-title">tap challenge</div>
+                <div class="pong-score" id="tap-score">0</div>
+                <button class="pong-close" onclick="closeTap()">close</button>
+              </div>
+              <div id="tap-btn-wrap" style="display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:14px;">
+                <div id="tap-timer" style="font-size:32px;font-weight:800;color:#fff;font-family:var(--font-b);">10</div>
+                <button id="tap-btn" onclick="tapIt()" style="width:120px;height:120px;border-radius:50%;background:var(--tomato);border:none;font-size:40px;cursor:pointer;transition:transform 0.05s;">🎯</button>
+                <div id="tap-status" style="color:rgba(255,255,255,0.5);font-size:12px;font-weight:800;">tap the target!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /body -->
   </div><!-- /app-shell -->
 </div><!-- /phone -->
@@ -745,7 +945,7 @@
     onAuthStateChanged, updateProfile, signOut
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
   import {
-    getFirestore, collection, addDoc, getDocs, onSnapshot,
+    getFirestore, collection, addDoc, getDocs, onSnapshot, deleteDoc,
     doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp, query, orderBy
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
@@ -979,6 +1179,8 @@
     document.getElementById('invite-code-display').textContent = groupId;
     loadFeed();
     loadVibeSuggestions();
+    loadWeeklyPrompt();
+    loadCustomPrompts();
 
     // live listener on group doc for real-time member + name updates
     if (unsubscribeGroup) unsubscribeGroup();
@@ -1021,7 +1223,6 @@
   window.deleteSong = async (songId) => {
     if (!currentGroupId) return;
     try {
-      const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
       await deleteDoc(doc(db, 'groups', currentGroupId, 'songs', songId));
     } catch(e) { alert('could not delete song'); }
   };
@@ -1167,12 +1368,13 @@
 
   // ── TAB NAV ──────────────────────────────────────
   window.goTab = (id, btn) => {
-    ['feed','album','vibe','invite'].forEach(t => {
+    ['feed','album','vibe','invite','games'].forEach(t => {
       document.getElementById('screen-' + t).classList.toggle('active', t === id);
     });
     document.querySelectorAll('.tab').forEach((b,i) => {
-      b.classList.toggle('on', ['feed','album','vibe','invite'][i] === id);
+      b.classList.toggle('on', ['feed','album','vibe','invite','games'][i] === id);
     });
+    if (id !== 'games' && pongRAF) { cancelAnimationFrame(pongRAF); pongRAF = null; }
   };
 
   // ── CHAR COUNT ───────────────────────────────────
@@ -1262,7 +1464,6 @@
         }
       }
       // Delete user doc
-      const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
       await deleteDoc(doc(db, 'users', currentUser.uid));
       // Delete Firebase auth account
       await currentUser.delete();
@@ -1291,6 +1492,293 @@
       });
     }
   }
+
+  // ── WEEKLY AI PROMPT ────────────────────────────
+  async function loadWeeklyPrompt() {
+    if (!currentGroupId) return;
+    const weekKey = getWeekKey();
+    const promptRef = doc(db, 'groups', currentGroupId, 'prompts', weekKey);
+    const snap = await getDoc(promptRef);
+
+    if (snap.exists()) {
+      document.getElementById('weekly-prompt-text').textContent = snap.data().text;
+      return;
+    }
+
+    // Generate new prompt based on last week posts
+    document.getElementById("weekly-prompt-text").textContent = "generating this week's prompt...";
+    try {
+      const lastWeekKey = getWeekKey(-1);
+      const postsSnap = await getDocs(collection(db, 'groups', currentGroupId, 'posts'));
+      const recentPosts = postsSnap.docs
+        .map(d => d.data().text || '')
+        .filter(t => t.length > 5)
+        .slice(0, 20)
+        .join(' | ');
+
+      const systemMsg = recentPosts.length > 20
+        ? 'Based on these recent posts from a close friend group: "' + recentPosts.slice(0,800) + '", write ONE short, warm, casual weekly prompt question (max 20 words) that picks up on their shared themes. Make it feel personal and fun, like something a friend would ask. Just the question, no quotes.'
+        : 'Write ONE short, warm, casual weekly prompt question (max 20 words) for a close friend group to answer about their life lately. Fun and personal. Just the question, no quotes.';
+
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': '', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 80, messages: [{ role: 'user', content: systemMsg }] })
+      });
+
+      let promptText = "what's one thing that made you smile this week?";
+      if (resp.ok) {
+        const data = await resp.json();
+        promptText = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text.trim() : promptText;
+      }
+
+      await setDoc(promptRef, { text: promptText, weekKey, createdAt: serverTimestamp() });
+      document.getElementById("weekly-prompt-text").textContent = promptText;
+    } catch(e) {
+      document.getElementById("weekly-prompt-text").textContent = "what's something small that made your week?";
+    }
+  }
+
+  function getWeekKey(offset) {
+    const d = new Date();
+    if (offset) d.setDate(d.getDate() + (offset * 7));
+    const year = d.getFullYear();
+    const week = Math.ceil(((d - new Date(year,0,1)) / 86400000 + new Date(year,0,1).getDay()+1)/7);
+    return year + '-W' + String(week).padStart(2,'0');
+  }
+
+  // ── CUSTOM PROMPTS ───────────────────────────────
+  let unsubscribeCustomPrompts = null;
+
+  function loadCustomPrompts() {
+    if (unsubscribeCustomPrompts) unsubscribeCustomPrompts();
+    if (!currentGroupId) return;
+    const q = query(collection(db, 'groups', currentGroupId, 'customPrompts'), orderBy('createdAt', 'desc'));
+    unsubscribeCustomPrompts = onSnapshot(q, (snap) => {
+      const el = document.getElementById('custom-prompts-list');
+      if (snap.empty) { el.innerHTML = ''; return; }
+      el.innerHTML = snap.docs.map(d => {
+        const p = d.data();
+        const isMe = p.uid === currentUser.uid;
+        return '<div class="custom-prompt-item">' +
+          '<div>' +
+            '<div class="custom-prompt-item-text">' + esc(p.text) + '</div>' +
+            '<div class="custom-prompt-item-by">asked by ' + esc(p.authorName) + '</div>' +
+          '</div>' +
+          (isMe ? '<button class="custom-prompt-del" onclick="deleteCustomPrompt(\'' + d.id + '\')">&#x2715;</button>' : '') +
+        '</div>';
+      }).join('');
+    });
+  }
+
+  window.addCustomPrompt = async () => {
+    const inp = document.getElementById('custom-prompt-input');
+    const v = inp.value.trim();
+    if (!v || !currentGroupId) return;
+    inp.value = '';
+    await addDoc(collection(db, 'groups', currentGroupId, 'customPrompts'), {
+      text: v, uid: currentUser.uid,
+      authorName: currentUser.displayName,
+      createdAt: serverTimestamp()
+    });
+  };
+
+  window.deleteCustomPrompt = async (id) => {
+    const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
+    await deleteDoc(doc(db, 'groups', currentGroupId, 'customPrompts', id));
+  };
+
+  // ── ALBUM EDITING ────────────────────────────────
+  let albumName = 'our group';
+  let albumCoverEmoji = '🩷';
+  let selectMode = false;
+  const selectedTiles = new Set();
+  const coverEmojis = ['🩷','🌸','✨','🎉','🌊','🌙','🍓','🌈','🎵','📸','🏖','🌺','💫','🫧','🌻'];
+
+  window.renameAlbum = () => {
+    document.getElementById('rename-album-input').value = albumName;
+    document.getElementById('rename-album-modal').classList.add('open');
+  };
+  window.confirmAlbumRename = () => {
+    const v = document.getElementById('rename-album-input').value.trim();
+    if (!v) return;
+    albumName = v;
+    document.getElementById('album-cover-name').textContent = albumName;
+    document.getElementById('album-title') && (document.getElementById('album-title').textContent = albumName);
+    closeModal('rename-album-modal');
+  };
+
+  window.changeCover = () => {
+    const idx = coverEmojis.indexOf(albumCoverEmoji);
+    albumCoverEmoji = coverEmojis[(idx + 1) % coverEmojis.length];
+    document.getElementById('album-cover-emoji').textContent = albumCoverEmoji;
+    const bg = ['linear-gradient(135deg,#FFE4B0,#FCCDD5)','linear-gradient(135deg,#C0EAD0,#D8E8F8)','linear-gradient(135deg,#F5D8E8,#DDD0F8)','linear-gradient(135deg,#FFE8D0,#FFF0C0)'];
+    document.getElementById('album-cover').style.background = bg[Math.floor(Math.random()*bg.length)];
+  };
+
+  window.toggleSelectMode = () => {
+    selectMode = !selectMode;
+    selectedTiles.clear();
+    const grid = document.getElementById('colgrid');
+    grid.classList.toggle('photo-select-mode', selectMode);
+    document.getElementById('select-bar').classList.toggle('visible', selectMode);
+    updateSelectBar();
+    if (selectMode) {
+      grid.querySelectorAll('.ctile').forEach((tile, i) => {
+        tile.onclick = () => {
+          tile.classList.toggle('selected');
+          if (tile.classList.contains('selected')) selectedTiles.add(i);
+          else selectedTiles.delete(i);
+          updateSelectBar();
+        };
+      });
+    } else {
+      grid.querySelectorAll('.ctile').forEach(tile => {
+        tile.classList.remove('selected');
+        tile.onclick = null;
+      });
+    }
+  };
+
+  function updateSelectBar() {
+    document.getElementById('select-bar-txt').textContent = selectedTiles.size + ' selected';
+  }
+
+  window.deleteSelected = () => {
+    if (selectedTiles.size === 0) return;
+    if (!confirm('delete ' + selectedTiles.size + ' photo(s)? this cannot be undone.')) return;
+    const grid = document.getElementById('colgrid');
+    const tiles = Array.from(grid.querySelectorAll('.ctile'));
+    Array.from(selectedTiles).sort((a,b)=>b-a).forEach(i => tiles[i] && tiles[i].remove());
+    selectedTiles.clear();
+    toggleSelectMode();
+  };
+
+  window.confirmDeleteAlbum = () => {
+    if (!confirm('delete ALL photos in this album? this cannot be undone.')) return;
+    const grid = document.getElementById('colgrid');
+    grid.querySelectorAll('.ctile').forEach(t => t.remove());
+    albumName = 'our group';
+    albumCoverEmoji = '🩷';
+    document.getElementById('album-cover-name').textContent = albumName;
+    document.getElementById('album-cover-emoji').textContent = albumCoverEmoji;
+  };
+
+  // ── GAMES ────────────────────────────────────────
+  let pongRAF = null;
+
+  window.startPong = () => {
+    document.getElementById('pong-game-area').style.display = 'block';
+    document.getElementById('games-list-area').style.display = 'none';
+    initPong();
+  };
+
+  window.closePong = () => {
+    if (pongRAF) cancelAnimationFrame(pongRAF);
+    document.getElementById('pong-game-area').style.display = 'none';
+    document.getElementById('games-list-area').style.display = 'block';
+  };
+
+  function initPong() {
+    const canvas = document.getElementById('pong');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth; canvas.width = W; const H = canvas.height;
+    const pad = { w: 10, h: 55, speed: 5 };
+    const state = {
+      ball: { x: W/2, y: H/2, vx: 3.5, vy: 2.5, r: 7 },
+      player: { y: H/2 - pad.h/2 },
+      ai: { y: H/2 - pad.h/2 },
+      score: { p: 0, ai: 0 },
+      dragging: false, dragY: 0
+    };
+
+    canvas.addEventListener('touchstart', e => { state.dragging = true; state.dragY = e.touches[0].clientY - canvas.getBoundingClientRect().top; }, { passive: true });
+    canvas.addEventListener('touchmove', e => { e.preventDefault(); const y = e.touches[0].clientY - canvas.getBoundingClientRect().top; state.player.y += y - state.dragY; state.dragY = y; state.player.y = Math.max(0, Math.min(H - pad.h, state.player.y)); }, { passive: false });
+    canvas.addEventListener('mousemove', e => { if (e.buttons) state.player.y = e.offsetY - pad.h/2; });
+
+    function loop() {
+      const b = state.ball;
+      b.x += b.vx; b.y += b.vy;
+      if (b.y - b.r < 0 || b.y + b.r > H) b.vy *= -1;
+
+      // AI paddle tracking
+      const aiCenter = state.ai.y + pad.h/2;
+      if (aiCenter < b.y - 4) state.ai.y = Math.min(H - pad.h, state.ai.y + pad.speed * 0.85);
+      else if (aiCenter > b.y + 4) state.ai.y = Math.max(0, state.ai.y - pad.speed * 0.85);
+
+      // Player collision
+      if (b.x - b.r < 18 && b.y > state.player.y && b.y < state.player.y + pad.h) {
+        b.vx = Math.abs(b.vx) * 1.04; b.vy += (Math.random()-0.5)*1.5;
+      }
+      // AI collision
+      if (b.x + b.r > W - 18 && b.y > state.ai.y && b.y < state.ai.y + pad.h) {
+        b.vx = -Math.abs(b.vx) * 1.04; b.vy += (Math.random()-0.5)*1.5;
+      }
+      // Cap speed
+      b.vx = Math.sign(b.vx) * Math.min(Math.abs(b.vx), 9);
+      b.vy = Math.sign(b.vy) * Math.min(Math.abs(b.vy), 7);
+
+      // Score
+      if (b.x < 0) { state.score.ai++; resetBall(state, W, H); }
+      if (b.x > W) { state.score.p++;  resetBall(state, W, H); }
+      document.getElementById('pong-score').textContent = state.score.p + ' — ' + state.score.ai;
+
+      // Draw
+      ctx.fillStyle = '#1a1028'; ctx.fillRect(0,0,W,H);
+      ctx.setLineDash([6,6]); ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillRect(6, state.player.y, pad.w, pad.h);
+      ctx.fillRect(W - 16, state.ai.y, pad.w, pad.h);
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.fill();
+      pongRAF = requestAnimationFrame(loop);
+    }
+    if (pongRAF) cancelAnimationFrame(pongRAF);
+    loop();
+  }
+
+  function resetBall(state, W, H) {
+    state.ball.x = W/2; state.ball.y = H/2;
+    state.ball.vx = (Math.random() > 0.5 ? 3.5 : -3.5);
+    state.ball.vy = (Math.random() - 0.5) * 4;
+  }
+
+  // TAP GAME
+  let tapCount = 0, tapInterval = null;
+
+  window.startTapGame = () => {
+    document.getElementById('tap-game-area').style.display = 'block';
+    document.getElementById('tap-score').textContent = '0';
+    tapCount = 0; let timeLeft = 10;
+    document.getElementById('tap-timer').textContent = timeLeft;
+    document.getElementById('tap-btn').disabled = false;
+    document.getElementById('tap-status').textContent = 'tap the target!';
+    if (tapInterval) clearInterval(tapInterval);
+    tapInterval = setInterval(() => {
+      timeLeft--;
+      document.getElementById('tap-timer').textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(tapInterval);
+        document.getElementById('tap-btn').disabled = true;
+        document.getElementById('tap-status').textContent = 'final score: ' + tapCount + ' taps! share it in the feed 🎯';
+      }
+    }, 1000);
+  };
+
+  window.tapIt = () => {
+    tapCount++;
+    document.getElementById('tap-score').textContent = tapCount;
+    const btn = document.getElementById('tap-btn');
+    btn.style.transform = 'scale(0.88)';
+    setTimeout(() => btn.style.transform = 'scale(1)', 80);
+    const btn2 = document.getElementById('tap-btn');
+    btn2.style.background = tapCount % 2 === 0 ? '#E8736A' : '#d05f58';
+  };
+
+  window.closeTap = () => {
+    clearInterval(tapInterval);
+    document.getElementById('tap-game-area').style.display = 'none';
+  };
 
   // INSTALL BANNER
   let deferredInstallPrompt = null;

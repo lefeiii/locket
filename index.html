@@ -17,31 +17,34 @@
       --font-n: 'Nunito', sans-serif;
     }
     html, body {
-      min-height: 100dvh;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
       font-family: var(--font-n);
       background: linear-gradient(160deg, #FFF0E4 0%, #FDEAF2 50%, #E8F8F0 100%);
-      display: flex; justify-content: center; align-items: flex-start;
     }
     .phone {
       width: 100%;
-      background: var(--cream);
-      display: flex; flex-direction: column;
       min-height: 100dvh;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
     }
     .notch { display: none; }
 
     /* ── AUTH SCREEN ── */
     #auth-screen {
       flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      align-items: stretch; justify-content: center;
       padding: 32px 28px;
     }
     .auth-heart { display: block; margin: 0 auto 12px; }
     .auth-logo {
       font-family: var(--font-b); font-size: 36px; font-weight: 800;
-      color: var(--ink); letter-spacing: -0.02em; margin-bottom: 6px; text-align: center;
+      color: var(--ink); letter-spacing: -0.02em; margin-bottom: 6px; text-align: center; width: 100%;
     }
-    .auth-sub { font-size: 13px; color: var(--mid); font-weight: 700; text-align: center; margin-bottom: 32px; line-height: 1.5; }
+    .auth-sub { font-size: 13px; color: var(--mid); font-weight: 700; text-align: center; margin-bottom: 32px; line-height: 1.5; width: 100%; }
     .auth-tabs { display: flex; background: rgba(255,255,255,0.6); border-radius: 999px; padding: 3px; margin-bottom: 24px; gap: 2px; }
     .auth-tab {
       flex: 1; padding: 8px; border-radius: 999px; border: none;
@@ -73,11 +76,11 @@
     /* ── GROUP SCREEN ── */
     #group-screen {
       flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      align-items: stretch; justify-content: center;
       padding: 28px 24px; gap: 14px;
     }
-    .group-screen-title { font-family: var(--font-b); font-size: 22px; font-weight: 800; color: var(--ink); text-align: center; }
-    .group-screen-sub { font-size: 12px; color: var(--mid); font-weight: 700; text-align: center; line-height: 1.5; margin-top: -6px; }
+    .group-screen-title { font-family: var(--font-b); font-size: 22px; font-weight: 800; color: var(--ink); text-align: center; width: 100%; }
+    .group-screen-sub { font-size: 12px; color: var(--mid); font-weight: 700; text-align: center; line-height: 1.5; margin-top: -6px; width: 100%; }
     .big-btn {
       width: 100%; font-family: var(--font-b);
       border-radius: 18px; padding: 16px;
@@ -95,7 +98,7 @@
       background: rgba(255,255,255,0.7); color: var(--ink); outline: none;
     }
     .join-input:focus { border-color: rgba(220,120,140,0.4); }
-    .or-row { font-size: 11px; font-weight: 800; color: var(--mid); }
+    .or-row { font-size: 11px; font-weight: 800; color: var(--mid); text-align: center; width: 100%; }
 
     /* ── TOPBAR ── */
     .topbar {
@@ -479,6 +482,17 @@
     doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp, query, orderBy
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
+  // expose all onclick functions to global scope immediately
+  // (needed because type="module" scopes functions away from HTML onclick handlers)
+  window.switchAuthTab = (tab) => {
+    document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('on', (i===0) === (tab==='login')));
+    document.getElementById('auth-name-row').style.display = tab === 'signup' ? 'block' : 'none';
+    document.getElementById('auth-submit-btn').textContent = tab === 'login' ? 'log in' : 'sign up';
+    document.getElementById('auth-err').textContent = '';
+    window._authMode = tab;
+  };
+  window._authMode = 'login';
+
   // ── FIREBASE CONFIG ──────────────────────────────
   const firebaseConfig = {
     apiKey: "AIzaSyBUNvLE5ZW2mDQpwsHh4hwq8YvVurBP16U",
@@ -507,14 +521,7 @@
   }
 
   // ── AUTH ─────────────────────────────────────────
-  window.switchAuthTab = (tab) => {
-    document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('on', (i===0) === (tab==='login')));
-    document.getElementById('auth-name-row').style.display = tab === 'signup' ? 'block' : 'none';
-    document.getElementById('auth-submit-btn').textContent = tab === 'login' ? 'log in' : 'sign up';
-    document.getElementById('auth-err').textContent = '';
-    window._authTab = tab;
-  };
-  window._authTab = 'login';
+  // switchAuthTab defined at top of module
 
   window.submitAuth = async () => {
     const email    = document.getElementById('auth-email').value.trim();
@@ -524,7 +531,7 @@
     errEl.textContent = '';
     if (!email || !password) { errEl.textContent = 'fill in all fields !'; return; }
     try {
-      if (window._authTab === 'signup') {
+      if (window._authMode === 'signup') {
         if (!name) { errEl.textContent = 'add your name !'; return; }
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(cred.user, { displayName: name });

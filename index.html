@@ -21,18 +21,14 @@
       font-family: var(--font-n);
       background: linear-gradient(160deg, #FFF0E4 0%, #FDEAF2 50%, #E8F8F0 100%);
       display: flex; justify-content: center; align-items: flex-start;
-      padding: 24px 16px 40px;
     }
     .phone {
-      width: 100%; max-width: 390px;
-      background: var(--cream); border-radius: 40px;
-      overflow: hidden;
-      border: 3px solid rgba(255,255,255,0.9);
-      box-shadow: 0 0 0 1px rgba(200,160,170,0.12), 0 24px 60px rgba(180,120,140,0.18);
+      width: 100%;
+      background: var(--cream);
       display: flex; flex-direction: column;
-      min-height: calc(100dvh - 64px);
+      min-height: 100dvh;
     }
-    .notch { width: 90px; height: 20px; background: var(--cream); border-radius: 0 0 14px 14px; margin: 0 auto; }
+    .notch { display: none; }
 
     /* ── AUTH SCREEN ── */
     #auth-screen {
@@ -260,13 +256,47 @@
     .chip-av { width: 21px; height: 21px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; color: #fff; }
     .leave-btn { width: 100%; margin-top: 16px; font-family: var(--font-n); background: transparent; border: 1.5px solid rgba(200,160,180,0.3); border-radius: 999px; padding: 9px; font-size: 12px; font-weight: 800; color: var(--mid); cursor: pointer; }
     .leave-btn:hover { border-color: var(--tomato); color: var(--tomato); }
+
+    /* ── INSTALL BANNER ── */
+    #install-banner {
+      display: none;
+      margin: 0 16px 16px;
+      background: linear-gradient(135deg, #FFE8D8, #FDDCE8);
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 1.5px solid rgba(232,115,106,0.2);
+    }
+    .install-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .install-title { font-family: var(--font-b); font-size: 14px; font-weight: 800; color: var(--ink); }
+    .install-close { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--mid); padding: 0 0 0 8px; }
+    .install-sub { font-size: 11.5px; color: var(--mid); font-weight: 700; line-height: 1.5; margin-bottom: 10px; }
+    .install-steps { font-size: 11px; font-weight: 800; color: var(--ink); line-height: 2; opacity: 0.75; }
+    .install-btn {
+      width: 100%; font-family: var(--font-b);
+      background: var(--tomato); color: #fff; border: none;
+      border-radius: 999px; padding: 10px;
+      font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 10px;
+    }
+    /* android uses native prompt so show a simpler banner */
+    .install-android .install-steps { display: none; }
   </style>
 </head>
 <body>
 <div class="phone">
   <div class="notch"></div>
 
-  <!-- ── AUTH SCREEN ── -->
+  <!-- INSTALL BANNER -->
+  <div id="install-banner">
+    <div class="install-top">
+      <div class="install-title">add locket to your home screen 🧡</div>
+      <button class="install-close" onclick="dismissInstall()">&#x2715;</button>
+    </div>
+    <div class="install-sub">open it like a real app anytime &mdash; no browser needed!</div>
+    <div class="install-steps" id="install-steps"></div>
+    <button class="install-btn" id="install-action-btn" onclick="triggerInstall()">add to home screen</button>
+  </div>
+
+  <!-- AUTH SCREEN -->
   <div id="auth-screen">
     <svg class="auth-heart" width="64" height="60" viewBox="0 0 70 66" fill="none">
       <path d="M35 62s-28-19-28-36C7 14 15 8 24 8c5 0 8.5 2.5 11 6 2.5-3.5 6-6 11-6 9 0 17 6 17 18 0 17-28 36-28 36z" fill="#FCCDD5" stroke="#E8736A" stroke-width="2.5"/>
@@ -754,6 +784,50 @@
   // ── UTILS ────────────────────────────────────────
   function esc(str) {
     return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // INSTALL BANNER
+  let deferredInstallPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    showInstallBanner('android');
+  });
+
+  function showInstallBanner(type) {
+    if (localStorage.getItem('installDismissed')) return;
+    if (window.navigator.standalone) return;
+    const banner = document.getElementById('install-banner');
+    const steps  = document.getElementById('install-steps');
+    if (type === 'android') {
+      steps.textContent = '';
+      document.getElementById('install-action-btn').textContent = 'add to home screen';
+    } else {
+      steps.innerHTML = '1. tap the <strong>share button</strong> at the bottom of Safari<br>2. scroll and tap <strong>Add to Home Screen</strong><br>3. tap Add — done!';
+      document.getElementById('install-action-btn').style.display = 'none';
+    }
+    banner.style.display = 'block';
+  }
+
+  window.triggerInstall = async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      if (outcome === 'accepted') dismissInstall();
+    }
+  };
+
+  window.dismissInstall = () => {
+    document.getElementById('install-banner').style.display = 'none';
+    localStorage.setItem('installDismissed', '1');
+  };
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (isIOS && isSafari && !window.navigator.standalone) {
+    showInstallBanner('ios');
   }
 </script>
 </body>

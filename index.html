@@ -8,447 +8,318 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --peach:   #FFCA7A;
-      --tomato:  #E8736A;
-      --dusty:   #E47A8A;
-      --blush:   #F5C8D2;
-      --sage:    #B8E4C8;
-      --cream:   #FEF8F2;
-      --ink:     #2e2030;
-      --mid:     #9a7888;
-      --font-b:  'Baloo 2', sans-serif;
-      --font-n:  'Nunito', sans-serif;
+      --tomato: #E8736A;
+      --ink:    #2e2030;
+      --mid:    #9a7888;
+      --cream:  #FEF8F2;
+      --font-b: 'Baloo 2', sans-serif;
+      --font-n: 'Nunito', sans-serif;
     }
-
     html, body {
-      height: 100%;
+      min-height: 100dvh;
       font-family: var(--font-n);
       background: linear-gradient(160deg, #FFF0E4 0%, #FDEAF2 50%, #E8F8F0 100%);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100dvh;
+      display: flex; justify-content: center; align-items: flex-start;
       padding: 24px 16px 40px;
     }
-
-    /* ── PHONE SHELL ─────────────────────────────── */
     .phone {
-      width: 100%;
-      max-width: 390px;
-      background: var(--cream);
-      border-radius: 40px;
+      width: 100%; max-width: 390px;
+      background: var(--cream); border-radius: 40px;
       overflow: hidden;
       border: 3px solid rgba(255,255,255,0.9);
-      box-shadow:
-        0 0 0 1px rgba(200,160,170,0.12),
-        0 24px 60px rgba(180,120,140,0.18);
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 0 0 1px rgba(200,160,170,0.12), 0 24px 60px rgba(180,120,140,0.18);
+      display: flex; flex-direction: column;
+      min-height: calc(100dvh - 64px);
     }
+    .notch { width: 90px; height: 20px; background: var(--cream); border-radius: 0 0 14px 14px; margin: 0 auto; }
 
-    .notch {
-      width: 90px; height: 20px;
-      background: var(--cream);
-      border-radius: 0 0 14px 14px;
-      margin: 0 auto;
+    /* ── AUTH SCREEN ── */
+    #auth-screen {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 28px;
     }
+    .auth-heart { display: block; margin: 0 auto 12px; }
+    .auth-logo {
+      font-family: var(--font-b); font-size: 36px; font-weight: 800;
+      color: var(--ink); letter-spacing: -0.02em; margin-bottom: 6px; text-align: center;
+    }
+    .auth-sub { font-size: 13px; color: var(--mid); font-weight: 700; text-align: center; margin-bottom: 32px; line-height: 1.5; }
+    .auth-tabs { display: flex; background: rgba(255,255,255,0.6); border-radius: 999px; padding: 3px; margin-bottom: 24px; gap: 2px; }
+    .auth-tab {
+      flex: 1; padding: 8px; border-radius: 999px; border: none;
+      font-family: var(--font-n); font-size: 13px; font-weight: 800;
+      cursor: pointer; background: transparent; color: var(--mid); transition: all 0.15s;
+    }
+    .auth-tab.on { background: var(--ink); color: #fff; }
+    .auth-field {
+      width: 100%; border: 2px solid rgba(200,160,180,0.2);
+      border-radius: 14px; padding: 12px 15px;
+      font-family: var(--font-n); font-size: 14px;
+      background: rgba(255,255,255,0.7); color: var(--ink); outline: none;
+      margin-bottom: 10px;
+    }
+    .auth-field:focus { border-color: rgba(220,120,140,0.4); }
+    .auth-btn {
+      width: 100%; font-family: var(--font-b);
+      background: var(--tomato); color: #fff; border: none;
+      border-radius: 999px; padding: 13px;
+      font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px;
+      transition: background 0.15s;
+    }
+    .auth-btn:active { background: #d05f58; }
+    .auth-err { font-size: 12px; color: var(--tomato); font-weight: 700; text-align: center; margin-top: 8px; min-height: 18px; }
+    .auth-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+    .auth-divider hr { flex: 1; border: none; border-top: 1.5px solid rgba(200,160,180,0.2); }
+    .auth-divider span { font-size: 11px; font-weight: 800; color: var(--mid); }
 
-    /* ── TOP BAR ─────────────────────────────────── */
+    /* ── GROUP SCREEN ── */
+    #group-screen {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 28px 24px; gap: 14px;
+    }
+    .group-screen-title { font-family: var(--font-b); font-size: 22px; font-weight: 800; color: var(--ink); text-align: center; }
+    .group-screen-sub { font-size: 12px; color: var(--mid); font-weight: 700; text-align: center; line-height: 1.5; margin-top: -6px; }
+    .big-btn {
+      width: 100%; font-family: var(--font-b);
+      border-radius: 18px; padding: 16px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      border: 2px solid transparent; transition: all 0.15s;
+      text-align: left; display: flex; flex-direction: column; gap: 3px;
+    }
+    .big-btn-primary { background: var(--tomato); color: #fff; }
+    .big-btn-secondary { background: rgba(255,255,255,0.7); color: var(--ink); border-color: rgba(200,160,180,0.25); }
+    .big-btn span { font-size: 11px; font-weight: 700; opacity: 0.7; }
+    .join-input {
+      width: 100%; border: 2px solid rgba(200,160,180,0.2);
+      border-radius: 14px; padding: 12px 15px;
+      font-family: var(--font-n); font-size: 14px;
+      background: rgba(255,255,255,0.7); color: var(--ink); outline: none;
+    }
+    .join-input:focus { border-color: rgba(220,120,140,0.4); }
+    .or-row { font-size: 11px; font-weight: 800; color: var(--mid); }
+
+    /* ── TOPBAR ── */
     .topbar {
-      display: flex; align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 6px 20px 10px;
     }
-
-    .logo {
-      font-family: var(--font-b);
-      font-size: 27px; font-weight: 800;
-      color: var(--ink); letter-spacing: -0.02em;
-      display: flex; align-items: center; gap: 3px;
-    }
-
+    .logo { font-family: var(--font-b); font-size: 27px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; display: flex; align-items: center; gap: 3px; }
     .logo svg { width: 22px; height: 20px; flex-shrink: 0; }
-
     .group-chip {
       display: flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.8);
-      border: 1.5px solid rgba(255,255,255,0.95);
-      border-radius: 999px;
-      padding: 5px 13px;
-      font-size: 11.5px; font-weight: 800; color: var(--mid);
-      cursor: pointer; user-select: none;
+      background: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.95);
+      border-radius: 999px; padding: 5px 13px;
+      font-size: 11px; font-weight: 800; color: var(--mid); cursor: pointer;
     }
-
-    .live-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #6dcc94;
-      animation: pulse 2s ease-in-out infinite;
-    }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #6dcc94; animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* ── TABS ────────────────────────────────────── */
-    .tabs {
-      display: flex; gap: 5px;
-      padding: 0 14px 14px;
-      overflow-x: auto; scrollbar-width: none;
-    }
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 5px; padding: 0 14px 14px; overflow-x: auto; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
-
     .tab {
       padding: 7px 16px; border-radius: 999px; border: none;
-      font-family: var(--font-n);
-      font-size: 12.5px; font-weight: 800; cursor: pointer;
-      white-space: nowrap;
-      background: rgba(255,255,255,0.55);
-      color: var(--mid);
-      transition: all 0.15s;
+      font-family: var(--font-n); font-size: 12.5px; font-weight: 800;
+      cursor: pointer; white-space: nowrap;
+      background: rgba(255,255,255,0.55); color: var(--mid); transition: all 0.15s;
     }
     .tab.on { background: var(--ink); color: #fff; }
 
-    /* ── SCROLLABLE BODY ─────────────────────────── */
-    .body {
-      flex: 1;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      scrollbar-width: none;
-      padding: 4px 15px 32px;
-      -webkit-overflow-scrolling: touch;
-    }
+    /* ── BODY ── */
+    .body { flex: 1; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 4px 15px 32px; -webkit-overflow-scrolling: touch; }
     .body::-webkit-scrollbar { display: none; }
-
     .screen { display: none; }
     .screen.active { display: block; }
 
-    /* ── PROMPT POLAROID ─────────────────────────── */
+    /* ── PROMPT POLAROID ── */
     .prompt-polo {
-      background: #fff;
-      padding: 11px 11px 34px;
-      border-radius: 3px;
+      background: #fff; padding: 11px 11px 34px; border-radius: 3px;
       transform: rotate(-1.5deg);
       border: 1px solid rgba(200,180,190,0.18);
       box-shadow: 2px 4px 12px rgba(180,120,140,0.12);
-      margin-bottom: 18px;
-      margin-top: 4px;
-      position: relative;
+      margin-bottom: 18px; margin-top: 4px; position: relative;
     }
+    .polo-tape { width: 38px; height: 13px; background: rgba(255,220,160,0.65); border-radius: 2px; position: absolute; top: -7px; left: 50%; transform: translateX(-50%); }
+    .prompt-inner { background: linear-gradient(135deg, #FFE8D8, #FDDCE8); border-radius: 2px; padding: 14px 12px 12px; min-height: 88px; }
+    .prompt-label { font-size: 9px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: #c07090; margin-bottom: 5px; }
+    .prompt-q { font-family: var(--font-b); font-size: 14px; font-weight: 700; line-height: 1.35; color: var(--ink); }
+    .polo-caption { position: absolute; bottom: 7px; left: 11px; right: 11px; text-align: center; font-size: 9.5px; font-weight: 800; color: var(--mid); }
 
-    .polo-tape {
-      width: 38px; height: 13px;
-      background: rgba(255,220,160,0.65);
-      border-radius: 2px;
-      position: absolute; top: -7px; left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .prompt-inner {
-      background: linear-gradient(135deg, #FFE8D8, #FDDCE8);
-      border-radius: 2px; padding: 14px 12px 12px;
-      min-height: 88px;
-    }
-
-    .prompt-label {
-      font-size: 9px; font-weight: 900;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: #c07090; margin-bottom: 5px;
-    }
-
-    .prompt-q {
-      font-family: var(--font-b);
-      font-size: 14px; font-weight: 700;
-      line-height: 1.35; color: var(--ink);
-    }
-
-    .polo-caption {
-      position: absolute; bottom: 7px; left: 11px; right: 11px;
-      text-align: center;
-      font-size: 9.5px; font-weight: 800;
-      color: var(--mid);
-    }
-
-    /* ── ANSWER BOX ──────────────────────────────── */
+    /* ── ANSWER ── */
     .answer-ta {
-      width: 100%;
-      border: 2px solid rgba(200,160,180,0.2);
-      border-radius: 14px; padding: 10px 13px;
-      font-family: var(--font-n);
-      font-size: 13px; resize: none; height: 56px;
-      background: rgba(255,255,255,0.7);
-      color: var(--ink); outline: none;
-      margin-bottom: 8px;
+      width: 100%; border: 2px solid rgba(200,160,180,0.2); border-radius: 14px;
+      padding: 10px 13px; font-family: var(--font-n); font-size: 13px;
+      resize: none; height: 56px; background: rgba(255,255,255,0.7); color: var(--ink); outline: none; margin-bottom: 8px;
     }
     .answer-ta:focus { border-color: rgba(220,120,140,0.4); }
-
-    .post-row {
-      display: flex; justify-content: space-between;
-      align-items: center; margin-bottom: 18px;
-    }
+    .post-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
     .char-hint { font-size: 10px; font-weight: 700; color: var(--mid); }
-
     .post-btn {
-      font-family: var(--font-b);
-      background: var(--tomato); color: #fff; border: none;
-      border-radius: 999px; padding: 8px 22px;
-      font-size: 13px; font-weight: 700; cursor: pointer;
-      transform: rotate(0.5deg);
-      transition: background 0.15s;
+      font-family: var(--font-b); background: var(--tomato); color: #fff; border: none;
+      border-radius: 999px; padding: 8px 22px; font-size: 13px; font-weight: 700; cursor: pointer;
+      transform: rotate(0.5deg); transition: background 0.15s;
     }
     .post-btn:active { background: #d05f58; }
 
-    /* ── MASONRY FEED ────────────────────────────── */
-    .masonry {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px; align-items: start;
-    }
+    /* ── MASONRY FEED ── */
+    .masonry { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
     .col { display: flex; flex-direction: column; gap: 10px; }
 
-    /* ── POLAROID CARD ───────────────────────────── */
+    /* ── POLAROID CARD ── */
     .polo-card {
-      background: #fff; padding: 8px 8px 26px;
-      border-radius: 3px;
+      background: #fff; padding: 8px 8px 26px; border-radius: 3px;
       border: 1px solid rgba(200,180,190,0.15);
       box-shadow: 2px 3px 10px rgba(180,120,140,0.1);
-      position: relative; cursor: pointer;
-      transition: transform 0.15s;
+      position: relative; cursor: pointer; transition: transform 0.15s;
     }
     .polo-card:hover { transform: scale(1.03) !important; z-index: 5; }
+    .polo-img { width: 100%; aspect-ratio: 1; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 34px; }
+    .polo-footer { position: absolute; bottom: 4px; left: 8px; right: 8px; display: flex; justify-content: space-between; align-items: flex-end; }
+    .polo-who { font-family: var(--font-b); font-size: 9px; font-weight: 700; color: var(--mid); }
 
-    .polo-img {
-      width: 100%; aspect-ratio: 1; border-radius: 2px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 34px;
-    }
-
-    .polo-footer {
-      position: absolute; bottom: 4px; left: 8px; right: 8px;
-      display: flex; justify-content: space-between; align-items: flex-end;
-    }
-
-    .polo-who {
-      font-family: var(--font-b);
-      font-size: 9px; font-weight: 700; color: var(--mid);
-    }
-
-    /* ── BUBBLE CARD ─────────────────────────────── */
-    .bubble {
-      border-radius: 16px 16px 16px 4px;
-      padding: 11px 13px;
-      cursor: pointer; transition: filter 0.15s;
-    }
+    /* ── BUBBLE ── */
+    .bubble { border-radius: 16px 16px 16px 4px; padding: 11px 13px; cursor: pointer; transition: filter 0.15s; }
     .bubble:hover { filter: brightness(0.97); }
-    .ba { background: #FFE8D8; }
-    .bb { background: #D8F0E4; }
-    .bc { background: #F5D8E8; }
-    .bd { background: #D8E8F8; }
-
-    .bubble-txt {
-      font-size: 12px; line-height: 1.5;
-      color: var(--ink); margin-bottom: 8px; font-weight: 700;
-    }
-
-    .bubble-foot {
-      display: flex; justify-content: space-between; align-items: center;
-    }
-
+    .ba{background:#FFE8D8;} .bb{background:#D8F0E4;} .bc{background:#F5D8E8;} .bd{background:#D8E8F8;}
+    .bubble-txt { font-size: 12px; line-height: 1.5; color: var(--ink); margin-bottom: 8px; font-weight: 700; }
+    .bubble-foot { display: flex; justify-content: space-between; align-items: center; }
     .bubble-who { font-size: 9.5px; font-weight: 900; color: var(--mid); }
     .bubble-acts { display: flex; gap: 4px; }
+    .repost-bar { background: rgba(255,255,255,0.55); border-left: 2.5px solid var(--tomato); border-radius: 0; padding: 4px 8px; margin-bottom: 6px; font-size: 10px; color: var(--mid); font-style: italic; line-height: 1.4; }
 
-    .repost-bar {
-      background: rgba(255,255,255,0.55);
-      border-left: 2.5px solid var(--tomato);
-      border-radius: 0;
-      padding: 4px 8px; margin-bottom: 6px;
-      font-size: 10px; color: var(--mid);
-      font-style: italic; line-height: 1.4;
-    }
-
-    /* ── SHARED PILL BUTTON ──────────────────────── */
+    /* ── PILLS ── */
     .pill {
-      background: rgba(255,255,255,0.65);
-      border: 1px solid rgba(200,170,180,0.2);
-      border-radius: 999px; padding: 4px 10px;
-      font-size: 10px; font-weight: 800;
-      cursor: pointer; color: var(--mid);
-      font-family: var(--font-n);
-      transition: background 0.12s;
+      background: rgba(255,255,255,0.65); border: 1px solid rgba(200,170,180,0.2);
+      border-radius: 999px; padding: 4px 10px; font-size: 10px; font-weight: 800;
+      cursor: pointer; color: var(--mid); font-family: var(--font-n); transition: background 0.12s;
     }
     .pill:hover { background: #fff; color: var(--ink); }
     .pill.liked { color: var(--tomato); }
 
-    /* ── ALBUM ───────────────────────────────────── */
-    .album-hd {
-      display: flex; align-items: flex-end;
-      justify-content: space-between; margin-bottom: 14px;
-    }
-    .album-title {
-      font-family: var(--font-b);
-      font-size: 22px; font-weight: 800; color: var(--ink);
-      transform: rotate(-1deg); display: inline-block;
-    }
+    /* ── LOADING STATE ── */
+    .feed-loading { text-align: center; padding: 32px 0; color: var(--mid); font-size: 13px; font-weight: 700; }
+    .feed-empty { text-align: center; padding: 24px 0; color: var(--mid); font-size: 12px; font-weight: 700; line-height: 1.6; }
+
+    /* ── ALBUM ── */
+    .album-hd { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+    .album-title { font-family: var(--font-b); font-size: 22px; font-weight: 800; color: var(--ink); transform: rotate(-1deg); display: inline-block; }
     .album-sub { font-size: 10px; color: var(--mid); font-weight: 800; margin-top: 2px; }
-
-    .make-btn {
-      font-family: var(--font-b);
-      background: var(--ink); color: rgba(255,255,255,0.92); border: none;
-      border-radius: 999px; padding: 7px 15px;
-      font-size: 11px; font-weight: 700; cursor: pointer;
-    }
-
-    .colgrid {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 7px;
-    }
-
-    .ctile {
-      border-radius: 10px; overflow: hidden; position: relative;
-      cursor: pointer; transition: transform 0.15s;
-    }
+    .make-btn { font-family: var(--font-b); background: var(--ink); color: rgba(255,255,255,0.92); border: none; border-radius: 999px; padding: 7px 15px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .colgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; }
+    .ctile { border-radius: 10px; overflow: hidden; position: relative; cursor: pointer; transition: transform 0.15s; }
     .ctile:nth-child(odd)  { transform: rotate(-1.1deg); }
-    .ctile:nth-child(even) { transform: rotate(0.8deg);  }
+    .ctile:nth-child(even) { transform: rotate(0.8deg); }
     .ctile:hover { transform: scale(1.06) rotate(0deg) !important; z-index: 5; }
-
-    .tface {
-      width: 100%; aspect-ratio: 1;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-    }
-
-    .tlabel {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: rgba(46,32,48,0.32);
-      padding: 4px 6px;
-      font-size: 8.5px; font-weight: 800;
-      color: rgba(255,255,255,0.92);
-    }
-
-    .add-tile {
-      aspect-ratio: 1; border-radius: 10px;
-      border: 2px dashed rgba(180,140,160,0.25);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 2px; cursor: pointer;
-      color: var(--mid); font-size: 10px; font-weight: 800;
-      transition: all 0.15s;
-    }
+    .tface { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+    .tlabel { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(46,32,48,0.32); padding: 4px 6px; font-size: 8.5px; font-weight: 800; color: rgba(255,255,255,0.92); }
+    .add-tile { aspect-ratio: 1; border-radius: 10px; border: 2px dashed rgba(180,140,160,0.25); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; color: var(--mid); font-size: 10px; font-weight: 800; transition: all 0.15s; }
     .add-tile:hover { border-color: var(--tomato); color: var(--tomato); }
+    .c1{background:#FFE4B0;}.c2{background:#FCCDD5;}.c3{background:#C0EAD0;}
+    .c4{background:#FCDAC8;}.c5{background:#D0EEE0;}.c6{background:#FFE8D0;}
+    .c7{background:#DDD0F8;}.c8{background:#FFF0C0;}.c9{background:#C0D8F4;}
 
-    /* tile colours */
-    .c1{background:#FFE4B0;} .c2{background:#FCCDD5;} .c3{background:#C0EAD0;}
-    .c4{background:#FCDAC8;} .c5{background:#D0EEE0;} .c6{background:#FFE8D0;}
-    .c7{background:#DDD0F8;} .c8{background:#FFF0C0;} .c9{background:#C0D8F4;}
-
-    /* ── VIBE ────────────────────────────────────── */
-    .vibe-card {
-      background: #1a1028; border-radius: 20px; padding: 18px;
-      transform: rotate(-0.5deg);
-      box-shadow: 0 8px 24px rgba(26,16,40,0.25);
-    }
-
+    /* ── VIBE ── */
+    .vibe-card { background: #1a1028; border-radius: 20px; padding: 18px; transform: rotate(-0.5deg); box-shadow: 0 8px 24px rgba(26,16,40,0.25); }
     .sp-row { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
-    .sp-badge {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: #1DB954;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
+    .sp-badge { width: 34px; height: 34px; border-radius: 50%; background: #1DB954; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .sp-badge svg { width: 18px; height: 18px; fill: #fff; }
     .sp-name { font-family: var(--font-b); font-size: 14px; font-weight: 700; color: #fff; }
-    .sp-sub  { font-size: 10px; color: rgba(255,255,255,0.4); }
-
+    .sp-sub { font-size: 10px; color: rgba(255,255,255,0.4); }
     .trows { display: grid; gap: 5px; }
-    .trow {
-      display: flex; align-items: center; gap: 9px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 10px; padding: 7px 10px; cursor: pointer;
-      transition: background 0.12s;
-    }
+    .trow { display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.06); border-radius: 10px; padding: 7px 10px; cursor: pointer; transition: background 0.12s; }
     .trow:hover { background: rgba(255,255,255,0.11); }
-    .trow.now  { background: rgba(29,185,84,0.14); }
-
+    .trow.now { background: rgba(29,185,84,0.14); }
     .tnum { font-size: 10.5px; color: rgba(255,255,255,0.3); width: 13px; flex-shrink: 0; font-weight: 800; }
     .now .tnum { color: #1DB954; }
-
-    .tinfo  { flex: 1; min-width: 0; }
-    .tname  { font-size: 12.5px; font-weight: 800; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tinfo { flex: 1; min-width: 0; }
+    .tname { font-size: 12.5px; font-weight: 800; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .now .tname { color: #1DB954; }
-    .tartist{ font-size: 10px; color: rgba(255,255,255,0.38); }
-    .ttag   { font-size: 9.5px; background: rgba(255,255,255,0.08); border-radius: 999px; padding: 2px 9px; color: rgba(255,255,255,0.4); font-weight: 800; flex-shrink: 0; }
-
+    .tartist { font-size: 10px; color: rgba(255,255,255,0.38); }
+    .ttag { font-size: 9.5px; background: rgba(255,255,255,0.08); border-radius: 999px; padding: 2px 9px; color: rgba(255,255,255,0.4); font-weight: 800; flex-shrink: 0; }
     .sug-row { display: flex; gap: 7px; margin-top: 12px; }
-    .sug-in {
-      flex: 1; border: 1.5px solid rgba(255,255,255,0.1);
-      border-radius: 10px; padding: 8px 12px;
-      font-size: 13px; font-family: var(--font-n);
-      background: rgba(255,255,255,0.07); color: #fff; outline: none;
-    }
+    .sug-in { flex: 1; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 12px; font-size: 13px; font-family: var(--font-n); background: rgba(255,255,255,0.07); color: #fff; outline: none; }
     .sug-in::placeholder { color: rgba(255,255,255,0.25); }
     .sug-in:focus { border-color: rgba(29,185,84,0.5); }
-    .sug-btn {
-      background: #1DB954; color: #fff; border: none;
-      border-radius: 10px; padding: 8px 14px;
-      font-size: 12px; font-weight: 800;
-      cursor: pointer; font-family: var(--font-n);
-    }
+    .sug-btn { background: #1DB954; color: #fff; border: none; border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: 800; cursor: pointer; font-family: var(--font-n); }
 
-    /* ── INVITE ──────────────────────────────────── */
+    /* ── INVITE ── */
     .heart-hero { display: block; margin: 10px auto 18px; }
-
-    .inv-card {
-      background: #fff; border-radius: 20px; padding: 18px;
-      transform: rotate(0.5deg);
-      box-shadow: 2px 4px 14px rgba(180,120,140,0.12);
-      border: 1px solid rgba(200,180,190,0.18);
-      margin-bottom: 12px;
-    }
-
-    .inv-title {
-      font-family: var(--font-b);
-      font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 4px;
-    }
+    .inv-card { background: #fff; border-radius: 20px; padding: 18px; transform: rotate(0.5deg); box-shadow: 2px 4px 14px rgba(180,120,140,0.12); border: 1px solid rgba(200,180,190,0.18); margin-bottom: 12px; }
+    .inv-title { font-family: var(--font-b); font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
     .inv-sub { font-size: 11px; color: var(--mid); margin-bottom: 14px; line-height: 1.55; font-weight: 700; }
-
-    .link-row {
-      display: flex; gap: 7px;
-      background: rgba(254,248,242,0.8);
-      border: 1.5px solid rgba(200,160,180,0.18);
-      border-radius: 12px; padding: 9px 12px;
-      align-items: center; margin-bottom: 14px;
-    }
+    .link-row { display: flex; gap: 7px; background: rgba(254,248,242,0.8); border: 1.5px solid rgba(200,160,180,0.18); border-radius: 12px; padding: 9px 12px; align-items: center; margin-bottom: 14px; }
     .link-txt { flex: 1; font-size: 11px; color: var(--mid); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .copy-btn {
-      background: var(--ink); color: rgba(255,255,255,0.92); border: none;
-      border-radius: 8px; padding: 6px 13px;
-      font-size: 10.5px; font-weight: 800; cursor: pointer; font-family: var(--font-n);
-      transition: background 0.15s;
-    }
+    .copy-btn { background: var(--ink); color: rgba(255,255,255,0.92); border: none; border-radius: 8px; padding: 6px 13px; font-size: 10.5px; font-weight: 800; cursor: pointer; font-family: var(--font-n); transition: background 0.15s; }
     .copy-btn.done { background: #1a8a50; }
-
     .m-hed { font-size: 10px; font-weight: 900; color: var(--mid); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 9px; }
-
     .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-    .chip {
-      display: flex; align-items: center; gap: 5px;
-      background: rgba(254,248,242,0.9);
-      border: 1.5px solid rgba(200,180,190,0.2);
-      border-radius: 999px; padding: 4px 11px 4px 5px;
-      font-size: 12px; font-weight: 800; color: var(--ink);
-    }
-    .chip-av {
-      width: 21px; height: 21px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; font-weight: 900; color: #fff;
-    }
+    .chip { display: flex; align-items: center; gap: 5px; background: rgba(254,248,242,0.9); border: 1.5px solid rgba(200,180,190,0.2); border-radius: 999px; padding: 4px 11px 4px 5px; font-size: 12px; font-weight: 800; color: var(--ink); }
+    .chip-av { width: 21px; height: 21px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; color: #fff; }
+    .leave-btn { width: 100%; margin-top: 16px; font-family: var(--font-n); background: transparent; border: 1.5px solid rgba(200,160,180,0.3); border-radius: 999px; padding: 9px; font-size: 12px; font-weight: 800; color: var(--mid); cursor: pointer; }
+    .leave-btn:hover { border-color: var(--tomato); color: var(--tomato); }
   </style>
 </head>
 <body>
-  <div class="phone">
-    <div class="notch"></div>
+<div class="phone">
+  <div class="notch"></div>
 
-    <!-- TOP BAR -->
+  <!-- ── AUTH SCREEN ── -->
+  <div id="auth-screen">
+    <svg class="auth-heart" width="64" height="60" viewBox="0 0 70 66" fill="none">
+      <path d="M35 62s-28-19-28-36C7 14 15 8 24 8c5 0 8.5 2.5 11 6 2.5-3.5 6-6 11-6 9 0 17 6 17 18 0 17-28 36-28 36z" fill="#FCCDD5" stroke="#E8736A" stroke-width="2.5"/>
+      <ellipse cx="35" cy="27" rx="10" ry="8" fill="rgba(255,255,255,0.25)"/>
+      <rect x="32" y="4" width="6" height="9" rx="2" fill="#E8A0B8"/>
+      <rect x="33.5" y="2" width="3" height="5" rx="1" fill="#d0809a"/>
+    </svg>
+    <div class="auth-logo">locket.</div>
+    <div class="auth-sub">your private little world<br>with your people 🩷</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab on" onclick="switchAuthTab('login')">log in</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">sign up</button>
+    </div>
+
+    <div id="auth-name-row" style="display:none;width:100%">
+      <input class="auth-field" id="auth-name" type="text" placeholder="your name (e.g. Jia)" />
+    </div>
+    <input class="auth-field" id="auth-email" type="email" placeholder="email" />
+    <input class="auth-field" id="auth-password" type="password" placeholder="password" />
+    <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">log in</button>
+    <div class="auth-err" id="auth-err"></div>
+  </div>
+
+  <!-- ── GROUP SCREEN ── -->
+  <div id="group-screen" style="display:none">
+    <svg width="52" height="50" viewBox="0 0 70 66" fill="none">
+      <path d="M35 62s-28-19-28-36C7 14 15 8 24 8c5 0 8.5 2.5 11 6 2.5-3.5 6-6 11-6 9 0 17 6 17 18 0 17-28 36-28 36z" fill="#FCCDD5" stroke="#E8736A" stroke-width="2.5"/>
+    </svg>
+    <div class="group-screen-title">welcome to locket 🩷</div>
+    <div class="group-screen-sub">start a new group with your friends<br>or join one with an invite code</div>
+
+    <button class="big-btn big-btn-primary" onclick="createGroup()">
+      start a new group
+      <span>you'll get an invite link to share</span>
+    </button>
+
+    <div class="or-row">— or join one —</div>
+
+    <input class="join-input" id="join-code-input" type="text" placeholder="paste invite code here..." />
+    <button class="big-btn big-btn-secondary" onclick="joinGroup()">
+      join group
+      <span>enter the code your friend sent you</span>
+    </button>
+    <div class="auth-err" id="group-err"></div>
+  </div>
+
+  <!-- ── MAIN APP ── -->
+  <div id="app-shell" style="display:none; flex-direction:column; flex:1;">
     <div class="topbar">
       <div class="logo">
         locket
-        <svg viewBox="0 0 28 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 28 26" fill="none">
           <path d="M14 24s-11-7.5-11-14C3 5.7 6.4 3 10 3c2 0 3.5.9 4 2.2C14.5 3.9 16 3 18 3c3.6 0 7 2.7 7 7 0 6.5-11 14-11 14z" fill="#E8736A" stroke="#E8736A" stroke-width="1" stroke-linejoin="round"/>
           <ellipse cx="14" cy="12" rx="4" ry="3" fill="rgba(255,255,255,0.22)"/>
           <rect x="12" y="1" width="4" height="5" rx="1.5" fill="#c8505a"/>
@@ -457,22 +328,20 @@
       </div>
       <div class="group-chip" onclick="goTab('invite')">
         <div class="live-dot"></div>
-        <span id="group-name">castle hill · 6</span>
+        <span id="group-chip-name">my group</span>
       </div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs">
       <button class="tab on" onclick="goTab('feed',this)">feed</button>
-      <button class="tab"    onclick="goTab('album',this)">album</button>
-      <button class="tab"    onclick="goTab('vibe',this)">vibe</button>
-      <button class="tab"    onclick="goTab('invite',this)">+ invite</button>
+      <button class="tab" onclick="goTab('album',this)">album</button>
+      <button class="tab" onclick="goTab('vibe',this)">vibe</button>
+      <button class="tab" onclick="goTab('invite',this)">+ invite</button>
     </div>
 
-    <!-- SCROLLABLE BODY -->
     <div class="body">
 
-      <!-- ── FEED ── -->
+      <!-- FEED -->
       <div class="screen active" id="screen-feed">
         <div class="prompt-polo">
           <div class="polo-tape"></div>
@@ -482,110 +351,43 @@
           </div>
           <div class="polo-caption">answer below ↓</div>
         </div>
-
         <textarea class="answer-ta" id="answer-ta" placeholder="what's going on with you lately..."></textarea>
         <div class="post-row">
           <span class="char-hint" id="char-count">0 / 200</span>
           <button class="post-btn" onclick="postIt()">post it !</button>
         </div>
-
-        <div class="masonry" id="masonry">
-          <div class="col" id="col-l">
-            <div class="polo-card" style="transform:rotate(-2.5deg)">
-              <div class="polo-img c1">🌧️</div>
-              <div class="polo-footer">
-                <div class="polo-who">Jia · Toronto</div>
-                <div class="bubble-acts">
-                  <button class="pill" onclick="likeIt(this)">♡ 3</button>
-                  <button class="pill" onclick="repost(this,'Jia','this is the walk i take when i feel weird')">↩</button>
-                </div>
-              </div>
-            </div>
-            <div class="bubble bc" style="transform:rotate(1.2deg)">
-              <div class="bubble-txt">"started rewatching new girl again and feeling absolutely no shame whatsoever"</div>
-              <div class="bubble-foot">
-                <div class="bubble-who">Emily · Western</div>
-                <div class="bubble-acts">
-                  <button class="pill" onclick="likeIt(this)">♡ 11</button>
-                  <button class="pill" onclick="repost(this,'Emily','started rewatching new girl again')">↩</button>
-                </div>
-              </div>
-            </div>
-            <div class="polo-card" style="transform:rotate(-1.2deg)">
-              <div class="polo-img c7">🌙</div>
-              <div class="polo-footer">
-                <div class="polo-who">Anya · rooftop</div>
-                <div class="bubble-acts">
-                  <button class="pill" onclick="likeIt(this)">♡ 5</button>
-                  <button class="pill" onclick="repost(this,'Anya','rooftop night vibes')">↩</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col" id="col-r">
-            <div class="bubble bb" style="transform:rotate(-0.8deg);margin-top:32px">
-              <div class="repost-bar">↩ Leah: "desk at 2am, one cold coffee"</div>
-              <div class="bubble-txt">"adding: a granola bar and the audacity to open tiktok"</div>
-              <div class="bubble-foot">
-                <div class="bubble-who">Nora · Waterloo</div>
-                <div class="bubble-acts">
-                  <button class="pill" onclick="likeIt(this)">♡ 7</button>
-                  <button class="pill" onclick="repost(this,'Nora','granola bar and the audacity to open tiktok')">↩</button>
-                </div>
-              </div>
-            </div>
-            <div class="polo-card" style="transform:rotate(2deg)">
-              <div class="polo-img c6">🎉</div>
-              <div class="polo-footer">
-                <div class="polo-who">Leah · McGill</div>
-                <div class="bubble-acts">
-                  <button class="pill" onclick="likeIt(this)">♡ 14</button>
-                  <button class="pill" onclick="repost(this,'Leah','i miss how easy summer felt')">↩</button>
-                </div>
-              </div>
-            </div>
-            <div class="bubble ba" style="transform:rotate(-1deg)">
-              <div class="bubble-txt">"the lecture humbled me. the iced latte saved me."</div>
-              <div class="bubble-foot">
-                <div class="bubble-who">Emily · 5h ago</div>
-                <div class="bubble-acts">
-                  <button class="pill" onclick="likeIt(this)">♡ 9</button>
-                  <button class="pill" onclick="repost(this,'Emily','the lecture humbled me')">↩</button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="masonry">
+          <div class="col" id="col-l"></div>
+          <div class="col" id="col-r"></div>
         </div>
-      </div><!-- /feed -->
+        <div class="feed-loading" id="feed-loading">loading posts...</div>
+        <div class="feed-empty hidden" id="feed-empty">no posts yet !<br>be the first one 🩷</div>
+      </div>
 
-      <!-- ── ALBUM ── -->
+      <!-- ALBUM -->
       <div class="screen" id="screen-album">
         <div class="album-hd">
           <div>
-            <div class="album-title">castle hill girls</div>
-            <div class="album-sub">28 memories · since sep 2023</div>
+            <div class="album-title" id="album-title">our group</div>
+            <div class="album-sub" id="album-sub">0 memories</div>
           </div>
-          <button class="make-btn" onclick="makeAlbum()">make album ✨</button>
+          <button class="make-btn">make album ✨</button>
         </div>
         <div class="colgrid" id="colgrid">
-          <div class="ctile"><div class="tface c1">🌧️</div><div class="tlabel">Jia · campus</div></div>
-          <div class="ctile"><div class="tface c2">🧋</div><div class="tlabel">Leah · study</div></div>
-          <div class="ctile"><div class="tface c3">🍜</div><div class="tlabel">Nora · 2am</div></div>
-          <div class="ctile"><div class="tface c4">☀️</div><div class="tlabel">Emily · frosh</div></div>
-          <div class="ctile"><div class="tface c5">🏃</div><div class="tlabel">Ria · trail</div></div>
-          <div class="ctile"><div class="tface c6">🎉</div><div class="tlabel">all of us · dec</div></div>
-          <div class="ctile"><div class="tface c7">🌙</div><div class="tlabel">Nora · roof</div></div>
-          <div class="ctile"><div class="tface c8">🍕</div><div class="tlabel">Jia · move-in</div></div>
-          <div class="ctile"><div class="tface c9">❄️</div><div class="tlabel">Leah · winter</div></div>
+          <div class="ctile"><div class="tface c1">🌧️</div><div class="tlabel">campus walk</div></div>
+          <div class="ctile"><div class="tface c2">🧋</div><div class="tlabel">study session</div></div>
+          <div class="ctile"><div class="tface c3">🍜</div><div class="tlabel">2am ramen</div></div>
+          <div class="ctile"><div class="tface c4">☀️</div><div class="tlabel">frosh week</div></div>
+          <div class="ctile"><div class="tface c5">🏃</div><div class="tlabel">morning run</div></div>
+          <div class="ctile"><div class="tface c6">🎉</div><div class="tlabel">all of us</div></div>
           <div class="add-tile" onclick="addPic()">
             <div style="font-size:22px;line-height:1;font-weight:300;">+</div>
             <span>add</span>
           </div>
         </div>
-      </div><!-- /album -->
+      </div>
 
-      <!-- ── VIBE ── -->
+      <!-- VIBE -->
       <div class="screen" id="screen-vibe">
         <div class="vibe-card">
           <div class="sp-row">
@@ -594,24 +396,24 @@
             </div>
             <div>
               <div class="sp-name">locket base playlist</div>
-              <div class="sp-sub">everyone can edit · <span id="song-count">5</span> songs</div>
+              <div class="sp-sub">everyone can add · <span id="song-count">5</span> songs</div>
             </div>
           </div>
           <div class="trows" id="tracks">
-            <div class="trow now" onclick="playT(this)"><div class="tnum">▶</div><div class="tinfo"><div class="tname">Slow Burn</div><div class="tartist">Kacey Musgraves</div></div><div class="ttag">Leah</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">2</div><div class="tinfo"><div class="tname">Motion Sickness</div><div class="tartist">Phoebe Bridgers</div></div><div class="ttag">Jia</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">3</div><div class="tinfo"><div class="tname">Glimpse of Us</div><div class="tartist">Joji</div></div><div class="ttag">Nora</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">4</div><div class="tinfo"><div class="tname">death bed</div><div class="tartist">Powfu ft. beabadoobee</div></div><div class="ttag">Emily</div></div>
-            <div class="trow" onclick="playT(this)"><div class="tnum">5</div><div class="tinfo"><div class="tname">BIRDS OF A FEATHER</div><div class="tartist">Billie Eilish</div></div><div class="ttag">Ria</div></div>
+            <div class="trow now" onclick="playT(this)"><div class="tnum">▶</div><div class="tinfo"><div class="tname">Slow Burn</div><div class="tartist">Kacey Musgraves</div></div><div class="ttag">base</div></div>
+            <div class="trow" onclick="playT(this)"><div class="tnum">2</div><div class="tinfo"><div class="tname">Motion Sickness</div><div class="tartist">Phoebe Bridgers</div></div><div class="ttag">base</div></div>
+            <div class="trow" onclick="playT(this)"><div class="tnum">3</div><div class="tinfo"><div class="tname">Glimpse of Us</div><div class="tartist">Joji</div></div><div class="ttag">base</div></div>
+            <div class="trow" onclick="playT(this)"><div class="tnum">4</div><div class="tinfo"><div class="tname">death bed</div><div class="tartist">Powfu ft. beabadoobee</div></div><div class="ttag">base</div></div>
+            <div class="trow" onclick="playT(this)"><div class="tnum">5</div><div class="tinfo"><div class="tname">BIRDS OF A FEATHER</div><div class="tartist">Billie Eilish</div></div><div class="ttag">base</div></div>
           </div>
           <div class="sug-row">
             <input class="sug-in" id="sug-in" placeholder="suggest a song..." />
             <button class="sug-btn" onclick="addSong()">add</button>
           </div>
         </div>
-      </div><!-- /vibe -->
+      </div>
 
-      <!-- ── INVITE ── -->
+      <!-- INVITE -->
       <div class="screen" id="screen-invite">
         <svg class="heart-hero" width="70" height="66" viewBox="0 0 70 66" fill="none">
           <path d="M35 62s-28-19-28-36C7 14 15 8 24 8c5 0 8.5 2.5 11 6 2.5-3.5 6-6 11-6 9 0 17 6 17 18 0 17-28 36-28 36z" fill="#FCCDD5" stroke="#E8736A" stroke-width="2.5"/>
@@ -619,192 +421,340 @@
           <rect x="32" y="4" width="6" height="9" rx="2" fill="#E8A0B8"/>
           <rect x="33.5" y="2" width="3" height="5" rx="1" fill="#d0809a"/>
         </svg>
-
         <div class="inv-card">
           <div class="inv-title">invite ur people</div>
-          <div class="inv-sub">anyone with this link can join — you can add more anytime !</div>
+          <div class="inv-sub">anyone with this code can join your locket — share it in your group chat !</div>
           <div class="link-row">
-            <div class="link-txt" id="invite-link">locket.app/join/castlehill-x9k2</div>
-            <button class="copy-btn" id="copy-btn" onclick="copyLink()">copy</button>
+            <div class="link-txt" id="invite-code-display">loading...</div>
+            <button class="copy-btn" id="copy-btn" onclick="copyCode()">copy</button>
           </div>
-          <div class="m-hed">members (6)</div>
-          <div class="chips">
-            <div class="chip"><div class="chip-av" style="background:#F4A890">J</div>Jia</div>
-            <div class="chip"><div class="chip-av" style="background:#8ED4B0">N</div>Nora</div>
-            <div class="chip"><div class="chip-av" style="background:#E090A8">E</div>Emily</div>
-            <div class="chip"><div class="chip-av" style="background:#F0C070">L</div>Leah</div>
-            <div class="chip"><div class="chip-av" style="background:#C0A8E8">A</div>Anya</div>
-            <div class="chip"><div class="chip-av" style="background:#90B8E8">R</div>Ria</div>
-          </div>
+          <div class="m-hed" id="members-hed">members</div>
+          <div class="chips" id="members-list"></div>
+          <button class="leave-btn" onclick="leaveGroup()">leave group</button>
         </div>
-      </div><!-- /invite -->
+      </div>
 
     </div><!-- /body -->
-  </div><!-- /phone -->
+  </div><!-- /app-shell -->
+</div><!-- /phone -->
 
-  <script>
-    /* ─── TAB NAVIGATION ─────────────────────────── */
-    const TABS = ['feed','album','vibe','invite'];
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    onAuthStateChanged, updateProfile
+  } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, onSnapshot,
+    doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-    function goTab(id, btn) {
-      TABS.forEach(t => {
-        document.getElementById('screen-' + t).classList.toggle('active', t === id);
-      });
-      document.querySelectorAll('.tab').forEach((b, i) => {
-        b.classList.toggle('on', TABS[i] === id);
-      });
-    }
+  // ── FIREBASE CONFIG ──────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyBUNvLE5ZW2mDQpwsHh4hwq8YvVurBP16U",
+    authDomain: "locket-9b5ae.firebaseapp.com",
+    projectId: "locket-9b5ae",
+    storageBucket: "locket-9b5ae.firebasestorage.app",
+    messagingSenderId: "252742374185",
+    appId: "1:252742374185:web:9219405e65dd9060989d38"
+  };
 
-    /* ─── FEED: ANSWER BOX ───────────────────────── */
-    const ta = document.getElementById('answer-ta');
-    const cc = document.getElementById('char-count');
-    ta.addEventListener('input', () => {
-      cc.textContent = ta.value.length + ' / 200';
-    });
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
 
-    let postCount = 0;
-    const BUBS = ['ba','bb','bc','bd'];
-    const ROTS = ['-1.5deg','1.3deg','-0.9deg','1.8deg'];
+  // ── STATE ────────────────────────────────────────
+  let currentUser = null;
+  let currentGroupId = null;
+  let currentGroupData = null;
+  let unsubscribePosts = null;
 
-    function postIt() {
-      const v = ta.value.trim();
-      if (!v) return;
-      const col = document.getElementById(postCount % 2 === 0 ? 'col-l' : 'col-r');
-      const d = document.createElement('div');
-      d.className = 'bubble ' + BUBS[postCount % 4];
-      d.style.transform = 'rotate(' + ROTS[postCount % 4] + ')';
-      d.innerHTML =
-        '<div class="bubble-txt">"' + esc(v) + '"</div>' +
-        '<div class="bubble-foot">' +
-          '<div class="bubble-who">you · just now</div>' +
-          '<div class="bubble-acts">' +
-            '<button class="pill" onclick="likeIt(this)">♡ 0</button>' +
-            '<button class="pill" onclick="repost(this,\'you\',\'' + esc(v).slice(0,40) + '\')">↩</button>' +
-          '</div>' +
-        '</div>';
-      col.insertBefore(d, col.firstChild);
-      ta.value = '';
-      cc.textContent = '0 / 200';
-      postCount++;
-    }
+  // ── SCREENS ──────────────────────────────────────
+  function showScreen(name) {
+    document.getElementById('auth-screen').style.display  = name === 'auth'  ? 'flex' : 'none';
+    document.getElementById('group-screen').style.display = name === 'group' ? 'flex' : 'none';
+    document.getElementById('app-shell').style.display    = name === 'app'   ? 'flex' : 'none';
+  }
 
-    /* ─── LIKE ───────────────────────────────────── */
-    function likeIt(btn) {
-      const n = parseInt(btn.textContent.match(/\d+/)[0]);
-      if (btn.dataset.l) {
-        btn.textContent = '♡ ' + (n - 1);
-        btn.dataset.l = '';
-        btn.classList.remove('liked');
+  // ── AUTH ─────────────────────────────────────────
+  window.switchAuthTab = (tab) => {
+    document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('on', (i===0) === (tab==='login')));
+    document.getElementById('auth-name-row').style.display = tab === 'signup' ? 'block' : 'none';
+    document.getElementById('auth-submit-btn').textContent = tab === 'login' ? 'log in' : 'sign up';
+    document.getElementById('auth-err').textContent = '';
+    window._authTab = tab;
+  };
+  window._authTab = 'login';
+
+  window.submitAuth = async () => {
+    const email    = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const name     = document.getElementById('auth-name').value.trim();
+    const errEl    = document.getElementById('auth-err');
+    errEl.textContent = '';
+    if (!email || !password) { errEl.textContent = 'fill in all fields !'; return; }
+    try {
+      if (window._authTab === 'signup') {
+        if (!name) { errEl.textContent = 'add your name !'; return; }
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(cred.user, { displayName: name });
       } else {
-        btn.textContent = '♥ ' + (n + 1);
-        btn.dataset.l = '1';
-        btn.classList.add('liked');
+        await signInWithEmailAndPassword(auth, email, password);
       }
+    } catch(e) {
+      const msgs = {
+        'auth/email-already-in-use': 'that email is already taken !',
+        'auth/weak-password': 'password needs 6+ characters !',
+        'auth/invalid-credential': 'wrong email or password !',
+        'auth/invalid-email': 'that email looks off !',
+      };
+      errEl.textContent = msgs[e.code] || 'something went wrong, try again !';
     }
+  };
 
-    /* ─── REPOST ─────────────────────────────────── */
-    function repost(btn, name, quote) {
-      const col = document.getElementById('col-l');
-      const d = document.createElement('div');
-      d.className = 'bubble ba';
-      d.style.transform = 'rotate(-1.2deg)';
+  // ── GROUP ────────────────────────────────────────
+  window.createGroup = async () => {
+    const errEl = document.getElementById('group-err');
+    errEl.textContent = 'creating your group...';
+    try {
+      const code = Math.random().toString(36).slice(2,8).toUpperCase();
+      const groupRef = doc(db, 'groups', code);
+      await setDoc(groupRef, {
+        name: currentUser.displayName + "'s locket",
+        code,
+        createdBy: currentUser.uid,
+        members: [{ uid: currentUser.uid, name: currentUser.displayName }],
+        createdAt: serverTimestamp()
+      });
+      await setDoc(doc(db, 'users', currentUser.uid), { groupId: code }, { merge: true });
+      await loadGroup(code);
+    } catch(e) {
+      errEl.textContent = 'something went wrong, try again !';
+    }
+  };
+
+  window.joinGroup = async () => {
+    const code  = document.getElementById('join-code-input').value.trim().toUpperCase();
+    const errEl = document.getElementById('group-err');
+    if (!code) { errEl.textContent = 'paste your invite code !'; return; }
+    errEl.textContent = 'joining...';
+    try {
+      const groupRef = doc(db, 'groups', code);
+      const snap = await getDoc(groupRef);
+      if (!snap.exists()) { errEl.textContent = "that code doesn't exist !"; return; }
+      await updateDoc(groupRef, {
+        members: arrayUnion({ uid: currentUser.uid, name: currentUser.displayName })
+      });
+      await setDoc(doc(db, 'users', currentUser.uid), { groupId: code }, { merge: true });
+      await loadGroup(code);
+    } catch(e) {
+      errEl.textContent = 'something went wrong, try again !';
+    }
+  };
+
+  async function loadGroup(groupId) {
+    const snap = await getDoc(doc(db, 'groups', groupId));
+    if (!snap.exists()) return;
+    currentGroupId   = groupId;
+    currentGroupData = snap.data();
+    document.getElementById('group-chip-name').textContent = currentGroupData.name + ' · ' + currentGroupData.members.length;
+    document.getElementById('album-title').textContent = currentGroupData.name;
+    document.getElementById('invite-code-display').textContent = groupId;
+    renderMembers(currentGroupData.members);
+    showScreen('app');
+    loadFeed();
+  }
+
+  function renderMembers(members) {
+    const colors = ['#F4A890','#8ED4B0','#E090A8','#F0C070','#C0A8E8','#90B8E8','#A8D4F0','#F0A8C0'];
+    const el = document.getElementById('members-list');
+    el.innerHTML = members.map((m, i) =>
+      `<div class="chip"><div class="chip-av" style="background:${colors[i%colors.length]}">${m.name.charAt(0).toUpperCase()}</div>${m.name}</div>`
+    ).join('');
+    document.getElementById('members-hed').textContent = 'members (' + members.length + ')';
+  }
+
+  window.leaveGroup = async () => {
+    if (!confirm('leave this group? you can rejoin with the code anytime.')) return;
+    await setDoc(doc(db, 'users', currentUser.uid), { groupId: null }, { merge: true });
+    if (unsubscribePosts) unsubscribePosts();
+    currentGroupId = null;
+    showScreen('group');
+  };
+
+  // ── FEED ─────────────────────────────────────────
+  function loadFeed() {
+    if (unsubscribePosts) unsubscribePosts();
+    document.getElementById('feed-loading').style.display = 'block';
+    document.getElementById('feed-empty').style.display = 'none';
+    document.getElementById('col-l').innerHTML = '';
+    document.getElementById('col-r').innerHTML = '';
+    const q = query(collection(db, 'groups', currentGroupId, 'posts'), orderBy('createdAt', 'desc'));
+    let count = 0;
+    unsubscribePosts = onSnapshot(q, (snap) => {
+      document.getElementById('feed-loading').style.display = 'none';
+      document.getElementById('col-l').innerHTML = '';
+      document.getElementById('col-r').innerHTML = '';
+      count = snap.docs.length;
+      if (count === 0) {
+        document.getElementById('feed-empty').style.display = 'block';
+        return;
+      }
+      document.getElementById('feed-empty').style.display = 'none';
+      snap.docs.forEach((d, i) => renderPost(d.data(), d.id, i));
+    });
+  }
+
+  const BUBS = ['ba','bb','bc','bd'];
+  const ROTS_L = ['-2.5deg','-1.2deg','-1.8deg','-0.8deg'];
+  const ROTS_R = ['2deg','0.8deg','1.5deg','1.2deg'];
+  const TILE_COLORS = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
+  const TILE_EMOJIS = ['🌧️','🧋','🍜','☀️','🏃','🎉','🌙','🍕','❄️','📸','🌈','🎵','🍦','🌸','✨'];
+
+  function renderPost(data, id, idx) {
+    const isLeft  = idx % 2 === 0;
+    const col     = document.getElementById(isLeft ? 'col-l' : 'col-r');
+    const rots    = isLeft ? ROTS_L : ROTS_R;
+    const rot     = rots[idx % 4];
+    const isMe    = data.uid === currentUser.uid;
+    const nameTag = isMe ? 'you' : data.authorName;
+    const likes   = data.likes || 0;
+
+    // alternate between polaroid and bubble
+    const d = document.createElement('div');
+    if (idx % 3 === 0) {
+      const tileColor = TILE_COLORS[idx % TILE_COLORS.length];
+      const emoji     = TILE_EMOJIS[idx % TILE_EMOJIS.length];
+      d.className = 'polo-card';
+      d.style.transform = rot;
       d.innerHTML =
-        '<div class="repost-bar">↩ ' + name + ': "' + esc(quote) + '..."</div>' +
-        '<textarea style="width:100%;background:rgba(255,255,255,0.55);border:1.5px solid rgba(200,160,180,0.2);border-radius:10px;padding:7px 10px;font-size:12px;font-family:var(--font-n);resize:none;height:46px;outline:none;color:var(--ink);margin-bottom:7px;" placeholder="ur reaction..."></textarea>' +
-        '<button class="post-btn" style="font-size:11px;padding:6px 16px;" onclick="submitRepost(this)">post</button>';
-      col.insertBefore(d, col.firstChild);
-      d.querySelector('textarea').focus();
-    }
-
-    function submitRepost(btn) {
-      const card = btn.closest('.bubble');
-      const val = card.querySelector('textarea').value.trim();
-      const bar = card.querySelector('.repost-bar').outerHTML;
-      card.innerHTML =
-        bar +
-        '<div class="bubble-txt">"' + esc(val || 'just vibes') + '"</div>' +
-        '<div class="bubble-foot">' +
-          '<div class="bubble-who">you · just now</div>' +
+        '<div class="polo-img ' + tileColor + '">' + emoji + '</div>' +
+        '<div class="polo-footer">' +
+          '<div class="polo-who">' + esc(nameTag) + '</div>' +
           '<div class="bubble-acts">' +
-            '<button class="pill" onclick="likeIt(this)">♡ 0</button>' +
-            '<button class="pill">↩</button>' +
+            '<button class="pill" onclick="likePost(\'' + id + '\',this)">' + (likes > 0 ? '♥' : '♡') + ' ' + likes + '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div style="padding:6px 2px 0;font-size:10.5px;font-weight:700;color:var(--ink);line-height:1.4;">' + esc(data.text) + '</div>';
+    } else {
+      d.className = 'bubble ' + BUBS[idx % 4];
+      d.style.transform = rot;
+      if (idx % 2 !== 0) d.style.marginTop = '28px';
+      d.innerHTML =
+        '<div class="bubble-txt">"' + esc(data.text) + '"</div>' +
+        '<div class="bubble-foot">' +
+          '<div class="bubble-who">' + esc(nameTag) + '</div>' +
+          '<div class="bubble-acts">' +
+            '<button class="pill" onclick="likePost(\'' + id + '\',this)">' + (likes > 0 ? '♥' : '♡') + ' ' + likes + '</button>' +
           '</div>' +
         '</div>';
     }
+    col.appendChild(d);
+  }
 
-    /* ─── VIBE ───────────────────────────────────── */
-    function playT(el) {
-      document.querySelectorAll('.trow').forEach((t, i) => {
-        t.classList.remove('now');
-        t.querySelector('.tnum').textContent = i + 1;
+  window.likePost = async (postId, btn) => {
+    const n = parseInt(btn.textContent.match(/\d+/)[0]);
+    if (btn.dataset.l) {
+      await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: Math.max(0, n-1) });
+      btn.dataset.l = '';
+    } else {
+      await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: n+1 });
+      btn.dataset.l = '1';
+    }
+  };
+
+  window.postIt = async () => {
+    const ta  = document.getElementById('answer-ta');
+    const v   = ta.value.trim();
+    if (!v) return;
+    try {
+      await addDoc(collection(db, 'groups', currentGroupId, 'posts'), {
+        text: v,
+        uid: currentUser.uid,
+        authorName: currentUser.displayName,
+        likes: 0,
+        createdAt: serverTimestamp()
       });
-      el.classList.add('now');
-      el.querySelector('.tnum').textContent = '▶';
+      ta.value = '';
+      document.getElementById('char-count').textContent = '0 / 200';
+    } catch(e) {
+      alert('could not post, try again !');
     }
+  };
 
-    function addSong() {
-      const inp = document.getElementById('sug-in');
-      const v = inp.value.trim();
-      if (!v) return;
-      const tracks = document.getElementById('tracks');
-      const n = tracks.querySelectorAll('.trow').length + 1;
-      const d = document.createElement('div');
-      d.className = 'trow';
-      d.onclick = function() { playT(this); };
-      d.innerHTML =
-        '<div class="tnum">' + n + '</div>' +
-        '<div class="tinfo"><div class="tname">' + esc(v) + '</div><div class="tartist">added by you</div></div>' +
-        '<div class="ttag">you</div>';
-      tracks.appendChild(d);
-      inp.value = '';
-      document.getElementById('song-count').textContent = n;
+  // ── COPY INVITE CODE ─────────────────────────────
+  window.copyCode = () => {
+    const code = document.getElementById('invite-code-display').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(code).catch(()=>{});
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'copied!';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('done'); }, 2500);
+  };
+
+  // ── AUTH STATE LISTENER ──────────────────────────
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { showScreen('auth'); return; }
+    currentUser = user;
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    if (userSnap.exists() && userSnap.data().groupId) {
+      await loadGroup(userSnap.data().groupId);
+    } else {
+      showScreen('group');
     }
+  });
 
-    /* ─── ALBUM ──────────────────────────────────── */
-    const TILE_CLASSES = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
-    const TILE_EMOJIS  = ['📸','🌈','🎵','🍦','🌸','✨','🌊','🏔️','🎨'];
-    let photoCount = 9;
+  // ── TAB NAV ──────────────────────────────────────
+  window.goTab = (id, btn) => {
+    ['feed','album','vibe','invite'].forEach(t => {
+      document.getElementById('screen-' + t).classList.toggle('active', t === id);
+    });
+    document.querySelectorAll('.tab').forEach((b,i) => {
+      b.classList.toggle('on', ['feed','album','vibe','invite'][i] === id);
+    });
+  };
 
-    function addPic() {
-      const grid = document.getElementById('colgrid');
-      const add  = grid.querySelector('.add-tile');
-      const r = Math.floor(Math.random() * 9);
-      const d = document.createElement('div');
-      d.className = 'ctile';
-      d.style.transform = photoCount % 2 === 0 ? 'rotate(-1.1deg)' : 'rotate(0.8deg)';
-      d.innerHTML =
-        '<div class="tface ' + TILE_CLASSES[r] + '">' + TILE_EMOJIS[r] + '</div>' +
-        '<div class="tlabel">you · now</div>';
-      grid.insertBefore(d, add);
-      photoCount++;
-      document.querySelector('.album-sub').textContent = photoCount + ' memories · since sep 2023';
-    }
+  // ── CHAR COUNT ───────────────────────────────────
+  document.getElementById('answer-ta').addEventListener('input', function() {
+    document.getElementById('char-count').textContent = this.value.length + ' / 200';
+  });
 
-    function makeAlbum() {
-      alert('📸 Album created! In the real app this will bundle selected photos into a shareable link.');
-    }
+  // ── VIBE ─────────────────────────────────────────
+  window.playT = (el) => {
+    document.querySelectorAll('.trow').forEach((t,i) => { t.classList.remove('now'); t.querySelector('.tnum').textContent = i+1; });
+    el.classList.add('now'); el.querySelector('.tnum').textContent = '▶';
+  };
+  window.addSong = () => {
+    const inp = document.getElementById('sug-in');
+    const v = inp.value.trim(); if (!v) return;
+    const tracks = document.getElementById('tracks');
+    const n = tracks.querySelectorAll('.trow').length + 1;
+    const d = document.createElement('div'); d.className = 'trow';
+    d.onclick = function(){ window.playT(this); };
+    d.innerHTML = '<div class="tnum">' + n + '</div><div class="tinfo"><div class="tname">' + esc(v) + '</div><div class="tartist">added by ' + esc(currentUser.displayName) + '</div></div><div class="ttag">you</div>';
+    tracks.appendChild(d); inp.value = '';
+    document.getElementById('song-count').textContent = n;
+  };
 
-    /* ─── INVITE / COPY ──────────────────────────── */
-    function copyLink() {
-      const btn = document.getElementById('copy-btn');
-      const link = document.getElementById('invite-link').textContent;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(link).catch(() => {});
-      }
-      btn.textContent = 'copied!';
-      btn.classList.add('done');
-      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('done'); }, 2500);
-    }
+  // ── ALBUM ────────────────────────────────────────
+  const TC = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
+  const TE = ['📸','🌈','🎵','🍦','🌸','✨','🌊','🏔️','🎨'];
+  let photoCount = 6;
+  window.addPic = () => {
+    const grid = document.getElementById('colgrid');
+    const add  = grid.querySelector('.add-tile');
+    const r = Math.floor(Math.random()*9);
+    const d = document.createElement('div'); d.className = 'ctile';
+    d.style.transform = photoCount%2===0 ? 'rotate(-1.1deg)' : 'rotate(0.8deg)';
+    d.innerHTML = '<div class="tface ' + TC[r] + '">' + TE[r] + '</div><div class="tlabel">you · now</div>';
+    grid.insertBefore(d, add); photoCount++;
+    document.getElementById('album-sub').textContent = photoCount + ' memories';
+  };
 
-    /* ─── UTILS ──────────────────────────────────── */
-    function esc(str) {
-      return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#39;');
-    }
-  </script>
+  // ── UTILS ────────────────────────────────────────
+  function esc(str) {
+    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+</script>
 </body>
 </html>

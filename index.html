@@ -742,7 +742,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    onAuthStateChanged, updateProfile, signOut as firebaseSignOut
+    onAuthStateChanged, updateProfile, signOut
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, getDocs, onSnapshot,
@@ -826,14 +826,14 @@
       const gSnap = await getDoc(doc(db, 'groups', groupId));
       if (!gSnap.exists()) { el.innerHTML = ''; return; }
       const g = gSnap.data();
-      el.innerHTML = \`<div class="group-card-row" onclick="enterGroup('\${groupId}')">
-        <div class="group-card-av">🩷</div>
-        <div class="group-card-info">
-          <div class="group-card-name">\${esc(g.name)}</div>
-          <div class="group-card-meta">\${g.members ? g.members.length : 1} members · code: \${groupId}</div>
-        </div>
-        <div class="group-card-arrow">›</div>
-      </div>\`;
+      el.innerHTML = '<div class="group-card-row" onclick="enterGroup(\'' + groupId + '\')">'+
+        '<div class="group-card-av">🩷</div>'+
+        '<div class="group-card-info">'+
+          '<div class="group-card-name">' + esc(g.name) + '</div>'+
+          '<div class="group-card-meta">' + (g.members ? g.members.length : 1) + ' members · code: ' + groupId + '</div>'+
+        '</div>'+
+        '<div class="group-card-arrow">›</div>'+
+      '</div>';
     } catch(e) {
       el.innerHTML = '<div style="color:var(--mid);font-size:12px;">could not load groups</div>';
     }
@@ -848,7 +848,7 @@
     if (unsubscribeGroup) unsubscribeGroup();
     if (unsubscribePosts) unsubscribePosts();
     if (unsubscribeVibe) unsubscribeVibe();
-    await firebaseSignOut(auth);
+    await signOut(auth);
     showScreen('auth');
   };
 
@@ -1012,7 +1012,7 @@
             '<div class="sketchbook-song">' + esc(s.song) + '</div>' +
             '<div class="sketchbook-by">added by ' + esc(s.addedBy) + '</div>' +
           '</div>' +
-          (isMe ? '<button class="sketchbook-delete" onclick="deleteSong('' + d.id + '')">✕</button>' : '') +
+          (isMe ? '<button class="sketchbook-delete" onclick="deleteSong(\'' + d.id + '\')">&#x2715;</button>' : '') +
         '</div>';
       }).join('');
     });
@@ -1234,7 +1234,7 @@
       }, { merge: true });
       closeModal('deactivate-modal');
       alert('your account is deactivated. log in within 30 days to reactivate. after that it will be permanently deleted.');
-      await firebaseSignOut(auth);
+      await signOut(auth);
       showScreen('auth');
     } catch(e) {
       alert('something went wrong. please email hellokayleec@gmail.com for help.');

@@ -303,6 +303,41 @@
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
 
+    /* ── ALBUM CARDS ── */
+    .album-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      border: 1.5px solid rgba(200,180,190,0.18); cursor: pointer;
+      transition: transform 0.12s; position: relative;
+    }
+    .album-card:hover { transform: scale(1.02); }
+    .album-card-cover {
+      width: 100%; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; position: relative; overflow: hidden;
+    }
+    .album-card-cover img { width:100%; height:100%; object-fit:cover; }
+    .album-card-cover-label {
+      position: absolute; inset: 0; background: rgba(46,32,48,0.22);
+      display: flex; align-items: flex-end; padding: 8px;
+    }
+    .album-card-info { padding: 9px 10px; }
+    .album-card-name { font-family: var(--font-b); font-size: 13px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .album-card-count { font-size: 10px; color: var(--mid); font-weight: 700; margin-top: 2px; }
+
+    /* ── MOVE PHOTOS MODAL ── */
+    .album-pick-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 12px; cursor: pointer;
+      background: rgba(254,248,242,0.7); border: 1.5px solid rgba(200,180,190,0.15);
+      margin-bottom: 7px; transition: background 0.12s;
+    }
+    .album-pick-item:hover { background: #fff; }
+    .album-pick-thumb { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg,#FFE4B0,#FCCDD5); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; overflow: hidden; }
+    .album-pick-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .album-pick-name { font-size: 13px; font-weight: 800; color: var(--ink); }
+    .album-pick-count { font-size: 10px; color: var(--mid); font-weight: 700; }
+
+
     /* ── CUSTOM PROMPT ── */
     .custom-prompt-banner {
       background: linear-gradient(135deg, #F5D8E8, #FFE8D8);
@@ -681,6 +716,31 @@
     </div>
   </div>
 
+  <!-- ── CREATE ALBUM MODAL ── -->
+  <div class="modal-overlay" id="create-album-modal">
+    <div class="modal-box">
+      <div class="modal-title">new album ✨</div>
+      <div class="modal-sub">give it a name your group will recognise !</div>
+      <input class="modal-input" id="create-album-input" type="text" placeholder="e.g. summer 2024, frosh week..." maxlength="30" />
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeModal('create-album-modal')">cancel</button>
+        <button class="modal-confirm" onclick="confirmCreateAlbum()">create !</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MOVE PHOTOS MODAL ── -->
+  <div class="modal-overlay" id="move-photos-modal">
+    <div class="modal-box">
+      <div class="modal-title">move to album</div>
+      <div class="modal-sub">pick which album to move these photos to</div>
+      <div id="move-albums-list" style="max-height:240px;overflow-y:auto;"></div>
+      <div class="modal-btns" style="margin-top:8px;">
+        <button class="modal-cancel" onclick="closeModal('move-photos-modal')">cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── RENAME ALBUM MODAL ── -->
   <div class="modal-overlay" id="rename-album-modal">
     <div class="modal-box">
@@ -813,37 +873,62 @@
 
       <!-- ALBUM -->
       <div class="screen" id="screen-album">
-        <div class="album-cover" id="album-cover">
-          <div id="album-cover-img" style="width:100%;height:100%;background:linear-gradient(135deg,#FFE4B0,#FCCDD5);display:flex;align-items:center;justify-content:center;font-size:52px;">🩷</div>
-          <div class="album-cover-name" id="album-cover-name">our group</div>
-          <label class="album-cover-edit" style="cursor:pointer;">
-            change cover
-            <input type="file" id="cover-file-input" accept="image/*" style="display:none" onchange="uploadCoverPhoto(this)">
-          </label>
-        </div>
-        <div class="album-actions-row">
-          <button class="album-action-btn" onclick="renameAlbum()">✏️ rename</button>
-          <button class="album-action-btn" onclick="toggleSelectMode()">☑️ select</button>
-          <button class="album-action-btn album-action-danger" onclick="confirmDeleteAlbum()">🗑️ delete all</button>
-        </div>
-        <div class="select-bar" id="select-bar">
-          <span class="select-bar-txt" id="select-bar-txt">0 selected</span>
-          <button class="select-bar-del" onclick="deleteSelected()">delete selected</button>
-        </div>
-        <div id="upload-progress-bar" style="display:none;margin-bottom:10px;">
-          <div style="background:rgba(200,160,180,0.15);border-radius:999px;height:6px;overflow:hidden;">
-            <div id="upload-progress-fill" style="background:var(--tomato);height:100%;width:0%;transition:width 0.2s;border-radius:999px;"></div>
+
+        <!-- ALBUMS LIST VIEW -->
+        <div id="albums-list-view">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div>
+              <div style="font-family:var(--font-b);font-size:20px;font-weight:800;color:var(--ink);">albums 📸</div>
+              <div style="font-size:11px;color:var(--mid);font-weight:700;margin-top:2px;">your group memories</div>
+            </div>
+            <button class="post-btn" style="transform:none;padding:8px 16px;font-size:12px;" onclick="createNewAlbum()">+ new album</button>
           </div>
-          <div style="font-size:10px;color:var(--mid);font-weight:700;margin-top:4px;text-align:center;" id="upload-progress-text">uploading...</div>
+          <div id="albums-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div id="albums-loading" style="grid-column:1/-1;text-align:center;padding:32px 0;color:var(--mid);font-size:12px;font-weight:700;">loading albums...</div>
+          </div>
         </div>
-        <div class="colgrid" id="colgrid">
-          <label class="add-tile" style="cursor:pointer;">
-            <div style="font-size:22px;line-height:1;font-weight:300;">+</div>
-            <span>add photo</span>
-            <input type="file" id="photo-file-input" accept="image/*" multiple style="display:none" onchange="uploadPhotos(this)">
-          </label>
+
+        <!-- ALBUM DETAIL VIEW -->
+        <div id="album-detail-view" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <button class="back-btn" onclick="backToAlbums()">← back</button>
+            <div style="flex:1;min-width:0;">
+              <div style="font-family:var(--font-b);font-size:18px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="detail-album-name">album</div>
+              <div style="font-size:10px;color:var(--mid);font-weight:700;" id="detail-album-count">0 photos</div>
+            </div>
+          </div>
+
+          <div class="album-actions-row">
+            <button class="album-action-btn" onclick="renameCurrentAlbum()">✏️ rename</button>
+            <button class="album-action-btn" onclick="toggleSelectMode()">☑️ select</button>
+            <button class="album-action-btn album-action-danger" onclick="confirmDeleteAlbum()">🗑️ delete</button>
+          </div>
+
+          <div class="select-bar" id="select-bar">
+            <span class="select-bar-txt" id="select-bar-txt">0 selected</span>
+            <div style="display:flex;gap:6px;">
+              <button class="select-bar-del" style="background:var(--mid);" onclick="moveSelected()">move</button>
+              <button class="select-bar-del" onclick="deleteSelected()">delete</button>
+            </div>
+          </div>
+
+          <div id="upload-progress-bar" style="display:none;margin-bottom:10px;">
+            <div style="background:rgba(200,160,180,0.15);border-radius:999px;height:6px;overflow:hidden;">
+              <div id="upload-progress-fill" style="background:var(--tomato);height:100%;width:0%;transition:width 0.2s;border-radius:999px;"></div>
+            </div>
+            <div style="font-size:10px;color:var(--mid);font-weight:700;margin-top:4px;text-align:center;" id="upload-progress-text">uploading...</div>
+          </div>
+
+          <div class="colgrid" id="colgrid">
+            <label class="add-tile" style="cursor:pointer;">
+              <div style="font-size:22px;line-height:1;font-weight:300;">+</div>
+              <span>add photo</span>
+              <input type="file" id="photo-file-input" accept="image/*" multiple style="display:none" onchange="uploadPhotos(this)">
+            </label>
+          </div>
+          <div id="album-loading" style="text-align:center;padding:24px 0;color:var(--mid);font-size:12px;font-weight:700;display:none;"></div>
         </div>
-        <div id="album-loading" style="text-align:center;padding:24px 0;color:var(--mid);font-size:12px;font-weight:700;">loading photos...</div>
+
         <span id="album-title" style="display:none">our group</span>
         <span id="album-sub" style="display:none">0 memories</span>
       </div>
@@ -1005,11 +1090,20 @@
     document.getElementById('app-shell').style.display       = name === 'app'      ? 'flex' : 'none';
   }
 
+  function cleanupListeners() {
+    if (unsubscribePosts)         { unsubscribePosts();         unsubscribePosts = null; }
+    if (unsubscribeGroup)         { unsubscribeGroup();         unsubscribeGroup = null; }
+    if (unsubscribeVibe)          { unsubscribeVibe();          unsubscribeVibe = null; }
+    if (unsubscribePhotos)        { unsubscribePhotos();        unsubscribePhotos = null; }
+    if (unsubscribeAlbums)        { unsubscribeAlbums();        unsubscribeAlbums = null; }
+    if (unsubscribeCustomPrompts) { unsubscribeCustomPrompts(); unsubscribeCustomPrompts = null; }
+    if (pongRAF)   { cancelAnimationFrame(pongRAF); pongRAF = null; }
+    if (tapInterval) { clearInterval(tapInterval); tapInterval = null; }
+  }
+
   window.showGroupsHub = () => {
-    if (unsubscribeGroup) unsubscribeGroup();
-    if (unsubscribePosts) unsubscribePosts();
-    if (unsubscribeVibe) unsubscribeVibe();
-    currentGroupId = null;
+    cleanupListeners();
+    currentGroupId = null; currentGroupData = null; currentAlbumId = null;
     showScreen('groups');
     loadUserGroups();
   };
@@ -1076,8 +1170,10 @@
   window.confirmRename = async () => {
     const val = document.getElementById('rename-input').value.trim();
     if (!val || !currentGroupId) return;
-    await updateDoc(doc(db, 'groups', currentGroupId), { name: val });
-    closeModal('rename-modal');
+    try {
+      await updateDoc(doc(db, 'groups', currentGroupId), { name: val });
+      closeModal('rename-modal');
+    } catch(e) { alert('could not rename, try again !'); }
   };
 
   window.copyCodeFromSettings = () => {
@@ -1097,10 +1193,8 @@
   window.leaveGroupFromSettings = async () => {
     if (!confirm('leave this group? you can rejoin with the code anytime.')) return;
     await setDoc(doc(db, 'users', currentUser.uid), { groupId: null }, { merge: true });
-    if (unsubscribeGroup) unsubscribeGroup();
-    if (unsubscribePosts) unsubscribePosts();
-    if (unsubscribeVibe) unsubscribeVibe();
-    currentGroupId = null; currentGroupData = null;
+    cleanupListeners();
+    currentGroupId = null; currentGroupData = null; currentAlbumId = null;
     showScreen('groups');
     loadUserGroups();
   };
@@ -1274,9 +1368,12 @@
     const q = query(collection(db, 'groups', currentGroupId, 'posts'), orderBy('createdAt', 'desc'));
     let count = 0;
     unsubscribePosts = onSnapshot(q, (snap) => {
+      const colL = document.getElementById('col-l');
+      const colR = document.getElementById('col-r');
+      if (!colL || !colR) return;
       document.getElementById('feed-loading').style.display = 'none';
-      document.getElementById('col-l').innerHTML = '';
-      document.getElementById('col-r').innerHTML = '';
+      colL.innerHTML = '';
+      colR.innerHTML = '';
       count = snap.docs.length;
       if (count === 0) {
         document.getElementById('feed-empty').style.display = 'block';
@@ -1335,20 +1432,23 @@
   }
 
   window.likePost = async (postId, btn) => {
+    if (!currentGroupId) return;
     const n = parseInt(btn.textContent.match(/\d+/)[0]);
-    if (btn.dataset.l) {
-      await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: Math.max(0, n-1) });
-      btn.dataset.l = '';
-    } else {
-      await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: n+1 });
-      btn.dataset.l = '1';
-    }
+    try {
+      if (btn.dataset.l) {
+        await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: Math.max(0, n-1) });
+        btn.dataset.l = '';
+      } else {
+        await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: n+1 });
+        btn.dataset.l = '1';
+      }
+    } catch(e) {}
   };
 
   window.postIt = async () => {
     const ta  = document.getElementById('answer-ta');
     const v   = ta.value.trim();
-    if (!v) return;
+    if (!v || !currentGroupId || !currentUser) return;
     try {
       await addDoc(collection(db, 'groups', currentGroupId, 'posts'), {
         text: v,
@@ -1392,6 +1492,7 @@
       b.classList.toggle('on', ['feed','album','vibe','invite','games'][i] === id);
     });
     if (id !== 'games' && pongRAF) { cancelAnimationFrame(pongRAF); pongRAF = null; }
+    if (id !== 'games' && tapInterval) { clearInterval(tapInterval); tapInterval = null; }
   };
 
   // ── CHAR COUNT ───────────────────────────────────
@@ -1406,7 +1507,7 @@
   };
   window.addSong = async () => {
     const inp = document.getElementById('sug-in');
-    const v = inp.value.trim(); if (!v || !currentGroupId) return;
+    const v = inp.value.trim(); if (!v || !currentGroupId || !currentUser) return;
     inp.value = '';
     try {
       await addDoc(collection(db, 'groups', currentGroupId, 'songs'), {
@@ -1591,35 +1692,126 @@
   window.addCustomPrompt = async () => {
     const inp = document.getElementById('custom-prompt-input');
     const v = inp.value.trim();
-    if (!v || !currentGroupId) return;
+    if (!v || !currentGroupId || !currentUser) return;
     inp.value = '';
-    await addDoc(collection(db, 'groups', currentGroupId, 'customPrompts'), {
-      text: v, uid: currentUser.uid,
-      authorName: currentUser.displayName,
-      createdAt: serverTimestamp()
-    });
+    try {
+      await addDoc(collection(db, 'groups', currentGroupId, 'customPrompts'), {
+        text: v, uid: currentUser.uid,
+        authorName: currentUser.displayName,
+        createdAt: serverTimestamp()
+      });
+    } catch(e) { alert('could not post prompt, try again !'); }
   };
 
   window.deleteCustomPrompt = async (id) => {
-    const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
-    await deleteDoc(doc(db, 'groups', currentGroupId, 'customPrompts', id));
+    if (!currentGroupId) return;
+    try { await deleteDoc(doc(db, 'groups', currentGroupId, 'customPrompts', id)); } catch(e) {}
   };
 
-  // ── ALBUM — REAL PHOTO UPLOADS ──────────────────
-  let albumName = 'our group';
+  // ── ALBUMS — MULTI ALBUM SYSTEM ────────────────
+  let currentAlbumId = null;
+  let currentAlbumName = 'album';
   let selectMode = false;
   const selectedPhotoIds = new Set();
   let unsubscribePhotos = null;
+  let unsubscribeAlbums = null;
 
+  // ── ALBUMS LIST ─────────────────────────────────
   function loadAlbumPhotos() {
-    if (unsubscribePhotos) unsubscribePhotos();
     if (!currentGroupId) return;
+    loadAlbumsList();
+  }
+
+  function loadAlbumsList() {
+    if (unsubscribeAlbums) unsubscribeAlbums();
+    document.getElementById('albums-list-view').style.display = 'block';
+    document.getElementById('album-detail-view').style.display = 'none';
+    const q = query(collection(db, 'groups', currentGroupId, 'albums'), orderBy('createdAt', 'asc'));
+    unsubscribeAlbums = onSnapshot(q, (snap) => {
+      const grid = document.getElementById('albums-grid');
+      grid.innerHTML = '';
+      if (snap.empty) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px 16px;color:var(--mid);font-size:12px;font-weight:700;line-height:1.8;">no albums yet !<br>tap <strong>+ new album</strong> to create one 🩷</div>';
+        return;
+      }
+      snap.docs.forEach(d => {
+        const a = d.data();
+        const card = document.createElement('div');
+        card.className = 'album-card';
+        card.onclick = () => openAlbum(d.id, a.name);
+        const coverContent = a.coverUrl
+          ? '<img src="' + a.coverUrl + '" style="width:100%;height:100%;object-fit:cover;" />'
+          : '<div style="width:100%;height:100%;background:' + (a.color || 'linear-gradient(135deg,#FFE4B0,#FCCDD5)') + ';display:flex;align-items:center;justify-content:center;font-size:36px;">' + (a.emoji || '🩷') + '</div>';
+        card.innerHTML =
+          '<div class="album-card-cover">' + coverContent + '</div>' +
+          '<div class="album-card-info">' +
+            '<div class="album-card-name">' + esc(a.name) + '</div>' +
+            '<div class="album-card-count">' + (a.photoCount || 0) + ' photos</div>' +
+          '</div>';
+        grid.appendChild(card);
+      });
+    });
+  }
+
+  window.createNewAlbum = () => {
+    document.getElementById('create-album-input').value = '';
+    document.getElementById('create-album-modal').classList.add('open');
+  };
+
+  window.confirmCreateAlbum = async () => {
+    const name = document.getElementById('create-album-input').value.trim();
+    if (!name) return;
+    const colors = [
+      'linear-gradient(135deg,#FFE4B0,#FCCDD5)',
+      'linear-gradient(135deg,#C0EAD0,#D8E8F8)',
+      'linear-gradient(135deg,#F5D8E8,#DDD0F8)',
+      'linear-gradient(135deg,#FFE8D0,#FFF0C0)',
+      'linear-gradient(135deg,#D8E8F8,#C0EAD0)'
+    ];
+    const emojis = ['🩷','🌸','✨','🎉','🌊','🌙','🍓','🌈','🎵','📸'];
+    const r = Math.floor(Math.random() * 5);
+    try {
+      const newAlbumRef = await addDoc(collection(db, 'groups', currentGroupId, 'albums'), {
+        name, photoCount: 0,
+        color: colors[r],
+        emoji: emojis[r],
+        createdBy: currentUser.uid,
+        createdAt: serverTimestamp()
+      });
+      closeModal('create-album-modal');
+      openAlbum(newAlbumRef.id, name);
+    } catch(e) { alert('could not create album, try again !'); }
+  };
+
+  // ── ALBUM DETAIL ─────────────────────────────────
+  window.openAlbum = (albumId, name) => {
+    currentAlbumId = albumId;
+    currentAlbumName = name;
+    document.getElementById('detail-album-name').textContent = name;
+    document.getElementById('albums-list-view').style.display = 'none';
+    document.getElementById('album-detail-view').style.display = 'block';
+    loadCurrentAlbumPhotos();
+  };
+
+  window.backToAlbums = () => {
+    if (unsubscribePhotos) unsubscribePhotos();
+    if (selectMode) toggleSelectMode();
+    currentAlbumId = null;
+    loadAlbumsList();
+  };
+
+  function loadCurrentAlbumPhotos() {
+    if (unsubscribePhotos) unsubscribePhotos();
     document.getElementById('album-loading').style.display = 'block';
-    const q = query(collection(db, 'groups', currentGroupId, 'photos'), orderBy('createdAt', 'desc'));
+    document.getElementById('album-loading').textContent = 'loading photos...';
+    const q = query(
+      collection(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos'),
+      orderBy('createdAt', 'desc')
+    );
     unsubscribePhotos = onSnapshot(q, (snap) => {
       document.getElementById('album-loading').style.display = 'none';
+      document.getElementById('detail-album-count').textContent = snap.size + ' photo' + (snap.size !== 1 ? 's' : '');
       const grid = document.getElementById('colgrid');
-      // remove old photo tiles but keep the add-tile label
       grid.querySelectorAll('.photo-tile').forEach(t => t.remove());
       const addTile = grid.querySelector('label.add-tile');
       snap.docs.forEach((d, i) => {
@@ -1630,32 +1822,19 @@
         tile.dataset.path = p.storagePath || '';
         tile.style.transform = i % 2 === 0 ? 'rotate(-1.1deg)' : 'rotate(0.8deg)';
         tile.innerHTML = '<img src="' + p.url + '" loading="lazy" /><div class="tlabel">' + esc(p.addedBy) + '</div>';
-        if (selectMode) {
-          tile.onclick = () => togglePhotoSelect(tile, d.id);
-        }
+        if (selectMode) tile.onclick = () => togglePhotoSelect(tile, d.id);
         grid.insertBefore(tile, addTile);
       });
-      document.getElementById('album-cover-name').textContent = albumName;
-    });
-
-    // load album meta (name, cover)
-    getDoc(doc(db, 'groups', currentGroupId, 'albumMeta', 'main')).then(snap => {
-      if (snap.exists()) {
-        albumName = snap.data().name || 'our group';
-        document.getElementById('album-cover-name').textContent = albumName;
-        if (snap.data().coverUrl) {
-          document.getElementById('album-cover-img').style.backgroundImage = 'url(' + snap.data().coverUrl + ')';
-          document.getElementById('album-cover-img').style.backgroundSize = 'cover';
-          document.getElementById('album-cover-img').style.backgroundPosition = 'center';
-          document.getElementById('album-cover-img').innerHTML = '';
-        }
-      }
+      // update photo count on album doc
+      updateDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId), { photoCount: snap.size }).catch(() => {});
     });
   }
 
+  // ── UPLOAD ──────────────────────────────────────
   window.uploadPhotos = async (input) => {
+    if (!currentAlbumId || !currentGroupId || !currentUser) return;
     const files = Array.from(input.files);
-    if (!files.length || !currentGroupId) return;
+    if (!files.length) return;
     const progressBar = document.getElementById('upload-progress-bar');
     const progressFill = document.getElementById('upload-progress-fill');
     const progressText = document.getElementById('upload-progress-text');
@@ -1663,7 +1842,7 @@
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       progressText.textContent = 'uploading ' + (i+1) + ' of ' + files.length + '...';
-      const path = 'groups/' + currentGroupId + '/photos/' + Date.now() + '_' + file.name;
+      const path = 'groups/' + currentGroupId + '/albums/' + currentAlbumId + '/' + Date.now() + '_' + file.name;
       const sref = ref(storage, path);
       await new Promise((resolve, reject) => {
         const task = uploadBytesResumable(sref, file);
@@ -1672,7 +1851,7 @@
           reject,
           async () => {
             const url = await getDownloadURL(task.snapshot.ref);
-            await addDoc(collection(db, 'groups', currentGroupId, 'photos'), {
+            await addDoc(collection(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos'), {
               url, storagePath: path,
               addedBy: currentUser.displayName,
               uid: currentUser.uid,
@@ -1689,12 +1868,13 @@
   };
 
   window.uploadCoverPhoto = async (input) => {
+    if (!currentAlbumId) return;
     const file = input.files[0];
-    if (!file || !currentGroupId) return;
+    if (!file) return;
     const progressBar = document.getElementById('upload-progress-bar');
     const progressFill = document.getElementById('upload-progress-fill');
     progressBar.style.display = 'block';
-    const path = 'groups/' + currentGroupId + '/cover/' + Date.now() + '_' + file.name;
+    const path = 'groups/' + currentGroupId + '/covers/' + currentAlbumId + '_' + Date.now();
     const sref = ref(storage, path);
     const task = uploadBytesResumable(sref, file);
     task.on('state_changed',
@@ -1702,12 +1882,7 @@
       () => { progressBar.style.display = 'none'; },
       async () => {
         const url = await getDownloadURL(task.snapshot.ref);
-        const coverEl = document.getElementById('album-cover-img');
-        coverEl.style.backgroundImage = 'url(' + url + ')';
-        coverEl.style.backgroundSize = 'cover';
-        coverEl.style.backgroundPosition = 'center';
-        coverEl.innerHTML = '';
-        await setDoc(doc(db, 'groups', currentGroupId, 'albumMeta', 'main'), { coverUrl: url, name: albumName }, { merge: true });
+        await updateDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId), { coverUrl: url });
         progressBar.style.display = 'none';
         progressFill.style.width = '0%';
       }
@@ -1715,20 +1890,23 @@
     input.value = '';
   };
 
-  window.renameAlbum = () => {
-    document.getElementById('rename-album-input').value = albumName;
+  // ── RENAME ──────────────────────────────────────
+  window.renameCurrentAlbum = () => {
+    document.getElementById('rename-album-input').value = currentAlbumName;
     document.getElementById('rename-album-modal').classList.add('open');
   };
+  window.renameAlbum = window.renameCurrentAlbum;
 
   window.confirmAlbumRename = async () => {
     const v = document.getElementById('rename-album-input').value.trim();
-    if (!v) return;
-    albumName = v;
-    document.getElementById('album-cover-name').textContent = albumName;
-    if (currentGroupId) await setDoc(doc(db, 'groups', currentGroupId, 'albumMeta', 'main'), { name: albumName }, { merge: true });
+    if (!v || !currentAlbumId) return;
+    currentAlbumName = v;
+    document.getElementById('detail-album-name').textContent = v;
+    await updateDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId), { name: v });
     closeModal('rename-album-modal');
   };
 
+  // ── SELECT + MOVE + DELETE ───────────────────────
   window.toggleSelectMode = () => {
     selectMode = !selectMode;
     selectedPhotoIds.clear();
@@ -1753,36 +1931,78 @@
     document.getElementById('select-bar-txt').textContent = selectedPhotoIds.size + ' selected';
   }
 
+  window.moveSelected = async () => {
+    if (selectedPhotoIds.size === 0) return;
+    // load other albums for picker
+    const snap = await getDocs(collection(db, 'groups', currentGroupId, 'albums'));
+    const others = snap.docs.filter(d => d.id !== currentAlbumId);
+    if (others.length === 0) {
+      alert('no other albums to move to — create one first !');
+      return;
+    }
+    const list = document.getElementById('move-albums-list');
+    list.innerHTML = '';
+    others.forEach(d => {
+      const a = d.data();
+      const item = document.createElement('div');
+      item.className = 'album-pick-item';
+      const thumb = document.createElement('div');
+      thumb.className = 'album-pick-thumb';
+      thumb.style.background = a.color || 'linear-gradient(135deg,#FFE4B0,#FCCDD5)';
+      thumb.textContent = a.emoji || '🩷';
+      const info = document.createElement('div');
+      info.innerHTML = '<div class="album-pick-name">' + esc(a.name) + '</div><div class="album-pick-count">' + (a.photoCount || 0) + ' photos</div>';
+      item.appendChild(thumb);
+      item.appendChild(info);
+      item.onclick = () => confirmMoveToAlbum(d.id, a.name);
+      list.appendChild(item);
+    });
+        document.getElementById('move-photos-modal').classList.add('open');
+  };
+
+  window.confirmMoveToAlbum = async (targetAlbumId, targetName) => {
+    closeModal('move-photos-modal');
+    try {
+      for (const photoId of selectedPhotoIds) {
+        const photoSnap = await getDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos', photoId));
+        if (!photoSnap.exists()) continue;
+        const data = photoSnap.data();
+        await addDoc(collection(db, 'groups', currentGroupId, 'albums', targetAlbumId, 'photos'), data);
+        await deleteDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos', photoId));
+      }
+    } catch(e) { alert('some photos could not be moved — try again !'); }
+    selectedPhotoIds.clear();
+    if (selectMode) toggleSelectMode();
+  };
+
   window.deleteSelected = async () => {
     if (selectedPhotoIds.size === 0) return;
     if (!confirm('delete ' + selectedPhotoIds.size + ' photo(s)? this cannot be undone.')) return;
     for (const id of selectedPhotoIds) {
-      const photoSnap = await getDoc(doc(db, 'groups', currentGroupId, 'photos', id));
+      const photoSnap = await getDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos', id));
       if (photoSnap.exists() && photoSnap.data().storagePath) {
         try { await deleteObject(ref(storage, photoSnap.data().storagePath)); } catch(e) {}
       }
-      await deleteDoc(doc(db, 'groups', currentGroupId, 'photos', id));
+      await deleteDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos', id));
     }
     selectedPhotoIds.clear();
-    toggleSelectMode();
+    if (selectMode) toggleSelectMode();
   };
 
   window.confirmDeleteAlbum = async () => {
-    if (!confirm('delete ALL photos? this cannot be undone.')) return;
-    const snap = await getDocs(collection(db, 'groups', currentGroupId, 'photos'));
+    if (!confirm('delete this entire album and all its photos? this cannot be undone.')) return;
+    const snap = await getDocs(collection(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos'));
     for (const d of snap.docs) {
       if (d.data().storagePath) {
         try { await deleteObject(ref(storage, d.data().storagePath)); } catch(e) {}
       }
-      await deleteDoc(doc(db, 'groups', currentGroupId, 'photos', d.id));
+      await deleteDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos', d.id));
     }
-    albumName = 'our group';
-    document.getElementById('album-cover-name').textContent = albumName;
-    document.getElementById('album-cover-img').style.backgroundImage = '';
-    document.getElementById('album-cover-img').innerHTML = '🩷';
+    await deleteDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId));
+    backToAlbums();
   };
 
-  // keep addPic as no-op since we use real uploads now
+  window.addPic = () => document.getElementById('photo-file-input') && document.getElementById('photo-file-input').click();
   window.addPic = () => document.getElementById('photo-file-input').click();
 
   // ── GAMES ────────────────────────────────────────

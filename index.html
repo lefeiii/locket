@@ -303,6 +303,38 @@
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
 
+    /* ── LEADERBOARD ── */
+    .leaderboard-card {
+      background: #fff; border-radius: 16px; padding: 14px 16px;
+      border: 1.5px solid rgba(200,180,190,0.18); margin-top: 10px;
+    }
+    .lb-title { font-family: var(--font-b); font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+    .lb-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 0; border-bottom: 1px solid rgba(200,180,190,0.12);
+    }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-rank { font-family: var(--font-b); font-size: 16px; font-weight: 800; color: var(--mid); width: 24px; flex-shrink: 0; text-align: center; }
+    .lb-rank.gold { color: #f5a623; }
+    .lb-rank.silver { color: #9b9b9b; }
+    .lb-rank.bronze { color: #c47b3e; }
+    .lb-av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: #fff; flex-shrink: 0; }
+    .lb-name { flex: 1; font-size: 13px; font-weight: 800; color: var(--ink); }
+    .lb-score { font-family: var(--font-b); font-size: 14px; font-weight: 800; color: var(--tomato); }
+    .lb-you { background: rgba(254,248,242,0.8); border-radius: 8px; padding: 2px 6px; }
+    .challenge-btn {
+      width: 100%; background: var(--ink); color: #fff; border: none;
+      border-radius: 999px; padding: 10px; font-family: var(--font-b);
+      font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 10px;
+    }
+    .post-score-row { display: flex; gap: 8px; margin-top: 10px; }
+    .post-score-btn {
+      flex: 1; background: var(--tomato); color: #fff; border: none;
+      border-radius: 12px; padding: 10px; font-family: var(--font-b);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+
+
     /* ── GUESS WHO GAME ── */
     .guess-who-card { background: #1a1028; border-radius: 20px; padding: 16px; margin-bottom: 10px; }
     .guess-photo-wrap { position: relative; width: 100%; aspect-ratio: 1; border-radius: 14px; overflow: hidden; background: #2a2040; margin-bottom: 12px; }
@@ -660,6 +692,9 @@
 
   <!-- ── GROUP SCREEN ── -->
   <div id="group-screen" style="display:none">
+    <div style="padding:16px 24px 0;align-self:stretch;">
+      <button class="back-btn" id="group-screen-back" onclick="showGroupsHub()" style="display:none">← back</button>
+    </div>
     <svg width="52" height="50" viewBox="0 0 70 66" fill="none">
       <path d="M35 62s-28-19-28-36C7 14 15 8 24 8c5 0 8.5 2.5 11 6 2.5-3.5 6-6 11-6 9 0 17 6 17 18 0 17-28 36-28 36z" fill="#FCCDD5" stroke="#E8736A" stroke-width="2.5"/>
     </svg>
@@ -885,14 +920,17 @@
   <!-- ── MAIN APP ── -->
   <div id="app-shell" style="display:none; flex-direction:column; flex:1;">
     <div class="topbar">
-      <div class="logo">
-        locket
-        <svg viewBox="0 0 28 26" fill="none">
-          <path d="M14 24s-11-7.5-11-14C3 5.7 6.4 3 10 3c2 0 3.5.9 4 2.2C14.5 3.9 16 3 18 3c3.6 0 7 2.7 7 7 0 6.5-11 14-11 14z" fill="#E8736A" stroke="#E8736A" stroke-width="1" stroke-linejoin="round"/>
-          <ellipse cx="14" cy="12" rx="4" ry="3" fill="rgba(255,255,255,0.22)"/>
-          <rect x="12" y="1" width="4" height="5" rx="1.5" fill="#c8505a"/>
-          <rect x="13" y="0" width="2" height="3" rx="0.8" fill="#b04048"/>
-        </svg>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="back-btn" onclick="showGroupsHub()" style="padding:5px 10px;font-size:11px;">← groups</button>
+        <div class="logo">
+          locket
+          <svg viewBox="0 0 28 26" fill="none">
+            <path d="M14 24s-11-7.5-11-14C3 5.7 6.4 3 10 3c2 0 3.5.9 4 2.2C14.5 3.9 16 3 18 3c3.6 0 7 2.7 7 7 0 6.5-11 14-11 14z" fill="#E8736A" stroke="#E8736A" stroke-width="1" stroke-linejoin="round"/>
+            <ellipse cx="14" cy="12" rx="4" ry="3" fill="rgba(255,255,255,0.22)"/>
+            <rect x="12" y="1" width="4" height="5" rx="1.5" fill="#c8505a"/>
+            <rect x="13" y="0" width="2" height="3" rx="0.8" fill="#b04048"/>
+          </svg>
+        </div>
       </div>
       <div class="group-chip" onclick="openSettings()">
         <div class="live-dot"></div>
@@ -1079,6 +1117,13 @@
               <div id="tap-status" style="color:rgba(255,255,255,0.5);font-size:12px;font-weight:800;">tap the target!</div>
             </div>
           </div>
+          <div id="tap-post-row" style="display:none;" class="post-score-row">
+            <button class="post-score-btn" onclick="postGameScore('tap',tapCount,'taps')">🏆 post my score</button>
+          </div>
+          <div class="leaderboard-card">
+            <div class="lb-title">🏆 tap challenge — group leaderboard</div>
+            <div id="tap-leaderboard"><div style="color:var(--mid);font-size:12px;font-weight:700;">no scores yet — be first!</div></div>
+          </div>
         </div>
 
         <!-- GUESS WHO GAME -->
@@ -1127,10 +1172,20 @@
             <button class="emoji-reveal-btn" id="emoji-reveal-btn" onclick="revealEmojiAnswer()">show answer</button>
             <button class="emoji-next-btn" id="emoji-next-btn" onclick="nextEmojiQuestion()" style="display:none;">next question →</button>
           </div>
+          <div id="emoji-post-row" style="display:none;" class="post-score-row">
+            <button class="post-score-btn" onclick="postGameScore('emoji',emojiScore,'/ 10')">🏆 post my score</button>
+          </div>
+          <div class="leaderboard-card">
+            <div class="lb-title">🏆 emoji brands — group leaderboard</div>
+            <div id="emoji-leaderboard"><div style="color:var(--mid);font-size:12px;font-weight:700;">no scores yet — be first!</div></div>
+          </div>
         </div>
 
         <!-- STREAK BILLBOARD -->
         <div id="streak-area" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <button class="back-btn" onclick="closeStreak()">← back</button>
+          </div>
           <div class="streak-card">
             <div class="streak-label">group streak 🔥</div>
             <div class="streak-number" id="streak-number">0</div>
@@ -1272,7 +1327,10 @@
     showScreen('settings');
   };
 
-  window.showGroupJoin = () => showScreen('group');
+  window.showGroupJoin = () => {
+    document.getElementById('group-screen-back').style.display = 'block';
+    showScreen('group');
+  };
   window.joinGroupFromHub = () => {
     const code = document.getElementById('hub-join-input').value.trim().toUpperCase();
     document.getElementById('join-code-input').value = code;
@@ -2247,6 +2305,8 @@
   window.startTapGame = () => {
     document.getElementById('tap-game-area').style.display = 'block';
     document.getElementById('tap-score').textContent = '0';
+    document.getElementById('tap-post-row').style.display = 'none';
+    loadLeaderboard('tap');
     tapCount = 0; let timeLeft = 10;
     document.getElementById('tap-timer').textContent = timeLeft;
     document.getElementById('tap-btn').disabled = false;
@@ -2258,7 +2318,8 @@
       if (timeLeft <= 0) {
         clearInterval(tapInterval);
         document.getElementById('tap-btn').disabled = true;
-        document.getElementById('tap-status').textContent = 'final score: ' + tapCount + ' taps! share it in the feed 🎯';
+        document.getElementById('tap-status').textContent = 'final score: ' + tapCount + ' taps!';
+        document.getElementById('tap-post-row').style.display = 'flex';
       }
     }, 1000);
   };
@@ -2276,6 +2337,8 @@
   window.closeTap = () => {
     clearInterval(tapInterval);
     document.getElementById('tap-game-area').style.display = 'none';
+    document.getElementById('tap-post-row').style.display = 'none';
+    document.getElementById('games-list-area').style.display = 'block';
   };
 
 
@@ -2418,6 +2481,8 @@
     emojiIndex = 0; emojiScore = 0; emojiAnswered = false;
     document.getElementById('games-list-area').style.display = 'none';
     document.getElementById('emoji-game-area').style.display = 'block';
+    document.getElementById('emoji-post-row').style.display = 'none';
+    loadLeaderboard('emoji');
     buildEmojiProgress();
     showEmojiQuestion();
   };
@@ -2499,6 +2564,7 @@
       document.getElementById('emoji-next-btn').textContent = 'play again →';
       document.getElementById('emoji-next-btn').style.display = 'block';
       document.getElementById('emoji-next-btn').onclick = startEmojiGame;
+      document.getElementById('emoji-post-row').style.display = 'flex';
       return;
     }
     showEmojiQuestion();
@@ -2512,10 +2578,16 @@
     document.getElementById('emoji-next-btn').textContent = 'next question →';
     document.getElementById('emoji-feedback').textContent = '';
     document.getElementById('emoji-answer-reveal').style.display = 'none';
+    document.getElementById('emoji-post-row').style.display = 'none';
     document.getElementById('games-list-area').style.display = 'block';
   };
 
   // ── STREAK BILLBOARD ─────────────────────────────
+  window.closeStreak = () => {
+    document.getElementById('streak-area').style.display = 'none';
+    document.getElementById('games-list-area').style.display = 'block';
+  };
+
   window.startStreak = async () => {
     if (!currentGroupId || !currentGroupData) { alert('join a group first !'); return; }
     document.getElementById('games-list-area').style.display = 'none';
@@ -2547,7 +2619,7 @@
           return d >= weekStart && d < weekEnd;
         });
         const uids = new Set(weekPosts.map(p => p.uid));
-        const allAnswered = members.length > 0 && members.every(m => uids.has(m.uid));
+        const allAnswered = members.length >= 2 && members.every(m => uids.has(m.uid));
         if (allAnswered || checkWeek === 0) {
           if (allAnswered) { streakCount++; checkWeek++; }
           else break;
@@ -2647,6 +2719,73 @@
     ctx.fillText('locket app · keep the group warm 🩷', W/2, 294);
 
     document.getElementById('share-overlay').classList.add('open');
+  };
+
+
+  // ── GAME LEADERBOARDS ────────────────────────────
+  window.postGameScore = async function(gameId, score, unit) {
+    if (!currentGroupId || !currentUser) return;
+    try {
+      const scoreRef = `${gameId}_${currentUser.uid}`;
+      await setDoc(doc(db, 'groups', currentGroupId, 'scores', scoreRef), {
+        gameId, score: Number(score),
+        unit, uid: currentUser.uid,
+        name: currentUser.displayName,
+        postedAt: serverTimestamp()
+      }, { merge: false });
+      // Reload the leaderboard
+      loadLeaderboard(gameId);
+      alert("score posted! 🏆 challenge your group to beat it!");
+    } catch(e) { alert('could not post score, try again !'); }
+  }
+
+  async function loadLeaderboard(gameId) {
+    if (!currentGroupId) return;
+    const elId = gameId + '-leaderboard';
+    const el = document.getElementById(elId);
+    if (!el) return;
+    try {
+      const snap = await getDocs(collection(db, 'groups', currentGroupId, 'scores'));
+      const scores = snap.docs
+        .map(d => d.data())
+        .filter(d => d.gameId === gameId)
+        .sort((a, b) => b.score - a.score);
+
+      if (scores.length === 0) {
+        el.innerHTML = '<div style="color:var(--mid);font-size:12px;font-weight:700;">no scores yet — be first!</div>';
+        return;
+      }
+
+      const colors = ['#F4A890','#8ED4B0','#E090A8','#F0C070','#C0A8E8','#90B8E8'];
+      const ranks = ['🥇','🥈','🥉'];
+      const rankClasses = ['gold','silver','bronze'];
+      el.innerHTML = scores.slice(0, 8).map((s, i) => {
+        const isYou = s.uid === currentUser.uid;
+        const rankDisplay = i < 3 ? ranks[i] : (i + 1);
+        const rankClass = i < 3 ? rankClasses[i] : '';
+        const colorIdx = (currentGroupData && currentGroupData.members)
+          ? currentGroupData.members.findIndex(m => m.uid === s.uid) % colors.length
+          : i % colors.length;
+        return '<div class="lb-row">' +
+          '<div class="lb-rank ' + rankClass + '">' + rankDisplay + '</div>' +
+          '<div class="lb-av" style="background:' + colors[Math.max(0,colorIdx)] + '">' + (s.name||'?').charAt(0).toUpperCase() + '</div>' +
+          '<div class="lb-name' + (isYou ? ' lb-you' : '') + '">' + esc(s.name||'unknown') + (isYou ? ' (you)' : '') + '</div>' +
+          '<div class="lb-score">' + s.score + ' ' + (s.unit||'') + '</div>' +
+        '</div>';
+      }).join('');
+    } catch(e) {
+      el.innerHTML = '<div style="color:var(--mid);font-size:12px;">could not load scores</div>';
+    }
+  }
+
+  // Load leaderboards when games tab opens
+  const _origGoTab = window.goTab;
+  window.goTab = (id, btn) => {
+    _origGoTab(id, btn);
+    if (id === 'games' && currentGroupId) {
+      loadLeaderboard('tap');
+      loadLeaderboard('emoji');
+    }
   };
 
   // INSTALL BANNER

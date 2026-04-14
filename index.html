@@ -303,6 +303,67 @@
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
 
+    /* ── GUESS WHO GAME ── */
+    .guess-who-card { background: #1a1028; border-radius: 20px; padding: 16px; margin-bottom: 10px; }
+    .guess-photo-wrap { position: relative; width: 100%; aspect-ratio: 1; border-radius: 14px; overflow: hidden; background: #2a2040; margin-bottom: 12px; }
+    .guess-photo-wrap img { width: 100%; height: 100%; object-fit: cover; filter: blur(20px) brightness(0.8); transition: filter 1s; }
+    .guess-photo-wrap img.revealed { filter: blur(0px) brightness(1); }
+    .guess-blur-label { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); border-radius: 999px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.8); }
+    .guess-input-row { display: flex; gap: 7px; margin-bottom: 8px; }
+    .guess-input { flex: 1; border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 12px; font-size: 13px; font-family: var(--font-n); background: rgba(255,255,255,0.07); color: #fff; outline: none; }
+    .guess-input::placeholder { color: rgba(255,255,255,0.3); }
+    .guess-btn { background: var(--tomato); color: #fff; border: none; border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: 800; cursor: pointer; font-family: var(--font-n); }
+    .guess-reveal-btn { width: 100%; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); border: none; border-radius: 10px; padding: 8px; font-size: 11px; font-weight: 800; cursor: pointer; font-family: var(--font-n); margin-top: 4px; }
+    .guess-result { text-align: center; padding: 10px 0; font-family: var(--font-b); font-size: 16px; font-weight: 800; }
+    .guess-correct { color: #6dcc94; }
+    .guess-wrong { color: var(--tomato); }
+    .guess-answers-list { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+    .guess-answer-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 6px 10px; font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; }
+    .guess-answer-correct { background: rgba(109,204,148,0.15); color: #6dcc94; }
+
+    /* ── STREAK BILLBOARD ── */
+    .streak-card { background: linear-gradient(135deg, #FFE8D8, #FDDCE8); border-radius: 20px; padding: 18px; margin-bottom: 10px; border: 2px solid rgba(232,115,106,0.2); }
+    .streak-number { font-family: var(--font-b); font-size: 72px; font-weight: 800; color: var(--tomato); text-align: center; line-height: 1; margin: 8px 0; }
+    .streak-label { font-size: 12px; font-weight: 800; color: var(--mid); text-align: center; text-transform: uppercase; letter-spacing: 0.12em; }
+    .streak-week-label { font-size: 11px; color: var(--mid); font-weight: 700; text-align: center; margin-top: 4px; }
+    .streak-members { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 14px 0; }
+    .streak-member { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .streak-av { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: #fff; position: relative; }
+    .streak-check { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-radius: 50%; background: #6dcc94; border: 2px solid #FFE8D8; display: flex; align-items: center; justify-content: center; font-size: 7px; }
+    .streak-pending { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-radius: 50%; background: rgba(180,140,160,0.4); border: 2px solid #FFE8D8; }
+    .streak-member-name { font-size: 9px; font-weight: 800; color: var(--mid); }
+    .share-btn { width: 100%; background: var(--ink); color: #fff; border: none; border-radius: 999px; padding: 12px; font-family: var(--font-b); font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+    .share-hint { font-size: 10px; color: var(--mid); font-weight: 700; text-align: center; margin-top: 6px; }
+
+    /* ── SHAREABLE IMAGE OVERLAY ── */
+    #share-overlay { display: none; position: fixed; inset: 0; background: rgba(46,32,48,0.6); z-index: 200; align-items: center; justify-content: center; padding: 24px; }
+    #share-overlay.open { display: flex; }
+    .share-card-wrap { background: var(--cream); border-radius: 24px; padding: 20px; width: 100%; max-width: 320px; }
+    .share-card-title { font-family: var(--font-b); font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+    .share-card-sub { font-size: 11px; color: var(--mid); font-weight: 700; margin-bottom: 14px; }
+    #share-canvas-wrap { border-radius: 16px; overflow: hidden; margin-bottom: 12px; }
+    .share-close-btn { width: 100%; background: transparent; border: 1.5px solid rgba(200,160,180,0.3); border-radius: 999px; padding: 10px; font-family: var(--font-n); font-size: 13px; font-weight: 800; color: var(--mid); cursor: pointer; }
+
+    /* ── EMOJI GAME ── */
+    .emoji-game-card { background: #fff; border-radius: 20px; padding: 18px; border: 2px solid rgba(200,180,190,0.18); margin-bottom: 10px; }
+    .emoji-puzzle { font-size: 42px; text-align: center; padding: 18px 0 10px; letter-spacing: 4px; }
+    .emoji-category { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mid); text-align: center; margin-bottom: 14px; }
+    .emoji-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .emoji-input { flex: 1; border: 2px solid rgba(200,160,180,0.2); border-radius: 12px; padding: 10px 13px; font-size: 14px; font-family: var(--font-n); background: rgba(254,248,242,0.7); color: var(--ink); outline: none; }
+    .emoji-input:focus { border-color: rgba(220,120,140,0.4); }
+    .emoji-submit-btn { background: var(--tomato); color: #fff; border: none; border-radius: 12px; padding: 10px 16px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: var(--font-n); }
+    .emoji-feedback { text-align: center; font-family: var(--font-b); font-size: 18px; font-weight: 800; min-height: 28px; margin-bottom: 8px; }
+    .emoji-reveal-btn { width: 100%; background: rgba(254,248,242,0.8); border: 1.5px solid rgba(200,180,190,0.2); border-radius: 12px; padding: 9px; font-size: 12px; font-weight: 800; color: var(--mid); cursor: pointer; font-family: var(--font-n); }
+    .emoji-answer-reveal { background: rgba(109,204,148,0.12); border: 1.5px solid rgba(109,204,148,0.3); border-radius: 12px; padding: 12px; text-align: center; font-family: var(--font-b); font-size: 16px; font-weight: 800; color: #1a7a48; display: none; }
+    .emoji-next-btn { width: 100%; background: var(--ink); color: #fff; border: none; border-radius: 12px; padding: 10px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: var(--font-n); margin-top: 8px; }
+    .emoji-progress { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; }
+    .emoji-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(200,180,190,0.3); }
+    .emoji-dot.done { background: var(--tomato); }
+    .emoji-dot.current { background: var(--ink); }
+    .emoji-score-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .emoji-score { font-size: 12px; font-weight: 800; color: var(--mid); }
+
+
     /* ── ALBUM CARDS ── */
     .album-card {
       background: #fff; border-radius: 16px; overflow: hidden;
@@ -741,6 +802,18 @@
     </div>
   </div>
 
+  <!-- ── SHARE OVERLAY ── -->
+  <div id="share-overlay">
+    <div class="share-card-wrap">
+      <div class="share-card-title">share your streak 🔥</div>
+      <div class="share-card-sub">screenshot this and post to your story !</div>
+      <div id="share-canvas-wrap">
+        <canvas id="share-canvas" width="320" height="320" style="width:100%;display:block;"></canvas>
+      </div>
+      <button class="share-close-btn" onclick="document.getElementById('share-overlay').classList.remove('open')">close</button>
+    </div>
+  </div>
+
   <!-- ── RENAME ALBUM MODAL ── -->
   <div class="modal-overlay" id="rename-album-modal">
     <div class="modal-box">
@@ -977,8 +1050,9 @@
       <!-- GAMES -->
       <div class="screen" id="screen-games">
         <div class="games-header">games 🎮</div>
-        <div class="games-sub">take a break and play with the group</div>
+        <div class="games-sub">play with your group</div>
 
+        <!-- PONG -->
         <div id="pong-game-area" style="display:none">
           <div class="pong-container">
             <div class="pong-header">
@@ -991,14 +1065,88 @@
           </div>
         </div>
 
+        <!-- TAP GAME -->
+        <div id="tap-game-area" style="display:none">
+          <div class="pong-container">
+            <div class="pong-header">
+              <div class="pong-title">tap challenge</div>
+              <div class="pong-score" id="tap-score">0</div>
+              <button class="pong-close" onclick="closeTap()">close</button>
+            </div>
+            <div id="tap-btn-wrap" style="display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:14px;">
+              <div id="tap-timer" style="font-size:32px;font-weight:800;color:#fff;font-family:var(--font-b);">10</div>
+              <button id="tap-btn" onclick="tapIt()" style="width:120px;height:120px;border-radius:50%;background:var(--tomato);border:none;font-size:40px;cursor:pointer;transition:transform 0.05s;">🎯</button>
+              <div id="tap-status" style="color:rgba(255,255,255,0.5);font-size:12px;font-weight:800;">tap the target!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GUESS WHO GAME -->
+        <div id="guess-who-area" style="display:none">
+          <div class="guess-who-card">
+            <div class="pong-header" style="margin-bottom:10px;">
+              <div class="pong-title">guess who</div>
+              <div id="gw-round" style="font-size:12px;font-weight:800;color:rgba(255,255,255,0.5);">round 1</div>
+              <button class="pong-close" onclick="closeGuessWho()">close</button>
+            </div>
+            <div class="guess-photo-wrap">
+              <img id="gw-photo" src="" alt="" />
+              <div class="guess-blur-label" id="gw-blur-label">who posted this?</div>
+            </div>
+            <div class="guess-input-row">
+              <input class="guess-input" id="gw-input" type="text" placeholder="type a name..." onkeydown="if(event.key==='Enter')submitGuess()" />
+              <button class="guess-btn" onclick="submitGuess()">guess</button>
+            </div>
+            <div class="guess-result" id="gw-result"></div>
+            <div class="guess-answers-list" id="gw-answers"></div>
+            <button class="guess-reveal-btn" id="gw-reveal-btn" onclick="revealGuessWho()">reveal answer</button>
+            <button class="game-play-btn" id="gw-next-btn" onclick="nextGuessWho()" style="display:none;margin-top:8px;">next photo →</button>
+          </div>
+        </div>
+
+        <!-- EMOJI GAME -->
+        <div id="emoji-game-area" style="display:none">
+          <div class="emoji-game-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div style="font-family:var(--font-b);font-size:16px;font-weight:800;color:var(--ink);">emoji brands</div>
+              <button class="pong-close" style="background:rgba(46,32,48,0.08);color:var(--ink);" onclick="closeEmojiGame()">close</button>
+            </div>
+            <div class="emoji-score-row">
+              <div class="emoji-score">score: <span id="emoji-score">0</span></div>
+              <div class="emoji-score">question <span id="emoji-qnum">1</span> of <span id="emoji-qtotal">10</span></div>
+            </div>
+            <div class="emoji-progress" id="emoji-progress"></div>
+            <div class="emoji-puzzle" id="emoji-puzzle">🍎📱</div>
+            <div class="emoji-category" id="emoji-category">tech brand</div>
+            <div class="emoji-input-row">
+              <input class="emoji-input" id="emoji-input" type="text" placeholder="what brand is this?" onkeydown="if(event.key==='Enter')submitEmojiAnswer()" />
+              <button class="emoji-submit-btn" onclick="submitEmojiAnswer()">→</button>
+            </div>
+            <div class="emoji-feedback" id="emoji-feedback"></div>
+            <div class="emoji-answer-reveal" id="emoji-answer-reveal"></div>
+            <button class="emoji-reveal-btn" id="emoji-reveal-btn" onclick="revealEmojiAnswer()">show answer</button>
+            <button class="emoji-next-btn" id="emoji-next-btn" onclick="nextEmojiQuestion()" style="display:none;">next question →</button>
+          </div>
+        </div>
+
+        <!-- STREAK BILLBOARD -->
+        <div id="streak-area" style="display:none">
+          <div class="streak-card">
+            <div class="streak-label">group streak 🔥</div>
+            <div class="streak-number" id="streak-number">0</div>
+            <div class="streak-week-label" id="streak-week-label">weeks in a row everyone answered</div>
+            <div class="streak-members" id="streak-members"></div>
+            <button class="share-btn" onclick="shareStreak()">share to story 📲</button>
+            <div class="share-hint">tap to generate a shareable image → screenshot → post !</div>
+          </div>
+        </div>
+
+        <!-- GAMES LIST -->
         <div id="games-list-area">
           <div class="game-card">
             <div class="game-card-top">
               <div class="game-icon">🏓</div>
-              <div>
-                <div class="game-name">table tennis</div>
-                <div class="game-desc">you vs the computer · drag to move your paddle</div>
-              </div>
+              <div><div class="game-name">table tennis</div><div class="game-desc">you vs AI · drag to move your paddle</div></div>
             </div>
             <button class="game-play-btn" onclick="startPong()">play now</button>
           </div>
@@ -1006,32 +1154,38 @@
           <div class="game-card">
             <div class="game-card-top">
               <div class="game-icon">🎯</div>
-              <div>
-                <div class="game-name">tap challenge</div>
-                <div class="game-desc">tap as fast as you can in 10 seconds · share your score</div>
-              </div>
+              <div><div class="game-name">tap challenge</div><div class="game-desc">tap as fast as you can in 10 seconds</div></div>
             </div>
             <button class="game-play-btn" onclick="startTapGame()">play now</button>
           </div>
 
-          <div id="tap-game-area" style="display:none;margin-top:4px;">
-            <div class="pong-container">
-              <div class="pong-header">
-                <div class="pong-title">tap challenge</div>
-                <div class="pong-score" id="tap-score">0</div>
-                <button class="pong-close" onclick="closeTap()">close</button>
-              </div>
-              <div id="tap-btn-wrap" style="display:flex;flex-direction:column;align-items:center;padding:20px 0;gap:14px;">
-                <div id="tap-timer" style="font-size:32px;font-weight:800;color:#fff;font-family:var(--font-b);">10</div>
-                <button id="tap-btn" onclick="tapIt()" style="width:120px;height:120px;border-radius:50%;background:var(--tomato);border:none;font-size:40px;cursor:pointer;transition:transform 0.05s;">🎯</button>
-                <div id="tap-status" style="color:rgba(255,255,255,0.5);font-size:12px;font-weight:800;">tap the target!</div>
-              </div>
+          <div class="game-card">
+            <div class="game-card-top">
+              <div class="game-icon">🕵️</div>
+              <div><div class="game-name">guess who</div><div class="game-desc">blurred group photos — who posted it?</div></div>
             </div>
+            <button class="game-play-btn" onclick="startGuessWho()">play now</button>
+          </div>
+
+          <div class="game-card">
+            <div class="game-card-top">
+              <div class="game-icon">🎭</div>
+              <div><div class="game-name">emoji brands</div><div class="game-desc">guess the brand from emojis · 10 rounds</div></div>
+            </div>
+            <button class="game-play-btn" onclick="startEmojiGame()">play now</button>
+          </div>
+
+          <div class="game-card">
+            <div class="game-card-top">
+              <div class="game-icon">🔥</div>
+              <div><div class="game-name">group streak</div><div class="game-desc">see your weekly streak · share to story</div></div>
+            </div>
+            <button class="game-play-btn" onclick="startStreak()">see streak</button>
           </div>
         </div>
       </div>
 
-    </div><!-- /body -->
+        </div><!-- /body -->
   </div><!-- /app-shell -->
 </div><!-- /phone -->
 
@@ -1306,7 +1460,8 @@
   }
 
   function loadVibeSuggestions() {
-    if (unsubscribeVibe) unsubscribeVibe();
+    if (unsubscribeVibe) { unsubscribeVibe(); unsubscribeVibe = null; }
+    if (!currentGroupId) return;
     const q = query(collection(db, 'groups', currentGroupId, 'songs'), orderBy('createdAt', 'desc'));
     unsubscribeVibe = onSnapshot(q, (snap) => {
       const el = document.getElementById('vibe-list');
@@ -1360,6 +1515,7 @@
 
   // ── FEED ─────────────────────────────────────────
   function loadFeed() {
+    if (!currentGroupId) return;
     if (unsubscribePosts) unsubscribePosts();
     document.getElementById('feed-loading').style.display = 'block';
     document.getElementById('feed-empty').style.display = 'none';
@@ -1801,6 +1957,7 @@
   };
 
   function loadCurrentAlbumPhotos() {
+    if (!currentGroupId || !currentAlbumId) return;
     if (unsubscribePhotos) unsubscribePhotos();
     document.getElementById('album-loading').style.display = 'block';
     document.getElementById('album-loading').textContent = 'loading photos...';
@@ -1826,7 +1983,7 @@
         grid.insertBefore(tile, addTile);
       });
       // update photo count on album doc
-      updateDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId), { photoCount: snap.size }).catch(() => {});
+      if (currentGroupId && currentAlbumId) updateDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId), { photoCount: snap.size }).catch(() => {});
     });
   }
 
@@ -1868,7 +2025,7 @@
   };
 
   window.uploadCoverPhoto = async (input) => {
-    if (!currentAlbumId) return;
+    if (!currentAlbumId || !currentGroupId || !currentUser) return;
     const file = input.files[0];
     if (!file) return;
     const progressBar = document.getElementById('upload-progress-bar');
@@ -1899,10 +2056,10 @@
 
   window.confirmAlbumRename = async () => {
     const v = document.getElementById('rename-album-input').value.trim();
-    if (!v || !currentAlbumId) return;
+    if (!v || !currentAlbumId || !currentGroupId) return;
     currentAlbumName = v;
     document.getElementById('detail-album-name').textContent = v;
-    await updateDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId), { name: v });
+    try { await updateDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId), { name: v }); } catch(e) {}
     closeModal('rename-album-modal');
   };
 
@@ -1932,7 +2089,7 @@
   }
 
   window.moveSelected = async () => {
-    if (selectedPhotoIds.size === 0) return;
+    if (selectedPhotoIds.size === 0 || !currentGroupId || !currentAlbumId) return;
     // load other albums for picker
     const snap = await getDocs(collection(db, 'groups', currentGroupId, 'albums'));
     const others = snap.docs.filter(d => d.id !== currentAlbumId);
@@ -1976,7 +2133,7 @@
   };
 
   window.deleteSelected = async () => {
-    if (selectedPhotoIds.size === 0) return;
+    if (selectedPhotoIds.size === 0 || !currentGroupId || !currentAlbumId) return;
     if (!confirm('delete ' + selectedPhotoIds.size + ' photo(s)? this cannot be undone.')) return;
     for (const id of selectedPhotoIds) {
       const photoSnap = await getDoc(doc(db, 'groups', currentGroupId, 'albums', currentAlbumId, 'photos', id));
@@ -2119,6 +2276,377 @@
   window.closeTap = () => {
     clearInterval(tapInterval);
     document.getElementById('tap-game-area').style.display = 'none';
+  };
+
+
+  // ── GUESS WHO GAME ──────────────────────────────
+  let gwPhotos = [], gwIndex = 0, gwRevealed = false;
+
+  window.startGuessWho = async () => {
+    if (!currentGroupId) { alert('join a group first !'); return; }
+    document.getElementById('games-list-area').style.display = 'none';
+    document.getElementById('guess-who-area').style.display = 'block';
+    gwRevealed = false; gwIndex = 0;
+    document.getElementById('gw-result').textContent = '';
+    document.getElementById('gw-answers').innerHTML = '';
+    await loadGuessWhoPhotos();
+  };
+
+  async function loadGuessWhoPhotos() {
+    gwPhotos = [];
+    try {
+      // collect photos from all albums
+      const albumsSnap = await getDocs(collection(db, 'groups', currentGroupId, 'albums'));
+      for (const albumDoc of albumsSnap.docs) {
+        const photosSnap = await getDocs(collection(db, 'groups', currentGroupId, 'albums', albumDoc.id, 'photos'));
+        photosSnap.docs.forEach(d => gwPhotos.push(d.data()));
+      }
+      // shuffle
+      gwPhotos = gwPhotos.sort(() => Math.random() - 0.5);
+    } catch(e) {}
+    if (gwPhotos.length === 0) {
+      document.getElementById('gw-result').textContent = 'no photos in your albums yet — add some first!';
+      document.getElementById('gw-result').style.color = 'rgba(255,255,255,0.5)';
+      document.getElementById('gw-reveal-btn').style.display = 'none';
+      return;
+    }
+    showGuessWhoPhoto();
+  }
+
+  function showGuessWhoPhoto() {
+    if (gwIndex >= gwPhotos.length) { gwIndex = 0; }
+    const p = gwPhotos[gwIndex];
+    const img = document.getElementById('gw-photo');
+    img.src = p.url;
+    img.classList.remove('revealed');
+    document.getElementById('gw-input').value = '';
+    document.getElementById('gw-result').textContent = '';
+    document.getElementById('gw-answers').innerHTML = '';
+    document.getElementById('gw-reveal-btn').style.display = 'block';
+    document.getElementById('gw-next-btn').style.display = 'none';
+    document.getElementById('gw-blur-label').textContent = 'who posted this?';
+    document.getElementById('gw-round').textContent = 'photo ' + (gwIndex+1) + ' of ' + gwPhotos.length;
+    gwRevealed = false;
+  }
+
+  window.submitGuess = () => {
+    const guess = document.getElementById('gw-input').value.trim().toLowerCase();
+    if (!guess || gwRevealed) return;
+    const correct = (gwPhotos[gwIndex].addedBy || '').toLowerCase();
+    const resultEl = document.getElementById('gw-result');
+    const answersEl = document.getElementById('gw-answers');
+    const isCorrect = correct.includes(guess) || guess.includes(correct.split(' ')[0].toLowerCase());
+    if (isCorrect) {
+      resultEl.textContent = '✓ correct! it was ' + gwPhotos[gwIndex].addedBy + ' !';
+      resultEl.className = 'guess-result guess-correct';
+      revealGuessWho();
+    } else {
+      resultEl.textContent = '✗ nope, try again!';
+      resultEl.className = 'guess-result guess-wrong';
+      const item = document.createElement('div');
+      item.className = 'guess-answer-item';
+      item.textContent = guess + ' ✗';
+      answersEl.appendChild(item);
+    }
+    document.getElementById('gw-input').value = '';
+  };
+
+  window.revealGuessWho = () => {
+    if (gwRevealed) return;
+    gwRevealed = true;
+    const p = gwPhotos[gwIndex];
+    document.getElementById('gw-photo').classList.add('revealed');
+    document.getElementById('gw-blur-label').textContent = 'posted by ' + (p.addedBy || 'unknown');
+    document.getElementById('gw-reveal-btn').style.display = 'none';
+    document.getElementById('gw-next-btn').style.display = 'block';
+    if (!document.getElementById('gw-result').textContent) {
+      document.getElementById('gw-result').textContent = 'posted by ' + (p.addedBy || 'unknown');
+      document.getElementById('gw-result').className = 'guess-result';
+      document.getElementById('gw-result').style.color = 'rgba(255,255,255,0.7)';
+    }
+  };
+
+  window.nextGuessWho = () => {
+    gwIndex++;
+    if (gwIndex >= gwPhotos.length) gwIndex = 0;
+    showGuessWhoPhoto();
+  };
+
+  window.closeGuessWho = () => {
+    document.getElementById('guess-who-area').style.display = 'none';
+    document.getElementById('games-list-area').style.display = 'block';
+  };
+
+  // ── EMOJI BRANDS GAME ───────────────────────────
+  const EMOJI_PUZZLES = [
+    { emoji: '🍎📱💻', answer: 'apple', category: 'tech brand' },
+    { emoji: '👟✔️', answer: 'nike', category: 'fashion brand' },
+    { emoji: '🐊👕', answer: 'lacoste', category: 'fashion brand' },
+    { emoji: '🦁☕', answer: 'lion bar', category: 'snack' },
+    { emoji: '🌊🏄‍♂️👟', answer: 'vans', category: 'fashion brand' },
+    { emoji: '🔵🟡🔴🟢', answer: 'google', category: 'tech brand' },
+    { emoji: '🦆📺', answer: 'duck tv', category: 'hint: yellow logo' },
+    { emoji: '👑🍺', answer: 'corona', category: 'drink brand' },
+    { emoji: '🐢🍕', answer: 'teenage mutant ninja turtles', category: 'movie / show' },
+    { emoji: '🌙⭐🍕', answer: 'pizza hut', category: 'food brand' },
+    { emoji: '🤖🚗', answer: 'tesla', category: 'car brand' },
+    { emoji: '🦅📦', answer: 'amazon', category: 'tech brand' },
+    { emoji: '☕🧜‍♀️', answer: 'starbucks', category: 'coffee brand' },
+    { emoji: '🔵👖', answer: 'levis', category: 'fashion brand' },
+    { emoji: '🐎👗', answer: 'ralph lauren', category: 'fashion brand' },
+    { emoji: '🍔👑', answer: 'burger king', category: 'food brand' },
+    { emoji: '🎮🕹️⭕❌', answer: 'playstation', category: 'gaming brand' },
+    { emoji: '🐦🔵', answer: 'twitter / x', category: 'social media' },
+    { emoji: '📸👻', answer: 'snapchat', category: 'social media' },
+    { emoji: '🎵🎵🟢', answer: 'spotify', category: 'music brand' },
+    { emoji: '🏠🔑🌍', answer: 'airbnb', category: 'travel brand' },
+    { emoji: '🐻☕🍩', answer: 'tim hortons', category: 'canadian food brand' },
+    { emoji: '🌮🔔', answer: 'taco bell', category: 'food brand' },
+    { emoji: '🟡M', answer: 'mcdonalds', category: 'food brand' },
+    { emoji: '👁️🍦', answer: 'baskin robbins', category: 'food brand' },
+    { emoji: '🦁🎬', answer: 'mgm studios', category: 'movie studio' },
+    { emoji: '🧊💎', answer: 'tiffany', category: 'luxury brand' },
+    { emoji: '🐊🦎', answer: 'crocs', category: 'shoe brand' },
+    { emoji: '🛋️🔵🟡', answer: 'ikea', category: 'home brand' },
+    { emoji: '🍫🥛', answer: 'cadbury', category: 'chocolate brand' },
+  ];
+
+  let emojiQuestions = [], emojiIndex = 0, emojiScore = 0, emojiAnswered = false;
+
+  window.startEmojiGame = () => {
+    emojiQuestions = [...EMOJI_PUZZLES].sort(() => Math.random() - 0.5).slice(0, 10);
+    emojiIndex = 0; emojiScore = 0; emojiAnswered = false;
+    document.getElementById('games-list-area').style.display = 'none';
+    document.getElementById('emoji-game-area').style.display = 'block';
+    buildEmojiProgress();
+    showEmojiQuestion();
+  };
+
+  function buildEmojiProgress() {
+    const el = document.getElementById('emoji-progress');
+    el.innerHTML = emojiQuestions.map((_, i) =>
+      '<div class="emoji-dot' + (i === emojiIndex ? ' current' : '') + '" id="edot-' + i + '"></div>'
+    ).join('');
+    document.getElementById('emoji-qtotal').textContent = emojiQuestions.length;
+  }
+
+  function showEmojiQuestion() {
+    const q = emojiQuestions[emojiIndex];
+    emojiAnswered = false;
+    document.getElementById('emoji-puzzle').textContent = q.emoji;
+    document.getElementById('emoji-category').textContent = q.category;
+    document.getElementById('emoji-input').value = '';
+    document.getElementById('emoji-feedback').textContent = '';
+    document.getElementById('emoji-feedback').style.color = '';
+    document.getElementById('emoji-answer-reveal').style.display = 'none';
+    document.getElementById('emoji-reveal-btn').style.display = 'block';
+    document.getElementById('emoji-next-btn').style.display = 'none';
+    document.getElementById('emoji-score').textContent = emojiScore;
+    document.getElementById('emoji-qnum').textContent = emojiIndex + 1;
+    document.querySelectorAll('.emoji-dot').forEach((d, i) => {
+      d.className = 'emoji-dot' + (i < emojiIndex ? ' done' : i === emojiIndex ? ' current' : '');
+    });
+  }
+
+  window.submitEmojiAnswer = () => {
+    if (emojiAnswered) return;
+    const inp = document.getElementById('emoji-input');
+    const guess = inp.value.trim().toLowerCase();
+    if (!guess) return;
+    const correct = emojiQuestions[emojiIndex].answer.toLowerCase();
+    const fb = document.getElementById('emoji-feedback');
+    const isCorrect = correct.split('/').some(a => guess.includes(a.trim()) || a.trim().includes(guess));
+    if (isCorrect) {
+      emojiScore++;
+      fb.textContent = '✓ correct !';
+      fb.style.color = '#1a7a48';
+      document.getElementById('emoji-score').textContent = emojiScore;
+      markEmojiAnswered(true);
+    } else {
+      fb.textContent = '✗ not quite — try again or reveal!';
+      fb.style.color = '#c0392b';
+    }
+    inp.value = '';
+  };
+
+  function markEmojiAnswered(correct) {
+    emojiAnswered = true;
+    document.getElementById('emoji-reveal-btn').style.display = 'none';
+    document.getElementById('emoji-next-btn').style.display = 'block';
+    document.getElementById('emoji-answer-reveal').textContent = '✓ ' + emojiQuestions[emojiIndex].answer.toUpperCase();
+    document.getElementById('emoji-answer-reveal').style.display = 'block';
+    const dot = document.getElementById('edot-' + emojiIndex);
+    if (dot) { dot.className = 'emoji-dot done'; dot.style.background = correct ? '#1DB954' : '#E8736A'; }
+  }
+
+  window.revealEmojiAnswer = () => {
+    if (emojiAnswered) return;
+    markEmojiAnswered(false);
+    document.getElementById('emoji-feedback').textContent = 'the answer was:';
+    document.getElementById('emoji-feedback').style.color = 'var(--mid)';
+  };
+
+  window.nextEmojiQuestion = () => {
+    emojiIndex++;
+    if (emojiIndex >= emojiQuestions.length) {
+      // Game over
+      document.getElementById('emoji-puzzle').textContent = '🎉';
+      document.getElementById('emoji-category').textContent = 'game over!';
+      document.getElementById('emoji-feedback').textContent = 'you scored ' + emojiScore + ' / ' + emojiQuestions.length + '!';
+      document.getElementById('emoji-feedback').style.color = 'var(--tomato)';
+      document.getElementById('emoji-input').style.display = 'none';
+      document.getElementById('emoji-reveal-btn').style.display = 'none';
+      document.getElementById('emoji-next-btn').textContent = 'play again →';
+      document.getElementById('emoji-next-btn').style.display = 'block';
+      document.getElementById('emoji-next-btn').onclick = startEmojiGame;
+      return;
+    }
+    showEmojiQuestion();
+  };
+
+  window.closeEmojiGame = () => {
+    document.getElementById('emoji-game-area').style.display = 'none';
+    document.getElementById('emoji-input').style.display = '';
+    document.getElementById('emoji-next-btn').style.display = 'none';
+    document.getElementById('emoji-next-btn').onclick = nextEmojiQuestion;
+    document.getElementById('emoji-next-btn').textContent = 'next question →';
+    document.getElementById('emoji-feedback').textContent = '';
+    document.getElementById('emoji-answer-reveal').style.display = 'none';
+    document.getElementById('games-list-area').style.display = 'block';
+  };
+
+  // ── STREAK BILLBOARD ─────────────────────────────
+  window.startStreak = async () => {
+    if (!currentGroupId || !currentGroupData) { alert('join a group first !'); return; }
+    document.getElementById('games-list-area').style.display = 'none';
+    document.getElementById('streak-area').style.display = 'block';
+    document.getElementById('streak-number').textContent = '...';
+    document.getElementById('streak-members').innerHTML = '';
+    await calculateStreak();
+  };
+
+  async function calculateStreak() {
+    const members = currentGroupData.members || [];
+    const weekKey = getWeekKey();
+
+    // Get all posts from this week
+    let streakCount = 0;
+    try {
+      const postsSnap = await getDocs(collection(db, 'groups', currentGroupId, 'posts'));
+      const allPosts = postsSnap.docs.map(d => d.data());
+
+      // Count consecutive weeks everyone answered
+      let checkWeek = 0;
+      while (true) {
+        const wKey = getWeekKey(-checkWeek);
+        const weekStart = getWeekStartDate(-checkWeek);
+        const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
+        const weekPosts = allPosts.filter(p => {
+          if (!p.createdAt) return false;
+          let d; try { d = p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt); } catch(e) { d = new Date(0); }
+          return d >= weekStart && d < weekEnd;
+        });
+        const uids = new Set(weekPosts.map(p => p.uid));
+        const allAnswered = members.length > 0 && members.every(m => uids.has(m.uid));
+        if (allAnswered || checkWeek === 0) {
+          if (allAnswered) { streakCount++; checkWeek++; }
+          else break;
+        } else break;
+        if (checkWeek > 52) break; // cap at 1 year
+      }
+
+      // This week's answered status
+      const thisWeekStart = getWeekStartDate(0);
+      const thisWeekEnd = new Date(thisWeekStart); thisWeekEnd.setDate(thisWeekEnd.getDate() + 7);
+      const thisWeekPosts = allPosts.filter(p => {
+        if (!p.createdAt) return false;
+        let d; try { d = p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt); } catch(e) { d = new Date(0); }
+        return d >= thisWeekStart && d < thisWeekEnd;
+      });
+      const thisWeekUids = new Set(thisWeekPosts.map(p => p.uid));
+
+      document.getElementById('streak-number').textContent = streakCount;
+      document.getElementById('streak-week-label').textContent =
+        streakCount === 1 ? '1 week in a row — keep it going!' :
+        streakCount === 0 ? "answer this week's prompt to start your streak!" :
+        streakCount + ' weeks in a row — incredible!';
+
+      // Render members with check/pending
+      const colors = ['#F4A890','#8ED4B0','#E090A8','#F0C070','#C0A8E8','#90B8E8'];
+      const membersEl = document.getElementById('streak-members');
+      membersEl.innerHTML = members.map((m, i) => {
+        const answered = thisWeekUids.has(m.uid);
+        return '<div class="streak-member">' +
+          '<div class="streak-av" style="background:' + colors[i % colors.length] + '">' +
+            m.name.charAt(0).toUpperCase() +
+            (answered
+              ? '<div class="streak-check">✓</div>'
+              : '<div class="streak-pending"></div>') +
+          '</div>' +
+          '<div class="streak-member-name">' + esc(m.name.split(' ')[0]) + '</div>' +
+        '</div>';
+      }).join('');
+
+    } catch(e) {
+      document.getElementById('streak-number').textContent = '?';
+    }
+  }
+
+  function getWeekStartDate(weekOffset) {
+    const d = new Date();
+    const day = d.getDay(); // 0=Sun
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday
+    const monday = new Date(d.setDate(diff + (weekOffset || 0) * 7));
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  }
+
+  window.shareStreak = () => {
+    const streak = document.getElementById('streak-number').textContent;
+    const groupName = currentGroupData ? currentGroupData.name : 'my group';
+    const canvas = document.getElementById('share-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = 320, H = 320;
+
+    // Draw gradient background
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, '#FFE8D8');
+    grad.addColorStop(0.5, '#FDDCE8');
+    grad.addColorStop(1, '#E8F8F0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // locket. logo
+    ctx.fillStyle = '#2e2030';
+    ctx.font = 'bold 22px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('locket.', W/2, 44);
+
+    // heart
+    ctx.font = '32px serif';
+    ctx.fillText('🔥', W/2, 100);
+
+    // streak number
+    ctx.font = 'bold 88px serif';
+    ctx.fillStyle = '#E8736A';
+    ctx.fillText(streak, W/2, 188);
+
+    // label
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillStyle = '#9a7888';
+    ctx.fillText('WEEK STREAK', W/2, 218);
+
+    // group name
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillStyle = '#2e2030';
+    ctx.fillText(groupName, W/2, 254);
+
+    // bottom tag
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = '#9a7888';
+    ctx.fillText('locket app · keep the group warm 🩷', W/2, 294);
+
+    document.getElementById('share-overlay').classList.add('open');
   };
 
   // INSTALL BANNER

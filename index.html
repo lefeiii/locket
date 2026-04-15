@@ -1032,8 +1032,8 @@
               <div style="font-size:10px;color:var(--mid);font-weight:700;" id="streak-info-sub">when everyone replies, you all earn a new charm</div>
             </div>
           </div>
-          <div id="bracelet-wrap" style="position:relative;width:100%;touch-action:none;margin-bottom:14px;">
-            <canvas id="bracelet-canvas" style="width:100%;display:block;touch-action:none;border-radius:12px;"></canvas>
+          <div id="bracelet-wrap" style="position:relative;width:100%;touch-action:none;margin-bottom:14px;min-height:160px;">
+            <canvas id="bracelet-canvas" style="width:100%;display:block;touch-action:none;border-radius:16px;background:transparent;"></canvas>
           </div>
           <div id="charm-detail" style="display:none;background:#fff;border-radius:18px;padding:14px 16px;border:1.5px solid rgba(200,180,190,0.2);margin-bottom:10px;">
             <div style="display:flex;align-items:center;gap:12px;">
@@ -2794,16 +2794,17 @@
       const snap = await getDocs(collection(db, 'groups', currentGroupId, 'charms'));
       bCharms = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
       await checkAndAwardCharm();
-      initBracelet();
     } catch(e) { console.error('loadCharms', e); }
     if (loadEl) loadEl.style.display = 'none';
     if (mainEl) mainEl.style.display = 'block';
+    // Init bracelet AFTER element is visible so offsetWidth is correct
+    requestAnimationFrame(() => requestAnimationFrame(() => initBracelet()));
     const countEl = document.getElementById('charms-count');
     if (countEl) countEl.textContent = bCharms.length;
     const emptyEl = document.getElementById('charms-empty');
     const wrapEl  = document.getElementById('bracelet-wrap');
     if (emptyEl) emptyEl.style.display = bCharms.length === 0 ? 'block' : 'none';
-    if (wrapEl)  wrapEl.style.display  = bCharms.length === 0 ? 'none'  : 'block';
+    if (wrapEl)  wrapEl.style.display  = 'block';  // always show bracelet
   }
 
   async function checkAndAwardCharm() {
@@ -2848,24 +2849,33 @@
   function initBracelet() {
     const canvas = document.getElementById('bracelet-canvas');
     if (!canvas) return;
-    const W = (canvas.parentElement||{}).offsetWidth || 340;
-    const H = Math.max(160, Math.min(200, Math.round(W * 0.52)));
-    canvas.width = W; canvas.height = H;
-    if (bPositions.length !== bCharms.length) {
-      bPositions = bCharms.map((_,i) =>
-        bCharms.length<=1 ? 0.5 : 0.1 + (i/Math.max(1,bCharms.length-1))*0.8
+    const W = canvas.parentElement ? canvas.parentElement.offsetWidth : 0;
+    if (W < 20) { setTimeout(initBracelet, 60); return; } // wait until visible
+
+    const H = Math.round(W * 0.62);
+    canvas.width  = W;
+    canvas.height = H;
+    canvas.style.height = H + 'px';
+
+    // Always spread across positions — use max(charms, 5) so empty bracelet still shows hooks
+    const slots = Math.max(bCharms.length, 5);
+    if (bPositions.length !== slots) {
+      bPositions = Array.from({length: slots}, (_, i) =>
+        slots === 1 ? 0.5 : 0.08 + (i / (slots - 1)) * 0.84
       );
     }
+
     canvas.onpointerdown   = bPointerDown;
     canvas.onpointermove   = bPointerMove;
     canvas.onpointerup     = bPointerUp;
     canvas.onpointercancel = bPointerUp;
+
     if (bAnimFrame) cancelAnimationFrame(bAnimFrame);
     bLoop();
   }
 
   function bLoop(ts) {
-    bSwayT = (ts||0)/1000;
+    bSwayT = (ts || 0) / 1000;
     bDraw();
     bAnimFrame = requestAnimationFrame(bLoop);
   }
@@ -2875,92 +2885,234 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0,0,W,H);
-    const ry=44, rx1=26, rx2=W-26;
-    const gSway = Math.sin(bSwayT*0.65)*2.2;
-    bDrawClasp(ctx,rx1,ry,false); bDrawClasp(ctx,rx2,ry,true);
-    bDrawChain(ctx,rx1,ry,rx2,ry,gSway);
-    bCharms.forEach((charm,i) => {
-      const t = bPositions[i];
-      const cx = rx1+(rx2-rx1)*t;
-      const sag = Math.sin(t*Math.PI)*6;
-      const lSway = gSway*(0.4+t*0.6);
-      const isDrag = bDragIdx===i, isSel=bSelected===i;
-      const phase = i*1.7+bSwayT*(0.75+i*0.09);
-      const swX = isDrag?0:Math.sin(phase)*1.8;
-      const swA = isDrag?0:Math.sin(phase*0.85)*0.07;
-      const hLen = 30+(i%3)*9;
-      const by = ry+sag+lSway;
-      bDrawStr(ctx, cx+swX*0.5, by, swX, hLen, isSel);
-      bDrawCharmShape(ctx, cx+swX, by+hLen, charm, swA, isDrag, isSel);
-    });
-  }
+    ctx.clearRect(0, 0, W, H);
 
-  function bDrawChain(ctx,x1,y1,x2,y2,sway) {
-    const n = Math.floor((x2-x1)/8);
-    for (let i=0;i<=n;i++) {
-      const t=i/n, x=x1+(x2-x1)*t;
-      const y = y1+Math.sin(t*Math.PI)*5+sway*0.3;
-      const a = t<0.5?0.4:-0.4;
-      ctx.beginPath(); ctx.ellipse(x,y,4,2.2,a,0,Math.PI*2);
-      ctx.strokeStyle='#c0b8c8'; ctx.lineWidth=1.3; ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(x-0.6,y-0.7,2.2,1,a,0,Math.PI);
-      ctx.strokeStyle='rgba(255,255,255,0.65)'; ctx.lineWidth=0.7; ctx.stroke();
+    // ── Soft warm background ──
+    const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+    bgGrad.addColorStop(0, 'rgba(255,240,232,0.55)');
+    bgGrad.addColorStop(1, 'rgba(252,220,225,0.4)');
+    ctx.fillStyle = bgGrad;
+    ctx.beginPath();
+    ctx.roundRect(0, 0, W, H, 16);
+    ctx.fill();
+
+    // ── Chain geometry ──
+    const chainY = Math.round(H * 0.28);   // chain sits at ~28% from top
+    const rx1 = 22, rx2 = W - 22;
+    const globalSway = Math.sin(bSwayT * 0.65) * 2.8;
+
+    // ── Clasps ──
+    bDrawClasp(ctx, rx1, chainY + globalSway * 0.2, false);
+    bDrawClasp(ctx, rx2, chainY - globalSway * 0.2, true);
+
+    // ── Chain links ──
+    bDrawChain(ctx, rx1, chainY, rx2, chainY, globalSway);
+
+    // ── Charms or empty hooks ──
+    const slots = Math.max(bCharms.length, 5);
+    for (let i = 0; i < slots; i++) {
+      const t   = bPositions[i] !== undefined ? bPositions[i]
+                  : (slots === 1 ? 0.5 : 0.08 + (i / (slots - 1)) * 0.84);
+      const cx  = rx1 + (rx2 - rx1) * t;
+      // catenary sag: deepest in middle
+      const sag = Math.sin(t * Math.PI) * 10;
+      const lSway  = globalSway * (0.3 + t * 0.7);
+      const baseY  = chainY + sag + lSway;
+
+      const isDrag = (bDragIdx === i);
+      const isSel  = (bSelected === i);
+
+      // per-charm gentle pendulum
+      const phase  = i * 1.9 + bSwayT * (0.72 + i * 0.08);
+      const swX    = isDrag ? 0 : Math.sin(phase) * 2.2;
+      const swA    = isDrag ? 0 : Math.sin(phase * 0.82) * 0.075;
+      const hLen   = 34 + (i % 3) * 10;   // different hang lengths
+
+      bDrawString(ctx, cx + swX * 0.45, baseY, swX, hLen, isSel);
+
+      if (i < bCharms.length) {
+        bDrawCharmShape(ctx, cx + swX, baseY + hLen, bCharms[i], swA, isDrag, isSel);
+      } else {
+        bDrawEmptyHook(ctx, cx + swX, baseY + hLen, swA);
+      }
     }
   }
 
-  function bDrawClasp(ctx,x,y,flip) {
-    ctx.save(); ctx.translate(x,y); if(flip) ctx.scale(-1,1);
-    const g=ctx.createLinearGradient(-7,-5,7,5);
-    g.addColorStop(0,'#ece4ec'); g.addColorStop(0.5,'#fff'); g.addColorStop(1,'#b8b0b8');
-    ctx.fillStyle=g; ctx.beginPath(); ctx.roundRect(-7,-5,14,10,3); ctx.fill();
-    ctx.strokeStyle='#c0b8c0'; ctx.lineWidth=0.8; ctx.stroke();
-    ctx.beginPath(); ctx.arc(-1,0,2.2,0,Math.PI*2); ctx.strokeStyle='#a8a0a8'; ctx.lineWidth=0.9; ctx.stroke();
+  function bDrawChain(ctx, x1, y1, x2, y2, sway) {
+    const n = Math.floor((x2 - x1) / 9);
+    for (let i = 0; i <= n; i++) {
+      const t = i / n;
+      const x = x1 + (x2 - x1) * t;
+      const sag = Math.sin(t * Math.PI) * 8;
+      const y   = y1 + sag + sway * 0.28;
+      const a   = t < 0.5 ? 0.45 : -0.45;
+
+      // Link body
+      ctx.beginPath();
+      ctx.ellipse(x, y, 4.5, 2.5, a, 0, Math.PI * 2);
+      ctx.strokeStyle = '#b8aec0';
+      ctx.lineWidth   = 1.4;
+      ctx.stroke();
+
+      // Highlight on top half
+      ctx.beginPath();
+      ctx.ellipse(x - 0.7, y - 0.8, 2.8, 1.1, a, 0, Math.PI);
+      ctx.strokeStyle = 'rgba(255,255,255,0.72)';
+      ctx.lineWidth   = 0.7;
+      ctx.stroke();
+    }
+  }
+
+  function bDrawClasp(ctx, x, y, flip) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (flip) ctx.scale(-1, 1);
+    const g = ctx.createLinearGradient(-8, -6, 8, 6);
+    g.addColorStop(0, '#f0eaf0');
+    g.addColorStop(0.45, '#ffffff');
+    g.addColorStop(1, '#b0a8b8');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.roundRect(-8, -6, 16, 12, 4);
+    ctx.fill();
+    ctx.strokeStyle = '#c0b8c8';
+    ctx.lineWidth   = 1.0;
+    ctx.stroke();
+    // detail dot
+    ctx.beginPath();
+    ctx.arc(-1, 0, 2.5, 0, Math.PI * 2);
+    ctx.strokeStyle = '#a098a8';
+    ctx.lineWidth   = 1.0;
+    ctx.stroke();
     ctx.restore();
   }
 
-  function bDrawStr(ctx,x,y,swX,len,isSel) {
-    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+swX*0.4,y+len);
-    ctx.strokeStyle=isSel?'#c090d0':'#c0b8c8'; ctx.lineWidth=isSel?1.6:1.1; ctx.stroke();
+  function bDrawString(ctx, x, y, swX, len, isSel) {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + swX * 0.35, y + len);
+    ctx.strokeStyle = isSel ? '#d090e0' : '#c4b8d0';
+    ctx.lineWidth   = isSel ? 1.8 : 1.2;
+    ctx.stroke();
   }
 
-  function bDrawCharmShape(ctx,cx,cy,charm,angle,isDrag,isSel) {
-    const tmpl=CHARM_TEMPLATES[charm.type]||CHARM_TEMPLATES.streaking, r=20;
-    ctx.save(); ctx.translate(cx,cy); ctx.rotate(angle);
-    if (!isDrag) { ctx.beginPath(); ctx.arc(2.5,4,r,0,Math.PI*2); ctx.fillStyle='rgba(80,40,80,0.13)'; ctx.fill(); }
-    const rg=ctx.createRadialGradient(-r*0.28,-r*0.28,r*0.06,0,0,r*1.1);
-    rg.addColorStop(0,bLighten(tmpl.bg,38)); rg.addColorStop(0.55,tmpl.bg); rg.addColorStop(1,bDarken(tmpl.bg,22));
-    ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle=rg; ctx.fill();
-    ctx.strokeStyle=isSel?'#e050a0':tmpl.stroke; ctx.lineWidth=isSel?2.8:2.0; ctx.stroke();
-    ctx.beginPath(); ctx.arc(-2.5,-2.5,r-5,Math.PI*1.1,Math.PI*1.9);
-    ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=1.5; ctx.stroke();
-    const bg2=ctx.createLinearGradient(-4,-r-9,4,-r-1);
-    bg2.addColorStop(0,'#ece4ec'); bg2.addColorStop(1,'#a8a0a8');
-    ctx.beginPath(); ctx.arc(0,-r-5,4,0,Math.PI*2); ctx.fillStyle=bg2; ctx.fill();
-    ctx.strokeStyle='#c0b8c0'; ctx.lineWidth=0.9; ctx.stroke();
-    ctx.font='17px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(tmpl.emoji,0,1);
-    if (isDrag) {
-      ctx.beginPath(); ctx.arc(0,0,r+5,0,Math.PI*2);
-      ctx.strokeStyle='rgba(200,120,200,0.45)'; ctx.lineWidth=2.2;
-      ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+  function bDrawEmptyHook(ctx, cx, cy, angle) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    // faint dashed circle placeholder
+    ctx.beginPath();
+    ctx.arc(0, 0, 20, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(190,170,200,0.28)';
+    ctx.lineWidth   = 1.5;
+    ctx.setLineDash([4, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // small centre dot
+    ctx.beginPath();
+    ctx.arc(0, 0, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(190,170,200,0.25)';
+    ctx.fill();
+    // bail stub
+    const bg = ctx.createLinearGradient(-4, -30, 4, -22);
+    bg.addColorStop(0, 'rgba(220,210,228,0.6)');
+    bg.addColorStop(1, 'rgba(180,168,192,0.4)');
+    ctx.beginPath();
+    ctx.arc(0, -24, 4, 0, Math.PI * 2);
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function bDrawCharmShape(ctx, cx, cy, charm, angle, isDrag, isSel) {
+    const tmpl = CHARM_TEMPLATES[charm.type] || CHARM_TEMPLATES.streaking;
+    const r = 22;   // bigger than before
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+
+    // Drop shadow
+    if (!isDrag) {
+      ctx.beginPath();
+      ctx.arc(3, 5, r + 1, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(60, 30, 70, 0.14)';
+      ctx.fill();
     }
+
+    // Jewel body — radial gradient for 3-D sphere look
+    const rg = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.05, 0, 0, r * 1.15);
+    rg.addColorStop(0,    bLighten(tmpl.bg, 45));
+    rg.addColorStop(0.45, tmpl.bg);
+    rg.addColorStop(1,    bDarken(tmpl.bg, 28));
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fillStyle = rg;
+    ctx.fill();
+
+    // Bezel rim
+    ctx.strokeStyle = isSel ? '#e040a0' : tmpl.stroke;
+    ctx.lineWidth   = isSel ? 3.0 : 2.2;
+    ctx.stroke();
+
+    // Inner gloss arc
+    ctx.beginPath();
+    ctx.arc(-3, -3, r - 6, Math.PI * 1.05, Math.PI * 1.95);
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth   = 2.0;
+    ctx.stroke();
+
+    // Bail (top loop)
+    const bg2 = ctx.createLinearGradient(-4, -r - 11, 4, -r - 2);
+    bg2.addColorStop(0, '#f0eaf0');
+    bg2.addColorStop(1, '#a8a0b0');
+    ctx.beginPath();
+    ctx.arc(0, -r - 6, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle   = bg2;
+    ctx.fill();
+    ctx.strokeStyle = '#c0b8c8';
+    ctx.lineWidth   = 1.0;
+    ctx.stroke();
+
+    // Emoji
+    ctx.font          = '18px serif';
+    ctx.textAlign     = 'center';
+    ctx.textBaseline  = 'middle';
+    ctx.fillText(tmpl.emoji, 0, 1);
+
+    // Drag halo
+    if (isDrag) {
+      ctx.beginPath();
+      ctx.arc(0, 0, r + 6, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(210, 130, 210, 0.5)';
+      ctx.lineWidth   = 2.5;
+      ctx.setLineDash([5, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
     ctx.restore();
   }
 
   function bLighten(hex,n){try{const v=parseInt(hex.replace('#',''),16);const r=Math.min(255,(v>>16)+n),g=Math.min(255,((v>>8)&0xff)+n),b=Math.min(255,(v&0xff)+n);return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return hex;}}
   function bDarken(hex,n){return bLighten(hex,-n);}
 
-  function bHitTest(ex,ey) {
-    const canvas=document.getElementById('bracelet-canvas');
+  function bHitTest(ex, ey) {
+    const canvas = document.getElementById('bracelet-canvas');
     if (!canvas) return -1;
-    const rect=canvas.getBoundingClientRect(), sx=canvas.width/rect.width;
-    const x=(ex-rect.left)*sx, y=(ey-rect.top)*sx;
-    const W=canvas.width, rx1=26, rx2=W-26, ry=44;
-    for (let i=bCharms.length-1;i>=0;i--) {
-      const t=bPositions[i], cx=rx1+(rx2-rx1)*t;
-      const cy=ry+Math.sin(t*Math.PI)*6+(30+(i%3)*9);
-      if (Math.hypot(x-cx,y-cy)<26) return i;
+    const rect = canvas.getBoundingClientRect();
+    const sx = canvas.width / rect.width;
+    const x  = (ex - rect.left) * sx;
+    const y  = (ey - rect.top)  * sx;
+    const W  = canvas.width, H = canvas.height;
+    const rx1 = 22, rx2 = W - 22;
+    const chainY = Math.round(H * 0.28);
+    for (let i = bCharms.length - 1; i >= 0; i--) {
+      const t    = bPositions[i];
+      const cx   = rx1 + (rx2 - rx1) * t;
+      const sag  = Math.sin(t * Math.PI) * 10;
+      const hLen = 34 + (i % 3) * 10;
+      const cy   = chainY + sag + hLen;
+      if (Math.hypot(x - cx, y - cy) < 28) return i;
     }
     return -1;
   }
@@ -2976,12 +3128,13 @@
 
   function bPointerMove(e) {
     e.preventDefault();
-    if (bDragIdx<0) return;
-    const canvas=document.getElementById('bracelet-canvas');
-    const rect=canvas.getBoundingClientRect(), sx=canvas.width/rect.width;
-    const x=(e.clientX-rect.left)*sx;
-    const W=canvas.width, rx1=26, rx2=W-26;
-    bPositions[bDragIdx]=Math.max(0.04,Math.min(0.96,(x-rx1)/(rx2-rx1)));
+    if (bDragIdx < 0) return;
+    const canvas = document.getElementById('bracelet-canvas');
+    const rect   = canvas.getBoundingClientRect();
+    const sx     = canvas.width / rect.width;
+    const x      = (e.clientX - rect.left) * sx;
+    const W      = canvas.width, rx1 = 22, rx2 = W - 22;
+    bPositions[bDragIdx] = Math.max(0.04, Math.min(0.96, (x - rx1) / (rx2 - rx1)));
   }
 
   function bPointerUp(e) {

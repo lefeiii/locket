@@ -266,6 +266,169 @@
     }
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
+
+    /* ══════════════════════════════════════════
+       LOCKET CHARMS — FULL BLEED LUXURY PAGE
+    ══════════════════════════════════════════ */
+
+    /* Make the vibe screen fill everything, no padding */
+    #screen-vibe.active {
+      display: flex !important;
+      flex-direction: column;
+      margin: -4px -15px -32px;   /* cancel .body padding */
+      min-height: calc(100dvh - 110px); /* below topbar+tabs */
+      overflow: hidden;
+      position: relative;
+    }
+    #charms-main { flex: 1; display: flex; flex-direction: column; }
+
+    /* Loading */
+    .charms-loading-state {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; padding: 60px 0;
+      font-size: 12px; font-weight: 700; color: var(--mid);
+    }
+    .charms-loading-spinner {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2.5px solid rgba(200,160,180,0.2);
+      border-top-color: var(--tomato);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Full-bleed stage */
+    #bracelet-stage {
+      flex: 1; position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #1a0e20 0%, #2a1535 35%, #1e1028 65%, #150d1c 100%);
+      display: flex; flex-direction: column;
+    }
+
+    /* Ambient glow orbs */
+    .charm-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(60px); pointer-events: none; opacity: 0.35;
+    }
+    .charm-orb-1 {
+      width: 220px; height: 220px; top: -60px; left: -40px;
+      background: radial-gradient(circle, #c060e0 0%, transparent 70%);
+      animation: orbFloat1 8s ease-in-out infinite;
+    }
+    .charm-orb-2 {
+      width: 180px; height: 180px; top: 20px; right: -30px;
+      background: radial-gradient(circle, #e06090 0%, transparent 70%);
+      animation: orbFloat2 10s ease-in-out infinite;
+    }
+    .charm-orb-3 {
+      width: 160px; height: 160px; bottom: 80px; left: 30%;
+      background: radial-gradient(circle, #6040c0 0%, transparent 70%);
+      animation: orbFloat3 12s ease-in-out infinite;
+    }
+    @keyframes orbFloat1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,30px)} }
+    @keyframes orbFloat2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-25px,20px)} }
+    @keyframes orbFloat3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(15px,-25px)} }
+
+    /* Header overlay */
+    .charms-header-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 18px 18px 0; position: relative; z-index: 10;
+    }
+    .charms-title {
+      font-family: var(--font-b); font-size: 22px; font-weight: 800;
+      color: #fff; letter-spacing: -0.02em;
+      text-shadow: 0 2px 20px rgba(200,120,240,0.5);
+    }
+    .charms-title-sub { font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 700; margin-top: 2px; }
+    .charms-count-badge {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px; padding: 5px 13px;
+      font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Bracelet scene — takes most of the vertical space */
+    #bracelet-scene {
+      flex: 1; position: relative; z-index: 5;
+      display: flex; align-items: flex-start; padding-top: 20px;
+      overflow: visible;
+    }
+    #bracelet-svg {
+      width: 100%; overflow: visible;
+      filter: drop-shadow(0 4px 24px rgba(180,100,220,0.2));
+    }
+
+    /* Charm strings — CSS animation for sway */
+    .charm-assembly {
+      cursor: grab; transform-origin: top center;
+      animation: charmSway 3s ease-in-out infinite;
+    }
+    .charm-assembly:active { cursor: grabbing; }
+    .charm-assembly:nth-child(1) { animation-delay: 0s;     animation-duration: 3.2s; }
+    .charm-assembly:nth-child(2) { animation-delay: -0.6s;  animation-duration: 3.5s; }
+    .charm-assembly:nth-child(3) { animation-delay: -1.1s;  animation-duration: 2.9s; }
+    .charm-assembly:nth-child(4) { animation-delay: -1.7s;  animation-duration: 3.3s; }
+    .charm-assembly:nth-child(5) { animation-delay: -0.4s;  animation-duration: 3.7s; }
+    .charm-assembly:nth-child(6) { animation-delay: -2.1s;  animation-duration: 3.0s; }
+    .charm-assembly:nth-child(7) { animation-delay: -1.4s;  animation-duration: 3.4s; }
+    .charm-assembly:nth-child(8) { animation-delay: -0.9s;  animation-duration: 2.8s; }
+    @keyframes charmSway {
+      0%,100% { transform: rotate(-2.5deg); }
+      50%      { transform: rotate(2.5deg); }
+    }
+    .charm-assembly.dragging { animation: none !important; }
+
+    /* Charm detail card */
+    .charm-detail-card {
+      position: absolute; bottom: 60px; left: 16px; right: 16px; z-index: 20;
+      background: rgba(30,18,40,0.85); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .charm-detail-emoji { font-size: 36px; flex-shrink: 0; }
+    .charm-detail-text { flex: 1; }
+    .charm-detail-name { font-family: var(--font-b); font-size: 16px; font-weight: 800; color: #fff; }
+    .charm-detail-meta { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; margin-top: 2px; }
+    .charm-detail-close {
+      background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
+      width: 28px; height: 28px; color: rgba(255,255,255,0.6);
+      font-size: 12px; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Streak pill */
+    .charms-streak-pill {
+      position: absolute; bottom: 14px; left: 16px; right: 16px; z-index: 10;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 999px;
+      padding: 8px 16px; font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* Empty state */
+    .charms-empty-state {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      text-align: center; z-index: 10; padding: 0 32px;
+    }
+    .charms-empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .charms-empty-title { font-family: var(--font-b); font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .charms-empty-sub { font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 700; line-height: 1.7; }
+
+    /* Hint */
+    .charms-hint {
+      text-align: center; font-size: 10px; font-weight: 700;
+      color: rgba(255,255,255,0.25); padding: 8px 0 12px;
+      background: #150d1c; position: relative; z-index: 10;
+    }
+
+    /* Bracelet entrance animation */
+    @keyframes braceletReveal {
+      from { opacity: 0; transform: translateY(-30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #charms-main { animation: braceletReveal 0.6s ease forwards; }
+
     /* ── LOCKET CHARMS ── */
     #bracelet-canvas { cursor: grab; }
     #bracelet-canvas:active { cursor: grabbing; }
@@ -1016,41 +1179,106 @@
 
             <!-- VIBE / CHARMS -->
       <div class="screen" id="screen-vibe">
-        <div id="charms-loading" style="text-align:center;padding:48px 0;color:var(--mid);font-size:13px;font-weight:700;">loading your charms...</div>
+        <div id="charms-loading" class="charms-loading-state">
+          <div class="charms-loading-spinner"></div>
+          <div>loading your charms...</div>
+        </div>
+
         <div id="charms-main" style="display:none;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div>
-              <div style="font-family:var(--font-b);font-size:20px;font-weight:800;color:var(--ink);">locket charms ✨</div>
-              <div style="font-size:11px;color:var(--mid);font-weight:700;margin-top:2px;">your group memory bracelet</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.7);border:1.5px solid rgba(200,180,190,0.2);border-radius:999px;padding:5px 12px;font-size:11px;font-weight:800;color:var(--mid);"><span id="charms-count">0</span> charms</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFE8D8,#FDDCE8);border-radius:999px;padding:7px 14px;margin-bottom:16px;border:1.5px solid rgba(232,115,106,0.15);">
-            <span style="font-size:14px;">🔥</span>
-            <div>
-              <div style="font-size:11px;font-weight:800;color:var(--ink);" id="streak-info-text">answer this week's prompt to earn a charm!</div>
-              <div style="font-size:10px;color:var(--mid);font-weight:700;" id="streak-info-sub">when everyone replies, you all earn a new charm</div>
-            </div>
-          </div>
-          <div id="bracelet-wrap" style="position:relative;width:100%;touch-action:none;margin-bottom:14px;min-height:160px;">
-            <canvas id="bracelet-canvas" style="width:100%;display:block;touch-action:none;border-radius:16px;background:transparent;"></canvas>
-          </div>
-          <div id="charm-detail" style="display:none;background:#fff;border-radius:18px;padding:14px 16px;border:1.5px solid rgba(200,180,190,0.2);margin-bottom:10px;">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div style="font-size:34px;" id="charm-detail-emoji"></div>
+          <!-- Full-bleed bracelet stage -->
+          <div id="bracelet-stage">
+
+            <!-- Ambient glow orbs -->
+            <div class="charm-orb charm-orb-1"></div>
+            <div class="charm-orb charm-orb-2"></div>
+            <div class="charm-orb charm-orb-3"></div>
+
+            <!-- Header overlay -->
+            <div class="charms-header-row">
               <div>
-                <div style="font-family:var(--font-b);font-size:15px;font-weight:800;color:var(--ink);" id="charm-detail-name"></div>
-                <div style="font-size:11px;color:var(--mid);font-weight:700;margin-top:2px;" id="charm-detail-week"></div>
-                <div style="font-size:11px;color:var(--mid);font-weight:700;" id="charm-detail-vibe"></div>
+                <div class="charms-title">locket charms</div>
+                <div class="charms-title-sub" id="streak-info-text">earn charms when everyone answers</div>
               </div>
+              <div class="charms-count-badge"><span id="charms-count">0</span> charms</div>
+            </div>
+
+            <!-- THE BRACELET — full width SVG -->
+            <div id="bracelet-scene">
+              <svg id="bracelet-svg" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <!-- Silver metallic gradient for chain -->
+                  <linearGradient id="chainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%"   stop-color="#f8f4f8"/>
+                    <stop offset="25%"  stop-color="#d0c8d8"/>
+                    <stop offset="50%"  stop-color="#ffffff"/>
+                    <stop offset="75%"  stop-color="#b8b0c0"/>
+                    <stop offset="100%" stop-color="#e8e0f0"/>
+                  </linearGradient>
+                  <!-- Chain link gradient -->
+                  <linearGradient id="linkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.9"/>
+                    <stop offset="40%"  stop-color="#c8c0d0"/>
+                    <stop offset="100%" stop-color="#908898"/>
+                  </linearGradient>
+                  <!-- Clasp gradient -->
+                  <linearGradient id="claspGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%"   stop-color="#ffffff"/>
+                    <stop offset="50%"  stop-color="#d8d0e0"/>
+                    <stop offset="100%" stop-color="#a098a8"/>
+                  </linearGradient>
+                  <!-- String gradient -->
+                  <linearGradient id="stringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stop-color="#d0c8d8"/>
+                    <stop offset="50%"  stop-color="#f0ecf4"/>
+                    <stop offset="100%" stop-color="#c0b8c8"/>
+                  </linearGradient>
+                  <!-- Empty hook dashed ring -->
+                  <filter id="softGlow">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                  </filter>
+                  <!-- Metallic charm filter -->
+                  <filter id="charmShine" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="shadow"/>
+                    <feOffset dx="2" dy="4" result="shadowOffset"/>
+                    <feComposite in="shadowOffset" in2="SourceAlpha" operator="out" result="shadowOnly"/>
+                    <feFlood flood-color="rgba(60,30,80,0.25)" result="shadowColor"/>
+                    <feComposite in="shadowColor" in2="shadowOnly" operator="in" result="coloredShadow"/>
+                    <feMerge><feMergeNode in="coloredShadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                <!-- Chain and charms rendered here by JS -->
+                <g id="chain-group"></g>
+                <g id="charms-group"></g>
+              </svg>
+            </div>
+
+            <!-- Charm detail card -->
+            <div id="charm-detail" class="charm-detail-card" style="display:none;">
+              <div id="charm-detail-emoji" class="charm-detail-emoji"></div>
+              <div class="charm-detail-text">
+                <div id="charm-detail-name" class="charm-detail-name"></div>
+                <div id="charm-detail-week" class="charm-detail-meta"></div>
+                <div id="charm-detail-vibe" class="charm-detail-meta"></div>
+              </div>
+              <button class="charm-detail-close" onclick="document.getElementById('charm-detail').style.display='none'">✕</button>
+            </div>
+
+            <!-- Streak pill bottom -->
+            <div class="charms-streak-pill">
+              <span>🔥</span>
+              <span id="streak-info-sub">when everyone answers the weekly prompt, you earn a charm</span>
+            </div>
+
+            <!-- Empty state -->
+            <div id="charms-empty" style="display:none;" class="charms-empty-state">
+              <div class="charms-empty-icon">🪬</div>
+              <div class="charms-empty-title">your bracelet is waiting</div>
+              <div class="charms-empty-sub">when everyone answers the weekly prompt, you'll earn your first charm together 🩷</div>
             </div>
           </div>
-          <div id="charms-empty" style="display:none;text-align:center;padding:16px 0 8px;">
-            <div style="font-size:32px;margin-bottom:8px;">🪬</div>
-            <div style="font-family:var(--font-b);font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;">no charms yet!</div>
-            <div style="font-size:12px;color:var(--mid);font-weight:700;line-height:1.6;">when everyone answers the weekly prompt<br>you earn a charm together 🩷</div>
-          </div>
-          <div style="font-size:10px;color:var(--mid);font-weight:700;text-align:center;margin-top:4px;">tap a charm · drag to rearrange</div>
+
+          <div class="charms-hint">tap a charm to see its story · drag to rearrange</div>
         </div>
       </div>
 
@@ -2783,6 +3011,7 @@
 
   let bCharms = [], bPositions = [], bDragIdx = -1, bSelected = -1;
   let bAnimFrame = null, bSwayT = 0;
+  let bCharmEls = [], bSvgW = 0, bSvgH = 0;
 
   async function loadCharms() {
     if (!currentGroupId) return;
@@ -2797,14 +3026,12 @@
     } catch(e) { console.error('loadCharms', e); }
     if (loadEl) loadEl.style.display = 'none';
     if (mainEl) mainEl.style.display = 'block';
-    // Init bracelet AFTER element is visible so offsetWidth is correct
-    requestAnimationFrame(() => requestAnimationFrame(() => initBracelet()));
+    // Init bracelet after element painted
+    setTimeout(initBracelet, 80);
     const countEl = document.getElementById('charms-count');
     if (countEl) countEl.textContent = bCharms.length;
     const emptyEl = document.getElementById('charms-empty');
-    const wrapEl  = document.getElementById('bracelet-wrap');
     if (emptyEl) emptyEl.style.display = bCharms.length === 0 ? 'block' : 'none';
-    if (wrapEl)  wrapEl.style.display  = 'block';  // always show bracelet
   }
 
   async function checkAndAwardCharm() {
@@ -2846,331 +3073,382 @@
     if (s) s.textContent = sub;
   }
 
+
+  // ══════════════════════════════════════════
+  // LOCKET CHARMS — SVG ENGINE (metallic CGI)
+  // ══════════════════════════════════════════
+
+  // Per-charm SVG gradient stops for jewel/metallic look
+  const CHARM_SVG_STYLES = {
+    streaking: { c1:'#ffd6e0', c2:'#f4a0b8', c3:'#c06080', rim:'#e898b8', glow:'rgba(240,140,180,0.6)' },
+    happy:     { c1:'#fff6c0', c2:'#f8d840', c3:'#c09010', rim:'#e8c030', glow:'rgba(240,200,40,0.6)'  },
+    nostalgic: { c1:'#e8d8ff', c2:'#c0a0f0', c3:'#7040c0', rim:'#a878e0', glow:'rgba(160,100,240,0.6)' },
+    cozy:      { c1:'#ffe4d0', c2:'#f4a878', c3:'#b06030', rim:'#e08850', glow:'rgba(240,160,80,0.6)'  },
+    adventure: { c1:'#c8e8ff', c2:'#70b8f8', c3:'#2060c0', rim:'#5090e0', glow:'rgba(80,160,240,0.6)' },
+    creative:  { c1:'#c8ffd8', c2:'#60e090', c3:'#208050', rim:'#40b870', glow:'rgba(60,200,100,0.6)'  },
+    moody:     { c1:'#9070c0', c2:'#5030a0', c3:'#200860', rim:'#7050b0', glow:'rgba(100,60,200,0.7)'  },
+    grateful:  { c1:'#f0d0ff', c2:'#d090f8', c3:'#8030c0', rim:'#c060e0', glow:'rgba(200,80,240,0.6)'  },
+    chaotic:   { c1:'#ffff90', c2:'#f8d010', c3:'#a08000', rim:'#e0b800', glow:'rgba(240,200,0,0.7)'   },
+    healing:   { c1:'#c8ffd0', c2:'#70e898', c3:'#208848', rim:'#50c878', glow:'rgba(60,220,120,0.6)'  },
+    milestone: { c1:'#ffe8a0', c2:'#f8c020', c3:'#a07000', rim:'#d8a010', glow:'rgba(240,180,10,0.7)'  },
+    love:      { c1:'#ffc0d4', c2:'#f86090', c3:'#b02050', rim:'#e04070', glow:'rgba(240,60,120,0.6)'  },
+    chill:     { c1:'#c8f0ff', c2:'#60c8f8', c3:'#1878b0', rim:'#40a8e0', glow:'rgba(40,180,240,0.6)'  },
+    wild:      { c1:'#fff0c0', c2:'#f8c060', c3:'#a06010', rim:'#e0a030', glow:'rgba(240,160,40,0.6)'  },
+    mystery:   { c1:'#c0a0e8', c2:'#8040d0', c3:'#300880', rim:'#6030b8', glow:'rgba(120,40,220,0.7)'  },
+  };
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const bHangLens = [60, 80, 50, 90, 65, 75, 55, 85]; // varying hang lengths
+
   function initBracelet() {
-    const canvas = document.getElementById('bracelet-canvas');
-    if (!canvas) return;
-    const W = canvas.parentElement ? canvas.parentElement.offsetWidth : 0;
-    if (W < 20) { setTimeout(initBracelet, 60); return; } // wait until visible
+    const scene  = document.getElementById('bracelet-scene');
+    const svg    = document.getElementById('bracelet-svg');
+    if (!scene || !svg) return;
+    const W = scene.offsetWidth || 0;
+    if (W < 20) { setTimeout(initBracelet, 60); return; }
 
-    const H = Math.round(W * 0.62);
-    canvas.width  = W;
-    canvas.height = H;
-    canvas.style.height = H + 'px';
+    const slots  = Math.max(bCharms.length, 5);
+    const chainH = 68;     // chain Y position
+    const H      = chainH + 160; // total SVG height
+    bSvgW = W; bSvgH = H;
 
-    // Always spread across positions — use max(charms, 5) so empty bracelet still shows hooks
-    const slots = Math.max(bCharms.length, 5);
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('height', H);
+
+    // Distribute charm positions
     if (bPositions.length !== slots) {
       bPositions = Array.from({length: slots}, (_, i) =>
-        slots === 1 ? 0.5 : 0.08 + (i / (slots - 1)) * 0.84
+        slots === 1 ? 0.5 : 0.07 + (i / (slots - 1)) * 0.86
       );
     }
 
-    canvas.onpointerdown   = bPointerDown;
-    canvas.onpointermove   = bPointerMove;
-    canvas.onpointerup     = bPointerUp;
-    canvas.onpointercancel = bPointerUp;
-
-    if (bAnimFrame) cancelAnimationFrame(bAnimFrame);
-    bLoop();
+    buildBraceletSVG();
   }
 
-  function bLoop(ts) {
-    bSwayT = (ts || 0) / 1000;
-    bDraw();
-    bAnimFrame = requestAnimationFrame(bLoop);
-  }
+  function buildBraceletSVG() {
+    const svg   = document.getElementById('bracelet-svg');
+    const chain = document.getElementById('chain-group');
+    const charmsG = document.getElementById('charms-group');
+    if (!svg || !chain || !charmsG) return;
 
-  function bDraw() {
-    const canvas = document.getElementById('bracelet-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
+    chain.innerHTML   = '';
+    charmsG.innerHTML = '';
+    bCharmEls         = [];
 
-    // ── Soft warm background ──
-    const bgGrad = ctx.createLinearGradient(0, 0, W, H);
-    bgGrad.addColorStop(0, 'rgba(255,240,232,0.55)');
-    bgGrad.addColorStop(1, 'rgba(252,220,225,0.4)');
-    ctx.fillStyle = bgGrad;
-    ctx.beginPath();
-    ctx.roundRect(0, 0, W, H, 16);
-    ctx.fill();
+    const W = bSvgW, H = bSvgH;
+    const rx1 = 20, rx2 = W - 20;
+    const chainY = 68;
+    const slots  = Math.max(bCharms.length, 5);
 
-    // ── Chain geometry ──
-    const chainY = Math.round(H * 0.28);   // chain sits at ~28% from top
-    const rx1 = 22, rx2 = W - 22;
-    const globalSway = Math.sin(bSwayT * 0.65) * 2.8;
+    // Build per-charm defs (gradients) in SVG <defs>
+    let defs = svg.querySelector('defs');
+    // Remove old charm gradients
+    defs.querySelectorAll('[id^="cg-"],[id^="bg-"],[id^="gl-"]').forEach(el => el.remove());
 
-    // ── Clasps ──
-    bDrawClasp(ctx, rx1, chainY + globalSway * 0.2, false);
-    bDrawClasp(ctx, rx2, chainY - globalSway * 0.2, true);
+    bCharms.forEach((charm, i) => {
+      const st  = CHARM_SVG_STYLES[charm.type] || CHARM_SVG_STYLES.streaking;
+      const gid = 'cg-' + i;
 
-    // ── Chain links ──
-    bDrawChain(ctx, rx1, chainY, rx2, chainY, globalSway);
+      // Radial gradient for jewel body
+      const rg = document.createElementNS(SVG_NS, 'radialGradient');
+      rg.setAttribute('id', gid);
+      rg.setAttribute('cx', '35%'); rg.setAttribute('cy', '30%');
+      rg.setAttribute('r',  '65%');
+      [[0, st.c1],[0.5, st.c2],[1, st.c3]].forEach(([o, c]) => {
+        const stop = document.createElementNS(SVG_NS, 'stop');
+        stop.setAttribute('offset', o);
+        stop.setAttribute('stop-color', c);
+        rg.appendChild(stop);
+      });
+      defs.appendChild(rg);
 
-    // ── Charms or empty hooks ──
-    const slots = Math.max(bCharms.length, 5);
+      // Gloss overlay gradient
+      const gg = document.createElementNS(SVG_NS, 'radialGradient');
+      gg.setAttribute('id', 'bg-' + i);
+      gg.setAttribute('cx', '30%'); gg.setAttribute('cy', '25%'); gg.setAttribute('r', '50%');
+      const gs1 = document.createElementNS(SVG_NS, 'stop');
+      gs1.setAttribute('offset', '0'); gs1.setAttribute('stop-color', '#fff'); gs1.setAttribute('stop-opacity', '0.55');
+      const gs2 = document.createElementNS(SVG_NS, 'stop');
+      gs2.setAttribute('offset', '1'); gs2.setAttribute('stop-color', '#fff'); gs2.setAttribute('stop-opacity', '0');
+      gg.appendChild(gs1); gg.appendChild(gs2);
+      defs.appendChild(gg);
+    });
+
+    // ── CHAIN CATENARY PATH ──
+    // Use quadratic bezier for natural sag
+    const midX = (rx1 + rx2) / 2;
+    const sagY = chainY + 12;  // sag down 12px at centre
+    const chainPath = document.createElementNS(SVG_NS, 'path');
+    chainPath.setAttribute('d', `M ${rx1} ${chainY} Q ${midX} ${sagY} ${rx2} ${chainY}`);
+    chainPath.setAttribute('fill', 'none');
+    chainPath.setAttribute('stroke', 'url(#chainGrad)');
+    chainPath.setAttribute('stroke-width', '5');
+    chainPath.setAttribute('stroke-linecap', 'round');
+    chain.appendChild(chainPath);
+
+    // Chain highlight (lighter stroke on top)
+    const chainHL = document.createElementNS(SVG_NS, 'path');
+    chainHL.setAttribute('d', `M ${rx1} ${chainY - 1} Q ${midX} ${sagY - 1} ${rx2} ${chainY - 1}`);
+    chainHL.setAttribute('fill', 'none');
+    chainHL.setAttribute('stroke', 'rgba(255,255,255,0.45)');
+    chainHL.setAttribute('stroke-width', '1.5');
+    chainHL.setAttribute('stroke-linecap', 'round');
+    chain.appendChild(chainHL);
+
+    // Chain links dots
+    for (let k = 0; k <= 24; k++) {
+      const t  = k / 24;
+      const lx = rx1 + (rx2 - rx1) * t;
+      const ly = chainY + 12 * Math.sin(t * Math.PI);  // catenary
+      const dot = document.createElementNS(SVG_NS, 'ellipse');
+      dot.setAttribute('cx', lx); dot.setAttribute('cy', ly);
+      dot.setAttribute('rx', '4'); dot.setAttribute('ry', '2.2');
+      dot.setAttribute('transform', `rotate(${t < 0.5 ? 25 : -25} ${lx} ${ly})`);
+      dot.setAttribute('fill', 'none');
+      dot.setAttribute('stroke', 'url(#linkGrad)');
+      dot.setAttribute('stroke-width', '1.2');
+      chain.appendChild(dot);
+      // Highlight
+      const dhl = document.createElementNS(SVG_NS, 'ellipse');
+      dhl.setAttribute('cx', lx - 0.8); dhl.setAttribute('cy', ly - 0.9);
+      dhl.setAttribute('rx', '2.2'); dhl.setAttribute('ry', '0.9');
+      dhl.setAttribute('transform', `rotate(${t < 0.5 ? 25 : -25} ${lx - 0.8} ${ly - 0.9})`);
+      dhl.setAttribute('fill', 'rgba(255,255,255,0.6)');
+      chain.appendChild(dhl);
+    }
+
+    // ── CLASPS ──
+    [rx1 - 14, rx2 + 14].forEach((cx, flip) => {
+      const g = document.createElementNS(SVG_NS, 'g');
+      const rect = document.createElementNS(SVG_NS, 'rect');
+      rect.setAttribute('x', cx - 10); rect.setAttribute('y', chainY - 7);
+      rect.setAttribute('width', '20'); rect.setAttribute('height', '14');
+      rect.setAttribute('rx', '4'); rect.setAttribute('fill', 'url(#claspGrad)');
+      rect.setAttribute('stroke', 'rgba(180,160,200,0.6)'); rect.setAttribute('stroke-width', '0.8');
+      const dot = document.createElementNS(SVG_NS, 'circle');
+      dot.setAttribute('cx', cx - 2); dot.setAttribute('cy', chainY);
+      dot.setAttribute('r', '2.5'); dot.setAttribute('fill', 'none');
+      dot.setAttribute('stroke', 'rgba(140,120,160,0.8)'); dot.setAttribute('stroke-width', '1');
+      g.appendChild(rect); g.appendChild(dot);
+      chain.appendChild(g);
+    });
+
+    // ── CHARMS ──
     for (let i = 0; i < slots; i++) {
-      const t   = bPositions[i] !== undefined ? bPositions[i]
-                  : (slots === 1 ? 0.5 : 0.08 + (i / (slots - 1)) * 0.84);
+      const t   = bPositions[i] !== undefined ? bPositions[i] : (i / Math.max(1, slots - 1));
       const cx  = rx1 + (rx2 - rx1) * t;
-      // catenary sag: deepest in middle
-      const sag = Math.sin(t * Math.PI) * 10;
-      const lSway  = globalSway * (0.3 + t * 0.7);
-      const baseY  = chainY + sag + lSway;
+      const sag = chainY + 12 * Math.sin(t * Math.PI);
+      const hLen = bHangLens[i % bHangLens.length];
+      const cy  = sag + hLen;
+      const r   = 22;
 
-      const isDrag = (bDragIdx === i);
-      const isSel  = (bSelected === i);
+      const assembly = document.createElementNS(SVG_NS, 'g');
+      assembly.setAttribute('class', 'charm-assembly');
+      assembly.setAttribute('data-idx', i);
+      assembly.style.transformOrigin = `${cx}px ${sag}px`;
 
-      // per-charm gentle pendulum
-      const phase  = i * 1.9 + bSwayT * (0.72 + i * 0.08);
-      const swX    = isDrag ? 0 : Math.sin(phase) * 2.2;
-      const swA    = isDrag ? 0 : Math.sin(phase * 0.82) * 0.075;
-      const hLen   = 34 + (i % 3) * 10;   // different hang lengths
-
-      bDrawString(ctx, cx + swX * 0.45, baseY, swX, hLen, isSel);
+      // Hang string
+      const str = document.createElementNS(SVG_NS, 'line');
+      str.setAttribute('x1', cx); str.setAttribute('y1', sag);
+      str.setAttribute('x2', cx); str.setAttribute('y2', cy - r - 5);
+      str.setAttribute('stroke', 'url(#stringGrad)');
+      str.setAttribute('stroke-width', '1.4');
+      assembly.appendChild(str);
 
       if (i < bCharms.length) {
-        bDrawCharmShape(ctx, cx + swX, baseY + hLen, bCharms[i], swA, isDrag, isSel);
+        const charm = bCharms[i];
+        const st    = CHARM_SVG_STYLES[charm.type] || CHARM_SVG_STYLES.streaking;
+        const tmpl  = CHARM_TEMPLATES[charm.type]  || CHARM_TEMPLATES.streaking;
+
+        // Glow halo
+        const glow = document.createElementNS(SVG_NS, 'circle');
+        glow.setAttribute('cx', cx); glow.setAttribute('cy', cy);
+        glow.setAttribute('r', r + 8);
+        glow.setAttribute('fill', st.glow.replace('0.6','0.15').replace('0.7','0.15'));
+        glow.setAttribute('filter', 'url(#softGlow)');
+        assembly.appendChild(glow);
+
+        // Shadow
+        const shadow = document.createElementNS(SVG_NS, 'circle');
+        shadow.setAttribute('cx', cx + 3); shadow.setAttribute('cy', cy + 5);
+        shadow.setAttribute('r', r);
+        shadow.setAttribute('fill', 'rgba(0,0,0,0.35)');
+        shadow.setAttribute('filter', 'blur(4px)');
+        assembly.appendChild(shadow);
+
+        // Main jewel body
+        const body = document.createElementNS(SVG_NS, 'circle');
+        body.setAttribute('cx', cx); body.setAttribute('cy', cy);
+        body.setAttribute('r', r);
+        body.setAttribute('fill', `url(#cg-${i})`);
+        body.setAttribute('stroke', st.rim);
+        body.setAttribute('stroke-width', '2');
+        assembly.appendChild(body);
+
+        // Gloss overlay
+        const gloss = document.createElementNS(SVG_NS, 'circle');
+        gloss.setAttribute('cx', cx); gloss.setAttribute('cy', cy);
+        gloss.setAttribute('r', r);
+        gloss.setAttribute('fill', `url(#bg-${i})`);
+        assembly.appendChild(gloss);
+
+        // Inner gloss arc (specular highlight)
+        const arc = document.createElementNS(SVG_NS, 'path');
+        const ax = cx - r * 0.3, ay = cy - r * 0.35;
+        arc.setAttribute('d', `M ${ax - 8} ${ay + 5} Q ${ax} ${ay - 6} ${ax + 12} ${ay + 2}`);
+        arc.setAttribute('fill', 'none');
+        arc.setAttribute('stroke', 'rgba(255,255,255,0.5)');
+        arc.setAttribute('stroke-width', '2.5');
+        arc.setAttribute('stroke-linecap', 'round');
+        assembly.appendChild(arc);
+
+        // Rim ring (outer metallic bezel)
+        const rim = document.createElementNS(SVG_NS, 'circle');
+        rim.setAttribute('cx', cx); rim.setAttribute('cy', cy);
+        rim.setAttribute('r', r + 1.5);
+        rim.setAttribute('fill', 'none');
+        rim.setAttribute('stroke', 'rgba(255,255,255,0.18)');
+        rim.setAttribute('stroke-width', '1');
+        assembly.appendChild(rim);
+
+        // Bail (top connector)
+        const bail = document.createElementNS(SVG_NS, 'ellipse');
+        bail.setAttribute('cx', cx); bail.setAttribute('cy', cy - r - 5);
+        bail.setAttribute('rx', '5'); bail.setAttribute('ry', '5.5');
+        bail.setAttribute('fill', 'url(#claspGrad)');
+        bail.setAttribute('stroke', 'rgba(200,180,220,0.5)'); bail.setAttribute('stroke-width', '0.8');
+        assembly.appendChild(bail);
+
+        // Emoji text
+        const txt = document.createElementNS(SVG_NS, 'text');
+        txt.setAttribute('x', cx); txt.setAttribute('y', cy + 6);
+        txt.setAttribute('text-anchor', 'middle');
+        txt.setAttribute('font-size', '20');
+        txt.setAttribute('style', 'font-family:serif;pointer-events:none;');
+        txt.textContent = tmpl.emoji;
+        assembly.appendChild(txt);
+
+        // Hit target (invisible, full charm area)
+        const hit = document.createElementNS(SVG_NS, 'circle');
+        hit.setAttribute('cx', cx); hit.setAttribute('cy', cy);
+        hit.setAttribute('r', r + 6);
+        hit.setAttribute('fill', 'transparent');
+        hit.setAttribute('style', 'cursor:pointer');
+        hit.setAttribute('data-charm-idx', i);
+        assembly.appendChild(hit);
+
       } else {
-        bDrawEmptyHook(ctx, cx + swX, baseY + hLen, swA);
+        // Empty placeholder hook
+        const ph = document.createElementNS(SVG_NS, 'circle');
+        ph.setAttribute('cx', cx); ph.setAttribute('cy', cy);
+        ph.setAttribute('r', r);
+        ph.setAttribute('fill', 'rgba(255,255,255,0.03)');
+        ph.setAttribute('stroke', 'rgba(255,255,255,0.08)');
+        ph.setAttribute('stroke-width', '1.5');
+        ph.setAttribute('stroke-dasharray', '5 5');
+        assembly.appendChild(ph);
+        // Bail stub
+        const bail = document.createElementNS(SVG_NS, 'ellipse');
+        bail.setAttribute('cx', cx); bail.setAttribute('cy', cy - r - 5);
+        bail.setAttribute('rx', '4'); bail.setAttribute('ry', '4.5');
+        bail.setAttribute('fill', 'rgba(255,255,255,0.06)');
+        bail.setAttribute('stroke', 'rgba(255,255,255,0.1)'); bail.setAttribute('stroke-width', '0.8');
+        assembly.appendChild(bail);
       }
-    }
-  }
 
-  function bDrawChain(ctx, x1, y1, x2, y2, sway) {
-    const n = Math.floor((x2 - x1) / 9);
-    for (let i = 0; i <= n; i++) {
-      const t = i / n;
-      const x = x1 + (x2 - x1) * t;
-      const sag = Math.sin(t * Math.PI) * 8;
-      const y   = y1 + sag + sway * 0.28;
-      const a   = t < 0.5 ? 0.45 : -0.45;
-
-      // Link body
-      ctx.beginPath();
-      ctx.ellipse(x, y, 4.5, 2.5, a, 0, Math.PI * 2);
-      ctx.strokeStyle = '#b8aec0';
-      ctx.lineWidth   = 1.4;
-      ctx.stroke();
-
-      // Highlight on top half
-      ctx.beginPath();
-      ctx.ellipse(x - 0.7, y - 0.8, 2.8, 1.1, a, 0, Math.PI);
-      ctx.strokeStyle = 'rgba(255,255,255,0.72)';
-      ctx.lineWidth   = 0.7;
-      ctx.stroke();
-    }
-  }
-
-  function bDrawClasp(ctx, x, y, flip) {
-    ctx.save();
-    ctx.translate(x, y);
-    if (flip) ctx.scale(-1, 1);
-    const g = ctx.createLinearGradient(-8, -6, 8, 6);
-    g.addColorStop(0, '#f0eaf0');
-    g.addColorStop(0.45, '#ffffff');
-    g.addColorStop(1, '#b0a8b8');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.roundRect(-8, -6, 16, 12, 4);
-    ctx.fill();
-    ctx.strokeStyle = '#c0b8c8';
-    ctx.lineWidth   = 1.0;
-    ctx.stroke();
-    // detail dot
-    ctx.beginPath();
-    ctx.arc(-1, 0, 2.5, 0, Math.PI * 2);
-    ctx.strokeStyle = '#a098a8';
-    ctx.lineWidth   = 1.0;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function bDrawString(ctx, x, y, swX, len, isSel) {
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + swX * 0.35, y + len);
-    ctx.strokeStyle = isSel ? '#d090e0' : '#c4b8d0';
-    ctx.lineWidth   = isSel ? 1.8 : 1.2;
-    ctx.stroke();
-  }
-
-  function bDrawEmptyHook(ctx, cx, cy, angle) {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(angle);
-    // faint dashed circle placeholder
-    ctx.beginPath();
-    ctx.arc(0, 0, 20, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(190,170,200,0.28)';
-    ctx.lineWidth   = 1.5;
-    ctx.setLineDash([4, 5]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    // small centre dot
-    ctx.beginPath();
-    ctx.arc(0, 0, 3, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(190,170,200,0.25)';
-    ctx.fill();
-    // bail stub
-    const bg = ctx.createLinearGradient(-4, -30, 4, -22);
-    bg.addColorStop(0, 'rgba(220,210,228,0.6)');
-    bg.addColorStop(1, 'rgba(180,168,192,0.4)');
-    ctx.beginPath();
-    ctx.arc(0, -24, 4, 0, Math.PI * 2);
-    ctx.fillStyle = bg;
-    ctx.fill();
-    ctx.restore();
-  }
-
-  function bDrawCharmShape(ctx, cx, cy, charm, angle, isDrag, isSel) {
-    const tmpl = CHARM_TEMPLATES[charm.type] || CHARM_TEMPLATES.streaking;
-    const r = 22;   // bigger than before
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(angle);
-
-    // Drop shadow
-    if (!isDrag) {
-      ctx.beginPath();
-      ctx.arc(3, 5, r + 1, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(60, 30, 70, 0.14)';
-      ctx.fill();
+      charmsG.appendChild(assembly);
+      bCharmEls.push(assembly);
     }
 
-    // Jewel body — radial gradient for 3-D sphere look
-    const rg = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.05, 0, 0, r * 1.15);
-    rg.addColorStop(0,    bLighten(tmpl.bg, 45));
-    rg.addColorStop(0.45, tmpl.bg);
-    rg.addColorStop(1,    bDarken(tmpl.bg, 28));
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.fillStyle = rg;
-    ctx.fill();
-
-    // Bezel rim
-    ctx.strokeStyle = isSel ? '#e040a0' : tmpl.stroke;
-    ctx.lineWidth   = isSel ? 3.0 : 2.2;
-    ctx.stroke();
-
-    // Inner gloss arc
-    ctx.beginPath();
-    ctx.arc(-3, -3, r - 6, Math.PI * 1.05, Math.PI * 1.95);
-    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
-    ctx.lineWidth   = 2.0;
-    ctx.stroke();
-
-    // Bail (top loop)
-    const bg2 = ctx.createLinearGradient(-4, -r - 11, 4, -r - 2);
-    bg2.addColorStop(0, '#f0eaf0');
-    bg2.addColorStop(1, '#a8a0b0');
-    ctx.beginPath();
-    ctx.arc(0, -r - 6, 4.5, 0, Math.PI * 2);
-    ctx.fillStyle   = bg2;
-    ctx.fill();
-    ctx.strokeStyle = '#c0b8c8';
-    ctx.lineWidth   = 1.0;
-    ctx.stroke();
-
-    // Emoji
-    ctx.font          = '18px serif';
-    ctx.textAlign     = 'center';
-    ctx.textBaseline  = 'middle';
-    ctx.fillText(tmpl.emoji, 0, 1);
-
-    // Drag halo
-    if (isDrag) {
-      ctx.beginPath();
-      ctx.arc(0, 0, r + 6, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(210, 130, 210, 0.5)';
-      ctx.lineWidth   = 2.5;
-      ctx.setLineDash([5, 4]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    ctx.restore();
+    // Pointer events
+    const svgEl = document.getElementById('bracelet-svg');
+    svgEl.onpointerdown = bPointerDown;
+    svgEl.onpointermove = bPointerMove;
+    svgEl.onpointerup   = bPointerUp;
+    svgEl.onpointercancel = bPointerUp;
   }
 
-  function bLighten(hex,n){try{const v=parseInt(hex.replace('#',''),16);const r=Math.min(255,(v>>16)+n),g=Math.min(255,((v>>8)&0xff)+n),b=Math.min(255,(v&0xff)+n);return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return hex;}}
-  function bDarken(hex,n){return bLighten(hex,-n);}
-
-  function bHitTest(ex, ey) {
-    const canvas = document.getElementById('bracelet-canvas');
-    if (!canvas) return -1;
-    const rect = canvas.getBoundingClientRect();
-    const sx = canvas.width / rect.width;
-    const x  = (ex - rect.left) * sx;
-    const y  = (ey - rect.top)  * sx;
-    const W  = canvas.width, H = canvas.height;
-    const rx1 = 22, rx2 = W - 22;
-    const chainY = Math.round(H * 0.28);
-    for (let i = bCharms.length - 1; i >= 0; i--) {
-      const t    = bPositions[i];
-      const cx   = rx1 + (rx2 - rx1) * t;
-      const sag  = Math.sin(t * Math.PI) * 10;
-      const hLen = 34 + (i % 3) * 10;
-      const cy   = chainY + sag + hLen;
-      if (Math.hypot(x - cx, y - cy) < 28) return i;
-    }
-    return -1;
-  }
-
+  // ── DRAG INTERACTION ──
   function bPointerDown(e) {
     e.preventDefault();
-    const canvas=document.getElementById('bracelet-canvas');
-    try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
-    const hit=bHitTest(e.clientX,e.clientY);
-    if (hit>=0) { bDragIdx=hit; bSelected=hit; bShowDetail(hit); }
-    else { bSelected=-1; const d=document.getElementById('charm-detail'); if(d) d.style.display='none'; }
+    const svg = document.getElementById('bracelet-svg');
+    try { svg.setPointerCapture(e.pointerId); } catch(err) {}
+
+    // Find which charm was tapped
+    const hit = e.target.closest('[data-charm-idx]');
+    if (hit) {
+      const idx = parseInt(hit.getAttribute('data-charm-idx'));
+      if (idx < bCharms.length) {
+        bDragIdx = idx; bSelected = idx;
+        bCharmEls[idx]?.classList.add('dragging');
+        bShowDetail(idx);
+        return;
+      }
+    }
+    // Tapped background — close detail
+    bSelected = -1;
+    const det = document.getElementById('charm-detail');
+    if (det) det.style.display = 'none';
   }
 
+  let bDragRafPending = false;
   function bPointerMove(e) {
     e.preventDefault();
     if (bDragIdx < 0) return;
-    const canvas = document.getElementById('bracelet-canvas');
-    const rect   = canvas.getBoundingClientRect();
-    const sx     = canvas.width / rect.width;
-    const x      = (e.clientX - rect.left) * sx;
-    const W      = canvas.width, rx1 = 22, rx2 = W - 22;
+    const svg  = document.getElementById('bracelet-svg');
+    const rect = svg.getBoundingClientRect();
+    const x    = e.clientX - rect.left;
+    const W    = bSvgW, rx1 = 20, rx2 = W - 20;
     bPositions[bDragIdx] = Math.max(0.04, Math.min(0.96, (x - rx1) / (rx2 - rx1)));
+    if (!bDragRafPending) {
+      bDragRafPending = true;
+      requestAnimationFrame(() => { bDragRafPending = false; buildBraceletSVG(); });
+    }
   }
 
   function bPointerUp(e) {
-    if (bDragIdx<0) return;
-    const pairs=bPositions.map((p,i)=>({p,c:bCharms[i]})).sort((a,b)=>a.p-b.p);
-    const draggedId=bCharms[bDragIdx]?.id;
-    bCharms=pairs.map(p=>p.c); bPositions=pairs.map(p=>p.p);
-    bSelected=bCharms.findIndex(c=>c.id===draggedId);
-    bDragIdx=-1;
-    if (currentGroupId) bCharms.forEach((c,i)=>{ if(c.id) updateDoc(doc(db,'groups',currentGroupId,'charms',c.id),{order:i}).catch(()=>{}); });
+    if (bDragIdx < 0) return;
+    bCharmEls[bDragIdx]?.classList.remove('dragging');
+    // Sort charms by position
+    const pairs = bPositions.map((p, i) => ({ p, c: bCharms[i] })).sort((a,b) => a.p - b.p);
+    const draggedId = bCharms[bDragIdx]?.id;
+    bCharms    = pairs.map(p => p.c).filter(Boolean);
+    bPositions = pairs.map(p => p.p);
+    bSelected  = bCharms.findIndex(c => c?.id === draggedId);
+    bDragIdx   = -1;
+    buildBraceletSVG();
+    if (currentGroupId) bCharms.forEach((c, i) => {
+      if (c?.id) updateDoc(doc(db, 'groups', currentGroupId, 'charms', c.id), { order: i }).catch(() => {});
+    });
   }
 
   function bShowDetail(idx) {
-    const charm=bCharms[idx]; if (!charm) return;
-    const tmpl=CHARM_TEMPLATES[charm.type]||CHARM_TEMPLATES.streaking;
-    const el=document.getElementById('charm-detail');
-    document.getElementById('charm-detail-emoji').textContent=tmpl.emoji;
-    document.getElementById('charm-detail-name').textContent=tmpl.name;
-    document.getElementById('charm-detail-week').textContent='week of '+bFmtWeek(charm.weekKey);
-    document.getElementById('charm-detail-vibe').textContent=tmpl.vibe;
-    if (el) el.style.display='block';
+    const charm = bCharms[idx]; if (!charm) return;
+    const tmpl  = CHARM_TEMPLATES[charm.type] || CHARM_TEMPLATES.streaking;
+    const det   = document.getElementById('charm-detail');
+    document.getElementById('charm-detail-emoji').textContent = tmpl.emoji;
+    document.getElementById('charm-detail-name').textContent  = tmpl.name;
+    document.getElementById('charm-detail-week').textContent  = 'week of ' + bFmtWeek(charm.weekKey);
+    document.getElementById('charm-detail-vibe').textContent  = tmpl.vibe;
+    if (det) det.style.display = 'flex';
   }
 
   function bFmtWeek(wk) {
-    if (!wk) return 'unknown'; try { const [yr,wn]=wk.split('-W'); const d=new Date(+yr,0,1+(+wn-1)*7); return d.toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}); } catch(e){return wk;}
+    if (!wk) return 'unknown';
+    try {
+      const [yr, wn] = wk.split('-W');
+      const d = new Date(+yr, 0, 1 + (+wn - 1) * 7);
+      return d.toLocaleDateString('en-CA', { month:'short', day:'numeric', year:'numeric' });
+    } catch(e) { return wk; }
   }
+
 
   // Hook goTab to start/stop bracelet
   const _bGT = window.goTab;
   window.goTab = (id, btn) => {
     _bGT(id, btn);
     if (id === 'vibe') {
-      if (bAnimFrame) { cancelAnimationFrame(bAnimFrame); bAnimFrame = null; }
       loadCharms();
-    } else {
-      if (bAnimFrame) { cancelAnimationFrame(bAnimFrame); bAnimFrame = null; }
     }
   };
 

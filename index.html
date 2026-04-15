@@ -226,43 +226,7 @@
     .c4{background:#FCDAC8;}.c5{background:#D0EEE0;}.c6{background:#FFE8D0;}
     .c7{background:#DDD0F8;}.c8{background:#FFF0C0;}.c9{background:#C0D8F4;}
 
-    /* ── SONG SKETCHBOOK ── */
-    .sketchbook-card {
-      background: #fff; border-radius: 20px; padding: 18px;
-      border: 2px solid rgba(200,180,190,0.18);
-      box-shadow: 2px 4px 14px rgba(180,120,140,0.1);
-      transform: rotate(-0.4deg);
-    }
-    .sketchbook-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-    .sketchbook-title { font-family: var(--font-b); font-size: 18px; font-weight: 800; color: var(--ink); }
-    .sketchbook-sub { font-size: 11px; color: var(--mid); font-weight: 700; margin-top: 2px; }
-    .sketchbook-count-pill { background: rgba(254,248,242,0.9); border: 1.5px solid rgba(200,180,190,0.2); border-radius: 999px; padding: 4px 12px; font-size: 11px; font-weight: 800; color: var(--mid); white-space: nowrap; }
-    .sketchbook-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
-    .sketchbook-input {
-      flex: 1; border: 2px solid rgba(200,160,180,0.2); border-radius: 12px;
-      padding: 9px 12px; font-size: 13px; font-family: var(--font-n);
-      background: rgba(254,248,242,0.7); color: var(--ink); outline: none;
-    }
-    .sketchbook-input:focus { border-color: rgba(220,120,140,0.4); }
-    .sketchbook-add-btn {
-      background: var(--tomato); color: #fff; border: none;
-      border-radius: 12px; padding: 9px 14px; font-size: 12px;
-      font-weight: 800; cursor: pointer; font-family: var(--font-n); white-space: nowrap;
-    }
-    .sketchbook-list { display: flex; flex-direction: column; gap: 8px; }
-    .sketchbook-empty { font-size: 12px; color: var(--mid); font-weight: 700; text-align: center; padding: 16px 0; }
-    .sketchbook-item {
-      display: flex; align-items: center; gap: 10px;
-      background: rgba(254,248,242,0.7); border-radius: 12px;
-      padding: 10px 12px; border: 1.5px solid rgba(200,180,190,0.15);
-      position: relative;
-    }
-    .sketchbook-num { font-size: 11px; font-weight: 900; color: var(--mid); width: 18px; flex-shrink: 0; text-align: center; }
-    .sketchbook-info { flex: 1; min-width: 0; }
-    .sketchbook-song { font-size: 13px; font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sketchbook-by { font-size: 10px; color: var(--mid); font-weight: 700; margin-top: 1px; }
-    .sketchbook-delete { background: none; border: none; font-size: 14px; cursor: pointer; color: var(--mid); opacity: 0.5; padding: 2px 4px; }
-    .sketchbook-delete:hover { opacity: 1; color: var(--tomato); }
+    /* song sketchbook CSS removed — replaced by locket charms */
 
     /* ── INVITE ── */
     .heart-hero { display: block; margin: 10px auto 18px; }
@@ -302,6 +266,12 @@
     }
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
+    /* ── LOCKET CHARMS ── */
+    #bracelet-canvas { cursor: grab; }
+    #bracelet-canvas:active { cursor: grabbing; }
+    @keyframes charms-fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    #charms-main { animation: charms-fadein 0.45s ease forwards; }
+
 
     /* ── LEADERBOARD ── */
     .leaderboard-card {
@@ -941,7 +911,7 @@
     <div class="tabs">
       <button class="tab on" onclick="goTab('feed',this)">feed</button>
       <button class="tab" onclick="goTab('album',this)">album</button>
-      <button class="tab" onclick="goTab('vibe',this)">vibe</button>
+      <button class="tab" onclick="goTab('vibe',this)">charms</button>
       <button class="tab" onclick="goTab('invite',this)">+ invite</button>
       <button class="tab" onclick="goTab('games',this)">🎮 games</button>
     </div>
@@ -1044,27 +1014,47 @@
         <span id="album-sub" style="display:none">0 memories</span>
       </div>
 
-            <!-- VIBE -->
+            <!-- VIBE / CHARMS -->
       <div class="screen" id="screen-vibe">
-        <div class="sketchbook-card">
-          <div class="sketchbook-header">
+        <div id="charms-loading" style="text-align:center;padding:48px 0;color:var(--mid);font-size:13px;font-weight:700;">loading your charms...</div>
+        <div id="charms-main" style="display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
             <div>
-              <div class="sketchbook-title">song sketchbook 🎵</div>
-              <div class="sketchbook-sub">songs everyone's been into lately</div>
+              <div style="font-family:var(--font-b);font-size:20px;font-weight:800;color:var(--ink);">locket charms ✨</div>
+              <div style="font-size:11px;color:var(--mid);font-weight:700;margin-top:2px;">your group memory bracelet</div>
             </div>
-            <div class="sketchbook-count-pill"><span id="song-count">0</span> songs</div>
+            <div style="background:rgba(255,255,255,0.7);border:1.5px solid rgba(200,180,190,0.2);border-radius:999px;padding:5px 12px;font-size:11px;font-weight:800;color:var(--mid);"><span id="charms-count">0</span> charms</div>
           </div>
-          <div class="sketchbook-input-row">
-            <input class="sketchbook-input" id="sug-in" placeholder="song name + artist..." />
-            <button class="sketchbook-add-btn" onclick="addSong()">+ add</button>
+          <div style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFE8D8,#FDDCE8);border-radius:999px;padding:7px 14px;margin-bottom:16px;border:1.5px solid rgba(232,115,106,0.15);">
+            <span style="font-size:14px;">🔥</span>
+            <div>
+              <div style="font-size:11px;font-weight:800;color:var(--ink);" id="streak-info-text">answer this week's prompt to earn a charm!</div>
+              <div style="font-size:10px;color:var(--mid);font-weight:700;" id="streak-info-sub">when everyone replies, you all earn a new charm</div>
+            </div>
           </div>
-          <div id="vibe-list" class="sketchbook-list">
-            <div class="sketchbook-empty">no songs yet — be the first !</div>
+          <div id="bracelet-wrap" style="position:relative;width:100%;touch-action:none;margin-bottom:14px;">
+            <canvas id="bracelet-canvas" style="width:100%;display:block;touch-action:none;border-radius:12px;"></canvas>
           </div>
+          <div id="charm-detail" style="display:none;background:#fff;border-radius:18px;padding:14px 16px;border:1.5px solid rgba(200,180,190,0.2);margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="font-size:34px;" id="charm-detail-emoji"></div>
+              <div>
+                <div style="font-family:var(--font-b);font-size:15px;font-weight:800;color:var(--ink);" id="charm-detail-name"></div>
+                <div style="font-size:11px;color:var(--mid);font-weight:700;margin-top:2px;" id="charm-detail-week"></div>
+                <div style="font-size:11px;color:var(--mid);font-weight:700;" id="charm-detail-vibe"></div>
+              </div>
+            </div>
+          </div>
+          <div id="charms-empty" style="display:none;text-align:center;padding:16px 0 8px;">
+            <div style="font-size:32px;margin-bottom:8px;">🪬</div>
+            <div style="font-family:var(--font-b);font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;">no charms yet!</div>
+            <div style="font-size:12px;color:var(--mid);font-weight:700;line-height:1.6;">when everyone answers the weekly prompt<br>you earn a charm together 🩷</div>
+          </div>
+          <div style="font-size:10px;color:var(--mid);font-weight:700;text-align:center;margin-top:4px;">tap a charm · drag to rearrange</div>
         </div>
       </div>
 
-      <!-- INVITE -->
+            <!-- INVITE -->
       <div class="screen" id="screen-invite">
         <svg class="heart-hero" width="70" height="66" viewBox="0 0 70 66" fill="none">
           <path d="M35 62s-28-19-28-36C7 14 15 8 24 8c5 0 8.5 2.5 11 6 2.5-3.5 6-6 11-6 9 0 17 6 17 18 0 17-28 36-28 36z" fill="#FCCDD5" stroke="#E8736A" stroke-width="2.5"/>
@@ -1306,8 +1296,9 @@
     if (unsubscribePhotos)        { unsubscribePhotos();        unsubscribePhotos = null; }
     if (unsubscribeAlbums)        { unsubscribeAlbums();        unsubscribeAlbums = null; }
     if (unsubscribeCustomPrompts) { unsubscribeCustomPrompts(); unsubscribeCustomPrompts = null; }
-    if (pongRAF)   { cancelAnimationFrame(pongRAF); pongRAF = null; }
-    if (tapInterval) { clearInterval(tapInterval); tapInterval = null; }
+    if (pongRAF)    { cancelAnimationFrame(pongRAF);    pongRAF = null; }
+    if (tapInterval){ clearInterval(tapInterval);       tapInterval = null; }
+    if (bAnimFrame) { cancelAnimationFrame(bAnimFrame); bAnimFrame = null; }
   }
 
   window.showGroupsHub = () => {
@@ -1517,32 +1508,6 @@
     });
   }
 
-  function loadVibeSuggestions() {
-    if (unsubscribeVibe) { unsubscribeVibe(); unsubscribeVibe = null; }
-    if (!currentGroupId) return;
-    const q = query(collection(db, 'groups', currentGroupId, 'songs'), orderBy('createdAt', 'desc'));
-    unsubscribeVibe = onSnapshot(q, (snap) => {
-      const el = document.getElementById('vibe-list');
-      const countEl = document.getElementById('song-count');
-      if (countEl) countEl.textContent = snap.size;
-      if (snap.empty) {
-        el.innerHTML = '<div class="sketchbook-empty">no songs yet — add the first one !</div>';
-        return;
-      }
-      el.innerHTML = snap.docs.map((d, i) => {
-        const s = d.data();
-        const isMe = s.uid === currentUser.uid;
-        return '<div class="sketchbook-item">' +
-          '<div class="sketchbook-num">' + (i+1) + '</div>' +
-          '<div class="sketchbook-info">' +
-            '<div class="sketchbook-song">' + esc(s.song) + '</div>' +
-            '<div class="sketchbook-by">added by ' + esc(s.addedBy) + '</div>' +
-          '</div>' +
-          (isMe ? '<button class="sketchbook-delete" onclick="deleteSong(\'' + d.id + '\')">&#x2715;</button>' : '') +
-        '</div>';
-      }).join('');
-    });
-  }
 
   window.deleteSong = async (songId) => {
     if (!currentGroupId) return;
@@ -1713,25 +1678,6 @@
   document.getElementById('answer-ta').addEventListener('input', function() {
     document.getElementById('char-count').textContent = this.value.length + ' / 200';
   });
-
-  // ── VIBE ─────────────────────────────────────────
-  window.playT = (el) => {
-    document.querySelectorAll('.trow').forEach((t,i) => { t.classList.remove('now'); t.querySelector('.tnum').textContent = i+1; });
-    el.classList.add('now'); el.querySelector('.tnum').textContent = '▶';
-  };
-  window.addSong = async () => {
-    const inp = document.getElementById('sug-in');
-    const v = inp.value.trim(); if (!v || !currentGroupId || !currentUser) return;
-    inp.value = '';
-    try {
-      await addDoc(collection(db, 'groups', currentGroupId, 'songs'), {
-        song: v,
-        addedBy: currentUser.displayName,
-        uid: currentUser.uid,
-        createdAt: serverTimestamp()
-      });
-    } catch(e) { alert('could not add song, try again!'); }
-  };
 
   // ── ALBUM ────────────────────────────────────────
   const TC = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
@@ -2787,6 +2733,307 @@
       loadLeaderboard('emoji');
     }
   };
+
+
+
+  // ══════════════════════════════════════════
+  // LOCKET CHARMS — BRACELET ENGINE
+  // ══════════════════════════════════════════
+
+  const CHARM_TEMPLATES = {
+    streaking:{ emoji:'🌸', name:'in bloom',       bg:'#FCCDD5', stroke:'#e89aaa', vibe:'everyone showed up this week'  },
+    happy:    { emoji:'☀️', name:'sunny week',     bg:'#FFE4A0', stroke:'#e8c040', vibe:'high energy all around'        },
+    nostalgic:{ emoji:'📼', name:'throwback',      bg:'#DDD0F8', stroke:'#a888d8', vibe:'missing the old days'          },
+    cozy:     { emoji:'☕', name:'cozy era',        bg:'#FCDAC8', stroke:'#e09060', vibe:'stay-in kind of week'          },
+    adventure:{ emoji:'🌊', name:'wave week',      bg:'#C0D8F4', stroke:'#7098d8', vibe:'something new happened'        },
+    creative: { emoji:'🎨', name:'artsy',          bg:'#C8F0D8', stroke:'#60b880', vibe:'creative energy was high'      },
+    moody:    { emoji:'🌙', name:'midnight feels', bg:'#3a2858', stroke:'#8855cc', vibe:'introspective week'            },
+    grateful: { emoji:'🫧', name:'soft and sweet', bg:'#F0D8F8', stroke:'#b868d8', vibe:'grateful for each other'      },
+    chaotic:  { emoji:'⚡', name:'electric',       bg:'#FFF0A0', stroke:'#e0b800', vibe:'chaotic but iconic'            },
+    healing:  { emoji:'🌿', name:'healing era',    bg:'#D0EED8', stroke:'#60a870', vibe:'gentle restorative week'       },
+    milestone:{ emoji:'🏆', name:'milestone',      bg:'#FFD080', stroke:'#c89020', vibe:'something big happened'        },
+    love:     { emoji:'🩷', name:'full of love',   bg:'#FCCDD5', stroke:'#e86090', vibe:'lots of warmth this week'      },
+    chill:    { emoji:'🧊', name:'ice cold',       bg:'#C8E8F8', stroke:'#68a8d8', vibe:'low-key week'                  },
+    wild:     { emoji:'🐆', name:'wild card',      bg:'#F8E0A0', stroke:'#c09030', vibe:'unpredictable week'            },
+    mystery:  { emoji:'🔮', name:'mysterious',     bg:'#3a2050', stroke:'#8844cc', vibe:'something felt different'      },
+  };
+
+  const VIBE_WORDS = {
+    sad:'moody',miss:'nostalgic',down:'moody',tired:'cozy',sleep:'cozy',
+    coffee:'cozy',cozy:'cozy',home:'cozy',stay:'cozy',
+    happy:'happy',good:'happy',great:'happy',amazing:'happy',love:'love',
+    beach:'adventure',travel:'adventure',outside:'adventure',adventure:'adventure',
+    art:'creative',music:'creative',draw:'creative',cook:'creative',
+    grateful:'grateful',thankful:'grateful',appreciate:'grateful',
+    crazy:'chaotic',wild:'wild',busy:'chaotic',stress:'chaotic',
+    heal:'healing',better:'healing',peace:'healing',calm:'healing',
+    big:'milestone',first:'milestone',win:'milestone',
+    chill:'chill',quiet:'chill',relaxed:'chill',
+    remember:'nostalgic',throwback:'nostalgic',
+  };
+
+  function pickCharmType(posts) {
+    if (!posts || !posts.length) return 'streaking';
+    const text = posts.map(p=>(p.text||'').toLowerCase()).join(' ');
+    const counts = {};
+    text.split(/\W+/).forEach(w => { if (VIBE_WORDS[w]) counts[VIBE_WORDS[w]] = (counts[VIBE_WORDS[w]]||0)+1; });
+    const top = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+    return top ? top[0] : 'streaking';
+  }
+
+  let bCharms = [], bPositions = [], bDragIdx = -1, bSelected = -1;
+  let bAnimFrame = null, bSwayT = 0;
+
+  async function loadCharms() {
+    if (!currentGroupId) return;
+    const loadEl = document.getElementById('charms-loading');
+    const mainEl = document.getElementById('charms-main');
+    if (loadEl) loadEl.style.display = 'block';
+    if (mainEl) mainEl.style.display = 'none';
+    try {
+      const snap = await getDocs(collection(db, 'groups', currentGroupId, 'charms'));
+      bCharms = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
+      await checkAndAwardCharm();
+      initBracelet();
+    } catch(e) { console.error('loadCharms', e); }
+    if (loadEl) loadEl.style.display = 'none';
+    if (mainEl) mainEl.style.display = 'block';
+    const countEl = document.getElementById('charms-count');
+    if (countEl) countEl.textContent = bCharms.length;
+    const emptyEl = document.getElementById('charms-empty');
+    const wrapEl  = document.getElementById('bracelet-wrap');
+    if (emptyEl) emptyEl.style.display = bCharms.length === 0 ? 'block' : 'none';
+    if (wrapEl)  wrapEl.style.display  = bCharms.length === 0 ? 'none'  : 'block';
+  }
+
+  async function checkAndAwardCharm() {
+    if (!currentGroupData) return;
+    const members = currentGroupData.members || [];
+    if (members.length < 2) return;
+    const weekKey = getWeekKey();
+    if (bCharms.find(c=>c.weekKey===weekKey)) {
+      bSetPill('charm earned this week! 🎉', 'everyone answered the prompt'); return;
+    }
+    try {
+      const postsSnap = await getDocs(collection(db, 'groups', currentGroupId, 'posts'));
+      const allPosts = postsSnap.docs.map(d=>d.data());
+      const wStart = getWeekStartDate(0);
+      const wEnd = new Date(wStart); wEnd.setDate(wEnd.getDate()+7);
+      const weekPosts = allPosts.filter(p=>{
+        try { const d = p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt); return d>=wStart && d<wEnd; } catch(e){return false;}
+      });
+      const uids = new Set(weekPosts.map(p=>p.uid));
+      if (members.length>=2 && members.every(m=>uids.has(m.uid))) {
+        const type = pickCharmType(weekPosts);
+        const tmpl = CHARM_TEMPLATES[type];
+        const newRef = await addDoc(collection(db,'groups',currentGroupId,'charms'), {
+          type, weekKey, order: bCharms.length, earnedAt: serverTimestamp(), weekPosts: weekPosts.length
+        });
+        bCharms.push({id:newRef.id, type, weekKey, order:bCharms.length, earnedAt:new Date()});
+        bSetPill('new charm unlocked! '+tmpl.emoji, tmpl.vibe);
+      } else {
+        const answered = members.filter(m=>uids.has(m.uid)).length;
+        bSetPill(answered+' / '+members.length+' answered this week', 'everyone must reply to earn a charm');
+      }
+    } catch(e) {}
+  }
+
+  function bSetPill(title, sub) {
+    const t = document.getElementById('streak-info-text');
+    const s = document.getElementById('streak-info-sub');
+    if (t) t.textContent = title;
+    if (s) s.textContent = sub;
+  }
+
+  function initBracelet() {
+    const canvas = document.getElementById('bracelet-canvas');
+    if (!canvas) return;
+    const W = (canvas.parentElement||{}).offsetWidth || 340;
+    const H = Math.max(160, Math.min(200, Math.round(W * 0.52)));
+    canvas.width = W; canvas.height = H;
+    if (bPositions.length !== bCharms.length) {
+      bPositions = bCharms.map((_,i) =>
+        bCharms.length<=1 ? 0.5 : 0.1 + (i/Math.max(1,bCharms.length-1))*0.8
+      );
+    }
+    canvas.onpointerdown   = bPointerDown;
+    canvas.onpointermove   = bPointerMove;
+    canvas.onpointerup     = bPointerUp;
+    canvas.onpointercancel = bPointerUp;
+    if (bAnimFrame) cancelAnimationFrame(bAnimFrame);
+    bLoop();
+  }
+
+  function bLoop(ts) {
+    bSwayT = (ts||0)/1000;
+    bDraw();
+    bAnimFrame = requestAnimationFrame(bLoop);
+  }
+
+  function bDraw() {
+    const canvas = document.getElementById('bracelet-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const ry=44, rx1=26, rx2=W-26;
+    const gSway = Math.sin(bSwayT*0.65)*2.2;
+    bDrawClasp(ctx,rx1,ry,false); bDrawClasp(ctx,rx2,ry,true);
+    bDrawChain(ctx,rx1,ry,rx2,ry,gSway);
+    bCharms.forEach((charm,i) => {
+      const t = bPositions[i];
+      const cx = rx1+(rx2-rx1)*t;
+      const sag = Math.sin(t*Math.PI)*6;
+      const lSway = gSway*(0.4+t*0.6);
+      const isDrag = bDragIdx===i, isSel=bSelected===i;
+      const phase = i*1.7+bSwayT*(0.75+i*0.09);
+      const swX = isDrag?0:Math.sin(phase)*1.8;
+      const swA = isDrag?0:Math.sin(phase*0.85)*0.07;
+      const hLen = 30+(i%3)*9;
+      const by = ry+sag+lSway;
+      bDrawStr(ctx, cx+swX*0.5, by, swX, hLen, isSel);
+      bDrawCharmShape(ctx, cx+swX, by+hLen, charm, swA, isDrag, isSel);
+    });
+  }
+
+  function bDrawChain(ctx,x1,y1,x2,y2,sway) {
+    const n = Math.floor((x2-x1)/8);
+    for (let i=0;i<=n;i++) {
+      const t=i/n, x=x1+(x2-x1)*t;
+      const y = y1+Math.sin(t*Math.PI)*5+sway*0.3;
+      const a = t<0.5?0.4:-0.4;
+      ctx.beginPath(); ctx.ellipse(x,y,4,2.2,a,0,Math.PI*2);
+      ctx.strokeStyle='#c0b8c8'; ctx.lineWidth=1.3; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x-0.6,y-0.7,2.2,1,a,0,Math.PI);
+      ctx.strokeStyle='rgba(255,255,255,0.65)'; ctx.lineWidth=0.7; ctx.stroke();
+    }
+  }
+
+  function bDrawClasp(ctx,x,y,flip) {
+    ctx.save(); ctx.translate(x,y); if(flip) ctx.scale(-1,1);
+    const g=ctx.createLinearGradient(-7,-5,7,5);
+    g.addColorStop(0,'#ece4ec'); g.addColorStop(0.5,'#fff'); g.addColorStop(1,'#b8b0b8');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.roundRect(-7,-5,14,10,3); ctx.fill();
+    ctx.strokeStyle='#c0b8c0'; ctx.lineWidth=0.8; ctx.stroke();
+    ctx.beginPath(); ctx.arc(-1,0,2.2,0,Math.PI*2); ctx.strokeStyle='#a8a0a8'; ctx.lineWidth=0.9; ctx.stroke();
+    ctx.restore();
+  }
+
+  function bDrawStr(ctx,x,y,swX,len,isSel) {
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+swX*0.4,y+len);
+    ctx.strokeStyle=isSel?'#c090d0':'#c0b8c8'; ctx.lineWidth=isSel?1.6:1.1; ctx.stroke();
+  }
+
+  function bDrawCharmShape(ctx,cx,cy,charm,angle,isDrag,isSel) {
+    const tmpl=CHARM_TEMPLATES[charm.type]||CHARM_TEMPLATES.streaking, r=20;
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(angle);
+    if (!isDrag) { ctx.beginPath(); ctx.arc(2.5,4,r,0,Math.PI*2); ctx.fillStyle='rgba(80,40,80,0.13)'; ctx.fill(); }
+    const rg=ctx.createRadialGradient(-r*0.28,-r*0.28,r*0.06,0,0,r*1.1);
+    rg.addColorStop(0,bLighten(tmpl.bg,38)); rg.addColorStop(0.55,tmpl.bg); rg.addColorStop(1,bDarken(tmpl.bg,22));
+    ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle=rg; ctx.fill();
+    ctx.strokeStyle=isSel?'#e050a0':tmpl.stroke; ctx.lineWidth=isSel?2.8:2.0; ctx.stroke();
+    ctx.beginPath(); ctx.arc(-2.5,-2.5,r-5,Math.PI*1.1,Math.PI*1.9);
+    ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=1.5; ctx.stroke();
+    const bg2=ctx.createLinearGradient(-4,-r-9,4,-r-1);
+    bg2.addColorStop(0,'#ece4ec'); bg2.addColorStop(1,'#a8a0a8');
+    ctx.beginPath(); ctx.arc(0,-r-5,4,0,Math.PI*2); ctx.fillStyle=bg2; ctx.fill();
+    ctx.strokeStyle='#c0b8c0'; ctx.lineWidth=0.9; ctx.stroke();
+    ctx.font='17px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(tmpl.emoji,0,1);
+    if (isDrag) {
+      ctx.beginPath(); ctx.arc(0,0,r+5,0,Math.PI*2);
+      ctx.strokeStyle='rgba(200,120,200,0.45)'; ctx.lineWidth=2.2;
+      ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.restore();
+  }
+
+  function bLighten(hex,n){try{const v=parseInt(hex.replace('#',''),16);const r=Math.min(255,(v>>16)+n),g=Math.min(255,((v>>8)&0xff)+n),b=Math.min(255,(v&0xff)+n);return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return hex;}}
+  function bDarken(hex,n){return bLighten(hex,-n);}
+
+  function bHitTest(ex,ey) {
+    const canvas=document.getElementById('bracelet-canvas');
+    if (!canvas) return -1;
+    const rect=canvas.getBoundingClientRect(), sx=canvas.width/rect.width;
+    const x=(ex-rect.left)*sx, y=(ey-rect.top)*sx;
+    const W=canvas.width, rx1=26, rx2=W-26, ry=44;
+    for (let i=bCharms.length-1;i>=0;i--) {
+      const t=bPositions[i], cx=rx1+(rx2-rx1)*t;
+      const cy=ry+Math.sin(t*Math.PI)*6+(30+(i%3)*9);
+      if (Math.hypot(x-cx,y-cy)<26) return i;
+    }
+    return -1;
+  }
+
+  function bPointerDown(e) {
+    e.preventDefault();
+    const canvas=document.getElementById('bracelet-canvas');
+    try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
+    const hit=bHitTest(e.clientX,e.clientY);
+    if (hit>=0) { bDragIdx=hit; bSelected=hit; bShowDetail(hit); }
+    else { bSelected=-1; const d=document.getElementById('charm-detail'); if(d) d.style.display='none'; }
+  }
+
+  function bPointerMove(e) {
+    e.preventDefault();
+    if (bDragIdx<0) return;
+    const canvas=document.getElementById('bracelet-canvas');
+    const rect=canvas.getBoundingClientRect(), sx=canvas.width/rect.width;
+    const x=(e.clientX-rect.left)*sx;
+    const W=canvas.width, rx1=26, rx2=W-26;
+    bPositions[bDragIdx]=Math.max(0.04,Math.min(0.96,(x-rx1)/(rx2-rx1)));
+  }
+
+  function bPointerUp(e) {
+    if (bDragIdx<0) return;
+    const pairs=bPositions.map((p,i)=>({p,c:bCharms[i]})).sort((a,b)=>a.p-b.p);
+    const draggedId=bCharms[bDragIdx]?.id;
+    bCharms=pairs.map(p=>p.c); bPositions=pairs.map(p=>p.p);
+    bSelected=bCharms.findIndex(c=>c.id===draggedId);
+    bDragIdx=-1;
+    if (currentGroupId) bCharms.forEach((c,i)=>{ if(c.id) updateDoc(doc(db,'groups',currentGroupId,'charms',c.id),{order:i}).catch(()=>{}); });
+  }
+
+  function bShowDetail(idx) {
+    const charm=bCharms[idx]; if (!charm) return;
+    const tmpl=CHARM_TEMPLATES[charm.type]||CHARM_TEMPLATES.streaking;
+    const el=document.getElementById('charm-detail');
+    document.getElementById('charm-detail-emoji').textContent=tmpl.emoji;
+    document.getElementById('charm-detail-name').textContent=tmpl.name;
+    document.getElementById('charm-detail-week').textContent='week of '+bFmtWeek(charm.weekKey);
+    document.getElementById('charm-detail-vibe').textContent=tmpl.vibe;
+    if (el) el.style.display='block';
+  }
+
+  function bFmtWeek(wk) {
+    if (!wk) return 'unknown'; try { const [yr,wn]=wk.split('-W'); const d=new Date(+yr,0,1+(+wn-1)*7); return d.toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'}); } catch(e){return wk;}
+  }
+
+  // Hook goTab to start/stop bracelet
+  const _bGT = window.goTab;
+  window.goTab = (id, btn) => {
+    _bGT(id, btn);
+    if (id === 'vibe') {
+      if (bAnimFrame) { cancelAnimationFrame(bAnimFrame); bAnimFrame = null; }
+      loadCharms();
+    } else {
+      if (bAnimFrame) { cancelAnimationFrame(bAnimFrame); bAnimFrame = null; }
+    }
+  };
+
+  // ── CANVAS roundRect POLYFILL (Safari <16) ──────
+  if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r) {
+      r = Math.min(r, w/2, h/2);
+      this.beginPath();
+      this.moveTo(x+r, y);
+      this.lineTo(x+w-r, y); this.arcTo(x+w,y,x+w,y+r,r);
+      this.lineTo(x+w, y+h-r); this.arcTo(x+w,y+h,x+w-r,y+h,r);
+      this.lineTo(x+r, y+h); this.arcTo(x,y+h,x,y+h-r,r);
+      this.lineTo(x, y+r); this.arcTo(x,y,x+r,y,r);
+      this.closePath();
+    };
+  }
 
   // INSTALL BANNER
   let deferredInstallPrompt = null;

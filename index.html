@@ -1720,6 +1720,31 @@
     }
   };
 
+  // ── AUTH STATE ──────────────────────────────────
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+      // User is signed in — check if they have a group
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists() && snap.data().groupId) {
+          await loadGroup(snap.data().groupId);
+        } else {
+          showScreen('groups');
+          loadUserGroups();
+        }
+      } catch(e) {
+        showScreen('groups');
+        loadUserGroups();
+      }
+    } else {
+      // Signed out
+      currentUser = null;
+      cleanupListeners();
+      showScreen('auth');
+    }
+  });
+
   // ── GROUP ────────────────────────────────────────
   window.createGroup = async () => {
     const errEl = document.getElementById('group-err');

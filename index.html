@@ -267,6 +267,176 @@
     /* android uses native prompt so show a simpler banner */
     .install-android .install-steps { display: none; }
 
+    /* ══════════════════════════════════
+       TREND FEED & POLAROID CARDS
+    ══════════════════════════════════ */
+
+    /* Category filter bar */
+    .cat-bar {
+      display: flex; gap: 7px; overflow-x: auto; padding-bottom: 12px;
+      scrollbar-width: none; margin: -4px -15px 4px;
+      padding-left: 15px; padding-right: 15px; padding-top: 2px;
+    }
+    .cat-bar::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      flex-shrink: 0; border: 1.5px solid rgba(200,180,190,0.25);
+      border-radius: 999px; padding: 7px 14px;
+      font-size: 12px; font-weight: 800; font-family: var(--font-n);
+      background: rgba(255,255,255,0.7); color: var(--mid);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+      backdrop-filter: blur(6px);
+    }
+    .cat-btn.active {
+      background: var(--ink); color: #fff; border-color: var(--ink);
+    }
+    .cat-btn:not(.active):hover {
+      background: #fff; border-color: rgba(180,140,160,0.4);
+    }
+
+    /* Feed loading */
+    .feed-loading {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; padding: 48px 0; font-size: 12px;
+      font-weight: 700; color: var(--mid);
+    }
+    .feed-loading-spinner {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 2.5px solid rgba(200,160,180,0.2);
+      border-top-color: var(--tomato);
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Feed empty */
+    .feed-empty {
+      text-align: center; padding: 48px 0;
+      font-size: 12px; font-weight: 700; color: var(--mid);
+    }
+
+    /* ── POLAROID TREND CARD ── */
+    .trend-card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 12px 12px 20px;
+      margin-bottom: 18px;
+      box-shadow:
+        0 2px 8px rgba(46,32,48,0.08),
+        0 8px 24px rgba(46,32,48,0.06),
+        0 1px 2px rgba(46,32,48,0.04);
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .trend-card:hover {
+      transform: translateY(-2px) rotate(0deg);
+      box-shadow: 0 6px 24px rgba(46,32,48,0.12), 0 12px 40px rgba(46,32,48,0.08);
+    }
+    /* Slight random tilt per card — applied in JS */
+    .trend-card.tilt-l { transform: rotate(-1.2deg); }
+    .trend-card.tilt-r { transform: rotate(1.1deg); }
+    .trend-card.tilt-l:hover { transform: rotate(-0.4deg) translateY(-2px); }
+    .trend-card.tilt-r:hover { transform: rotate(0.4deg) translateY(-2px); }
+
+    /* Photo area */
+    .trend-photo {
+      width: 100%; aspect-ratio: 1;
+      border-radius: 2px; overflow: hidden;
+      background: linear-gradient(135deg, #f8f0f4, #f0e8f0);
+      margin-bottom: 10px; position: relative;
+    }
+    .trend-photo img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .trend-photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px;
+    }
+
+    /* Category badge on photo */
+    .trend-cat-badge {
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+      border-radius: 999px; padding: 3px 9px;
+      font-size: 10px; font-weight: 800; color: var(--ink);
+    }
+
+    /* Card content below photo */
+    .trend-title {
+      font-family: var(--font-b); font-size: 15px; font-weight: 800;
+      color: var(--ink); margin-bottom: 5px; line-height: 1.3;
+    }
+    .trend-desc {
+      font-size: 12px; color: var(--mid); font-weight: 700;
+      line-height: 1.55; margin-bottom: 10px;
+    }
+
+    /* Price comparison row */
+    .trend-price-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .trend-price-original {
+      font-size: 12px; color: var(--mid); font-weight: 700;
+      text-decoration: line-through; opacity: 0.7;
+    }
+    .trend-price-locket {
+      font-size: 14px; font-weight: 900; color: var(--tomato);
+      font-family: var(--font-b);
+    }
+    .trend-price-save {
+      background: rgba(232,115,106,0.1); color: var(--tomato);
+      border-radius: 999px; padding: 2px 8px;
+      font-size: 10px; font-weight: 800;
+    }
+
+    /* Where to find */
+    .trend-where {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; color: var(--mid);
+      margin-bottom: 10px;
+    }
+    .trend-where-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--tomato); flex-shrink: 0;
+    }
+
+    /* CTA button */
+    .trend-cta {
+      display: block; width: 100%;
+      background: var(--ink); color: #fff;
+      border: none; border-radius: 999px;
+      padding: 10px; font-family: var(--font-b);
+      font-size: 13px; font-weight: 700;
+      text-align: center; text-decoration: none;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .trend-cta:hover { opacity: 0.85; }
+    .trend-cta.no-link {
+      background: rgba(200,180,190,0.15); color: var(--mid);
+      cursor: default;
+    }
+
+    /* Tape strip decoration at top of polaroid */
+    .trend-tape {
+      position: absolute; top: -8px; left: 50%;
+      transform: translateX(-50%);
+      width: 44px; height: 16px;
+      background: rgba(255,230,180,0.7);
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(46,32,48,0.1);
+    }
+
+    /* Section divider */
+    .section-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 20px 0 14px; font-size: 11px; font-weight: 800;
+      color: var(--mid); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(200,180,190,0.25);
+    }
+
+
 
     /* ── LOCKET CHARMS ── */
     #bracelet-stage {
@@ -678,7 +848,7 @@
       <rect x="33.5" y="2" width="3" height="5" rx="1" fill="#d0809a"/>
     </svg>
     <div class="auth-logo">locket.</div>
-    <div class="auth-sub">your private little world<br>with your people 🩷</div>
+    <div class="auth-sub">keep up, spend less, your insider angel. 🩷</div>
 
     <div class="auth-tabs">
       <button class="auth-tab on" onclick="switchAuthTab('login')">log in</button>
@@ -954,37 +1124,65 @@
 
       <!-- FEED -->
       <div class="screen active" id="screen-feed">
-        <div class="prompt-polo">
-          <div class="polo-tape"></div>
-          <div class="prompt-inner">
-            <div class="ai-prompt-badge">✨ ai-generated</div>
-            <div class="prompt-label" id="prompt-week-label">this week's prompt</div>
-            <div class="prompt-q" id="weekly-prompt-text">loading this week's prompt...</div>
-          </div>
-          <div class="polo-caption">answer below ↓</div>
+
+        <!-- Category filter bar -->
+        <div class="cat-bar" id="cat-bar">
+          <button class="cat-btn active" data-cat="all"    onclick="filterFeed('all',this)">✨ all</button>
+          <button class="cat-btn" data-cat="drink"  onclick="filterFeed('drink',this)">☕ drinks</button>
+          <button class="cat-btn" data-cat="beauty" onclick="filterFeed('beauty',this)">💄 beauty</button>
+          <button class="cat-btn" data-cat="deals"  onclick="filterFeed('deals',this)">🛍️ deals</button>
+          <button class="cat-btn" data-cat="worthy" onclick="filterFeed('worthy',this)">✅ worth it?</button>
         </div>
 
-        <div class="custom-prompt-banner">
-          <div class="custom-prompt-label">+ add your own prompt</div>
-          <div class="custom-prompt-row">
-            <input class="custom-prompt-input" id="custom-prompt-input" type="text" placeholder="ask the group something..." maxlength="120" />
-            <button class="custom-prompt-btn" onclick="addCustomPrompt()">post</button>
+        <!-- Trend feed (curated AI cards) -->
+        <div id="trend-feed">
+          <div class="feed-loading" id="feed-loading">
+            <div class="feed-loading-spinner"></div>
+            loading today's finds...
           </div>
-          <div class="custom-prompts-list" id="custom-prompts-list"></div>
+          <div class="feed-empty" id="feed-empty" style="display:none;">
+            <div style="font-size:28px;margin-bottom:8px;">🔍</div>
+            no finds in this category yet!
+          </div>
         </div>
 
-        <textarea class="answer-ta" id="answer-ta" placeholder="what's going on with you lately..."></textarea>
-        <div class="post-row">
-          <span class="char-hint" id="char-count">0 / 200</span>
-          <button class="post-btn" onclick="postIt()">post it !</button>
+        <!-- Divider into group section -->
+        <div class="section-divider" id="group-divider" style="display:none;">
+          <span>group chat 💬</span>
         </div>
-        <div class="masonry">
-          <div class="col" id="col-l"></div>
-          <div class="col" id="col-r"></div>
+
+        <!-- Group posts section -->
+        <div id="group-posts-section" style="display:none;">
+          <div class="custom-prompt-banner">
+            <div class="custom-prompt-row">
+              <input class="custom-prompt-input" id="custom-prompt-input" type="text" placeholder="ask the group something..." maxlength="120" />
+              <button class="custom-prompt-btn" onclick="addCustomPrompt()">post</button>
+            </div>
+            <div class="custom-prompts-list" id="custom-prompts-list"></div>
+          </div>
+          <div id="prompt-pill" style="display:none;">
+            <div class="prompt-polo" style="margin-bottom:12px;">
+              <div class="polo-tape"></div>
+              <div class="prompt-inner">
+                <div class="ai-prompt-badge">✨ this week's prompt</div>
+                <div class="prompt-q" id="weekly-prompt-text">loading...</div>
+              </div>
+              <div class="polo-caption">answer below ↓</div>
+            </div>
+            <textarea class="answer-ta" id="answer-ta" placeholder="what's going on with you lately..."></textarea>
+            <div class="post-row">
+              <span class="char-hint" id="char-count">0 / 200</span>
+              <button class="post-btn" onclick="postIt()">post it !</button>
+            </div>
+          </div>
+          <div class="masonry">
+            <div class="col" id="col-l"></div>
+            <div class="col" id="col-r"></div>
+          </div>
         </div>
-        <div class="feed-loading" id="feed-loading">loading posts...</div>
-        <div class="feed-empty hidden" id="feed-empty">no posts yet !<br>be the first one 🩷</div>
+
       </div>
+
 
       <!-- ALBUM -->
       <div class="screen" id="screen-album">
@@ -1324,7 +1522,7 @@
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, getDocs, onSnapshot, deleteDoc,
-    doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp, query, orderBy
+    doc, setDoc, getDoc, updateDoc, arrayUnion, serverTimestamp, query, orderBy, where, limit
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
   import {
     getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject
@@ -1378,9 +1576,10 @@
     if (unsubscribePhotos)        { unsubscribePhotos();        unsubscribePhotos = null; }
     if (unsubscribeAlbums)        { unsubscribeAlbums();        unsubscribeAlbums = null; }
     if (unsubscribeCustomPrompts) { unsubscribeCustomPrompts(); unsubscribeCustomPrompts = null; }
-    if (pongRAF)    { cancelAnimationFrame(pongRAF);    pongRAF = null; }
-    if (tapInterval){ clearInterval(tapInterval);       tapInterval = null; }
-    if (bAnimFrame) { cancelAnimationFrame(bAnimFrame); bAnimFrame = null; }
+    if (trendUnsub)  { trendUnsub();  trendUnsub = null; }
+    if (pongRAF)     { cancelAnimationFrame(pongRAF);    pongRAF = null; }
+    if (tapInterval) { clearInterval(tapInterval);       tapInterval = null; }
+    if (bAnimFrame)  { cancelAnimationFrame(bAnimFrame); bAnimFrame = null; }
   }
 
   window.showGroupsHub = () => {
@@ -1459,6 +1658,14 @@
       await updateDoc(doc(db, 'groups', currentGroupId), { name: val });
       closeModal('rename-modal');
     } catch(e) { alert('could not rename, try again !'); }
+  };
+
+  window.copyCode = () => {
+    if (!currentGroupData) return;
+    navigator.clipboard.writeText(currentGroupData.code || '').then(() => {
+      const btn = document.getElementById('copy-btn');
+      if (btn) { btn.textContent = 'copied!'; setTimeout(() => { btn.textContent = 'copy'; }, 2000); }
+    }).catch(() => {});
   };
 
   window.copyCodeFromSettings = () => {
@@ -1619,241 +1826,263 @@
   };
 
   // ── FEED ─────────────────────────────────────────
+
+  // ═══════════════════════════════════════════════
+  // TREND FEED — Curated AI content + group posts
+  // ═══════════════════════════════════════════════
+
+  let currentCatFilter = 'all';
+  let trendUnsub = null;
+
   function loadFeed() {
-    if (!currentGroupId) return;
-    if (unsubscribePosts) unsubscribePosts();
-    document.getElementById('feed-loading').style.display = 'block';
-    document.getElementById('feed-empty').style.display = 'none';
-    document.getElementById('col-l').innerHTML = '';
-    document.getElementById('col-r').innerHTML = '';
-    const q = query(collection(db, 'groups', currentGroupId, 'posts'), orderBy('createdAt', 'desc'));
-    let count = 0;
-    unsubscribePosts = onSnapshot(q, (snap) => {
-      const colL = document.getElementById('col-l');
-      const colR = document.getElementById('col-r');
-      if (!colL || !colR) return;
-      document.getElementById('feed-loading').style.display = 'none';
-      colL.innerHTML = '';
-      colR.innerHTML = '';
-      count = snap.docs.length;
-      if (count === 0) {
-        document.getElementById('feed-empty').style.display = 'block';
+    loadTrendFeed();
+    if (currentGroupId) {
+      loadGroupPosts();
+      loadWeeklyPrompt();
+      loadCustomPrompts();
+    }
+  }
+
+  // ── TREND FEED (global curated content) ─────────
+  function loadTrendFeed() {
+    if (trendUnsub) { trendUnsub(); trendUnsub = null; }
+    const loadEl  = document.getElementById('feed-loading');
+    const emptyEl = document.getElementById('feed-empty');
+    const feedEl  = document.getElementById('trend-feed');
+    if (loadEl)  loadEl.style.display  = 'flex';
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    // Remove any existing cards
+    feedEl.querySelectorAll('.trend-card').forEach(c => c.remove());
+
+    // Query approved posts — ordered by publishedAt desc
+    let q = query(
+      collection(db, 'trendPosts'),
+      where('approved', '==', true),
+      orderBy('publishedAt', 'desc'),
+      limit(30)
+    );
+
+    trendUnsub = onSnapshot(q, (snap) => {
+      if (loadEl) loadEl.style.display = 'none';
+      feedEl.querySelectorAll('.trend-card').forEach(c => c.remove());
+
+      // Get user category weights for personalization
+      const weights = (currentUser && userCatWeights) ? userCatWeights : {};
+
+      // Filter + sort by personalization weight
+      let docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (currentCatFilter !== 'all') {
+        docs = docs.filter(d => d.category === currentCatFilter);
+      } else {
+        // Personalized sort: boost categories user taps most
+        docs.sort((a, b) => {
+          const wa = weights[a.category] || 0;
+          const wb = weights[b.category] || 0;
+          if (wb !== wa) return wb - wa;
+          // secondary sort: newest first
+          const ta = a.publishedAt?.seconds || 0;
+          const tb = b.publishedAt?.seconds || 0;
+          return tb - ta;
+        });
+      }
+
+      if (docs.length === 0) {
+        if (emptyEl) emptyEl.style.display = 'flex';
         return;
       }
-      document.getElementById('feed-empty').style.display = 'none';
-      snap.docs.forEach((d, i) => renderPost(d.data(), d.id, i));
-    });
-  }
 
-  const BUBS = ['ba','bb','bc','bd'];
-  const ROTS_L = ['-2.5deg','-1.2deg','-1.8deg','-0.8deg'];
-  const ROTS_R = ['2deg','0.8deg','1.5deg','1.2deg'];
-  const TILE_COLORS = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
-  const TILE_EMOJIS = ['🌧️','🧋','🍜','☀️','🏃','🎉','🌙','🍕','❄️','📸','🌈','🎵','🍦','🌸','✨'];
-
-  function renderPost(data, id, idx) {
-    const isLeft  = idx % 2 === 0;
-    const col     = document.getElementById(isLeft ? 'col-l' : 'col-r');
-    const rots    = isLeft ? ROTS_L : ROTS_R;
-    const rot     = rots[idx % 4];
-    const isMe    = data.uid === currentUser.uid;
-    const nameTag = isMe ? 'you' : data.authorName;
-    const likes   = data.likes || 0;
-
-    // alternate between polaroid and bubble
-    const d = document.createElement('div');
-    if (idx % 3 === 0) {
-      const tileColor = TILE_COLORS[idx % TILE_COLORS.length];
-      const emoji     = TILE_EMOJIS[idx % TILE_EMOJIS.length];
-      d.className = 'polo-card';
-      d.style.transform = rot;
-      d.innerHTML =
-        '<div class="polo-img ' + tileColor + '">' + emoji + '</div>' +
-        '<div class="polo-footer">' +
-          '<div class="polo-who">' + esc(nameTag) + '</div>' +
-          '<div class="bubble-acts">' +
-            '<button class="pill" onclick="likePost(\'' + id + '\',this)">' + (likes > 0 ? '♥' : '♡') + ' ' + likes + '</button>' +
-          '</div>' +
-        '</div>' +
-        '<div style="padding:6px 2px 0;font-size:10.5px;font-weight:700;color:var(--ink);line-height:1.4;">' + esc(data.text) + '</div>';
-    } else {
-      d.className = 'bubble ' + BUBS[idx % 4];
-      d.style.transform = rot;
-      if (idx % 2 !== 0) d.style.marginTop = '28px';
-      d.innerHTML =
-        '<div class="bubble-txt">"' + esc(data.text) + '"</div>' +
-        '<div class="bubble-foot">' +
-          '<div class="bubble-who">' + esc(nameTag) + '</div>' +
-          '<div class="bubble-acts">' +
-            '<button class="pill" onclick="likePost(\'' + id + '\',this)">' + (likes > 0 ? '♥' : '♡') + ' ' + likes + '</button>' +
-          '</div>' +
-        '</div>';
-    }
-    col.appendChild(d);
-  }
-
-  window.likePost = async (postId, btn) => {
-    if (!currentGroupId) return;
-    const n = parseInt(btn.textContent.match(/\d+/)[0]);
-    try {
-      if (btn.dataset.l) {
-        await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: Math.max(0, n-1) });
-        btn.dataset.l = '';
-      } else {
-        await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: n+1 });
-        btn.dataset.l = '1';
-      }
-    } catch(e) {}
-  };
-
-  window.postIt = async () => {
-    const ta  = document.getElementById('answer-ta');
-    const v   = ta.value.trim();
-    if (!v || !currentGroupId || !currentUser) return;
-    try {
-      await addDoc(collection(db, 'groups', currentGroupId, 'posts'), {
-        text: v,
-        uid: currentUser.uid,
-        authorName: currentUser.displayName,
-        likes: 0,
-        createdAt: serverTimestamp()
+      const tilts = ['tilt-l', 'tilt-r', '', 'tilt-l', 'tilt-r'];
+      docs.forEach((post, i) => {
+        const card = buildTrendCard(post, tilts[i % tilts.length]);
+        feedEl.appendChild(card);
       });
-      ta.value = '';
-      document.getElementById('char-count').textContent = '0 / 200';
-    } catch(e) {
-      alert('could not post, try again !');
-    }
-  };
 
-  // ── COPY INVITE CODE ─────────────────────────────
-  window.copyCode = () => {
-    const code = document.getElementById('invite-code-display').textContent;
-    if (navigator.clipboard) navigator.clipboard.writeText(code).catch(()=>{});
-    const btn = document.getElementById('copy-btn');
-    btn.textContent = 'copied!';
-    btn.classList.add('done');
-    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('done'); }, 2500);
-  };
-
-  // ── AUTH STATE LISTENER ──────────────────────────
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) { showScreen('auth'); return; }
-    currentUser = user;
-    await checkAndClearDeactivation(user.uid);
-    showScreen('groups');
-    loadUserGroups();
-  });
-
-  // ── TAB NAV ──────────────────────────────────────
-  window.goTab = (id, btn) => {
-    ['feed','album','vibe','invite','games'].forEach(t => {
-      document.getElementById('screen-' + t).classList.toggle('active', t === id);
-    });
-    document.querySelectorAll('.tab').forEach((b,i) => {
-      b.classList.toggle('on', ['feed','album','vibe','invite','games'][i] === id);
-    });
-    if (id !== 'games' && pongRAF) { cancelAnimationFrame(pongRAF); pongRAF = null; }
-    if (id !== 'games' && tapInterval) { clearInterval(tapInterval); tapInterval = null; }
-  };
-
-  // ── CHAR COUNT ───────────────────────────────────
-  document.getElementById('answer-ta').addEventListener('input', function() {
-    document.getElementById('char-count').textContent = this.value.length + ' / 200';
-  });
-
-  // ── ALBUM ────────────────────────────────────────
-  const TC = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
-  const TE = ['📸','🌈','🎵','🍦','🌸','✨','🌊','🏔️','🎨'];
-  let photoCount = 6;
-  window.addPic = () => {
-    const grid = document.getElementById('colgrid');
-    const add  = grid.querySelector('.add-tile');
-    const r = Math.floor(Math.random()*9);
-    const d = document.createElement('div'); d.className = 'ctile';
-    d.style.transform = photoCount%2===0 ? 'rotate(-1.1deg)' : 'rotate(0.8deg)';
-    d.innerHTML = '<div class="tface ' + TC[r] + '">' + TE[r] + '</div><div class="tlabel">you · now</div>';
-    grid.insertBefore(d, add); photoCount++;
-    document.getElementById('album-sub').textContent = photoCount + ' memories';
-  };
-
-  // ── UTILS ────────────────────────────────────────
-  function esc(str) {
-    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-
-  // ── DEACTIVATE / DELETE ACCOUNT ────────────────
-  window.deactivateAccount = () => {
-    document.getElementById('deactivate-modal').classList.add('open');
-  };
-
-  window.confirmDeactivate = async () => {
-    try {
-      // Mark account as deactivated with a timestamp in Firestore
-      await setDoc(doc(db, 'users', currentUser.uid), {
-        deactivated: true,
-        deactivatedAt: serverTimestamp(),
-        deleteAfter: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      }, { merge: true });
-      closeModal('deactivate-modal');
-      alert('your account is deactivated. log in within 30 days to reactivate. after that it will be permanently deleted.');
-      await signOut(auth);
-      showScreen('auth');
-    } catch(e) {
-      alert('something went wrong. please email hellokayleec@gmail.com for help.');
-    }
-  };
-
-  window.deleteAccount = () => {
-    document.getElementById('delete-confirm-input').value = '';
-    document.getElementById('delete-modal').classList.add('open');
-  };
-
-  window.confirmDelete = async () => {
-    const val = document.getElementById('delete-confirm-input').value.trim();
-    if (val !== 'DELETE') {
-      alert('please type DELETE in all caps to confirm');
-      return;
-    }
-    try {
-      // Remove from group members list
+      // Show group section if in a group
       if (currentGroupId) {
-        const gSnap = await getDoc(doc(db, 'groups', currentGroupId));
-        if (gSnap.exists()) {
-          const members = (gSnap.data().members || []).filter(m => m.uid !== currentUser.uid);
-          await updateDoc(doc(db, 'groups', currentGroupId), { members });
-        }
+        document.getElementById('group-divider').style.display = 'flex';
+        document.getElementById('group-posts-section').style.display = 'block';
       }
-      // Delete user doc
-      await deleteDoc(doc(db, 'users', currentUser.uid));
-      // Delete Firebase auth account
-      await currentUser.delete();
-      closeModal('delete-modal');
-      alert('your account has been permanently deleted. goodbye 🩷');
-      showScreen('auth');
-    } catch(e) {
-      if (e.code === 'auth/requires-recent-login') {
-        alert('for security, please sign out and sign back in before deleting your account.');
-      } else {
-        alert('something went wrong. please email hellokayleec@gmail.com for help.');
-      }
-      closeModal('delete-modal');
-    }
-  };
-
-  // ── REACTIVATE ON LOGIN ──────────────────────────
-  // If a deactivated user logs back in, clear the deactivation flag
-  async function checkAndClearDeactivation(uid) {
-    const snap = await getDoc(doc(db, 'users', uid));
-    if (snap.exists() && snap.data().deactivated) {
-      await updateDoc(doc(db, 'users', uid), {
-        deactivated: false,
-        deactivatedAt: null,
-        deleteAfter: null
-      });
-    }
+    }, (err) => {
+      console.error('trendFeed error:', err);
+      if (loadEl) loadEl.style.display = 'none';
+    });
   }
 
-  // ── WEEKLY AI PROMPT ────────────────────────────
+  function buildTrendCard(post, tiltClass) {
+    const card = document.createElement('div');
+    card.className = 'trend-card ' + (tiltClass || '');
+
+    const catLabels = {
+      drink: '☕ drinks', beauty: '💄 beauty',
+      deals: '🛍️ deals', worthy: '✅ worth it?'
+    };
+    const catEmojis = { drink:'☕', beauty:'💄', deals:'🛍️', worthy:'✅' };
+    const placeholderEmoji = catEmojis[post.category] || '✨';
+
+    // Tape decoration
+    card.innerHTML = '<div class="trend-tape"></div>';
+
+    // Photo
+    const photoDiv = document.createElement('div');
+    photoDiv.className = 'trend-photo';
+    if (post.imageUrl) {
+      const img = document.createElement('img');
+      img.src = post.imageUrl;
+      img.alt = post.title || '';
+      img.loading = 'lazy';
+      img.onerror = () => { img.style.display='none'; photoDiv.querySelector('.trend-photo-placeholder').style.display='flex'; };
+      const ph = document.createElement('div');
+      ph.className = 'trend-photo-placeholder';
+      ph.style.display = 'none';
+      ph.textContent = placeholderEmoji;
+      photoDiv.appendChild(img);
+      photoDiv.appendChild(ph);
+    } else {
+      const ph = document.createElement('div');
+      ph.className = 'trend-photo-placeholder';
+      ph.textContent = placeholderEmoji;
+      photoDiv.appendChild(ph);
+    }
+
+    // Category badge on photo
+    const badge = document.createElement('div');
+    badge.className = 'trend-cat-badge';
+    badge.textContent = catLabels[post.category] || '✨ trend';
+    photoDiv.appendChild(badge);
+    card.appendChild(photoDiv);
+
+    // Title
+    const title = document.createElement('div');
+    title.className = 'trend-title';
+    title.textContent = post.title || '';  // textContent is safe, no XSS
+    card.appendChild(title);
+
+    // Description
+    if (post.description) {
+      const desc = document.createElement('div');
+      desc.className = 'trend-desc';
+      desc.textContent = post.description;
+      card.appendChild(desc);
+    }
+
+    // Price comparison
+    if (post.originalPrice || post.locketPrice) {
+      const row = document.createElement('div');
+      row.className = 'trend-price-row';
+      if (post.originalPrice) {
+        const orig = document.createElement('div');
+        orig.className = 'trend-price-original';
+        orig.textContent = post.originalPrice;
+        row.appendChild(orig);
+      }
+      if (post.locketPrice) {
+        const lp = document.createElement('div');
+        lp.className = 'trend-price-locket';
+        lp.textContent = post.locketPrice;
+        row.appendChild(lp);
+      }
+      if (post.savings) {
+        const sv = document.createElement('div');
+        sv.className = 'trend-price-save';
+        sv.textContent = 'save ' + post.savings;
+        row.appendChild(sv);
+      }
+      card.appendChild(row);
+    }
+
+    // Where to find it
+    if (post.where) {
+      const where = document.createElement('div');
+      where.className = 'trend-where';
+      where.innerHTML = '<div class="trend-where-dot"></div>' + esc(post.where || '');
+      card.appendChild(where);
+    }
+
+    // CTA button
+    const cta = document.createElement('a');
+    cta.className = 'trend-cta' + (post.link ? '' : ' no-link');
+    cta.textContent = post.link ? 'get it →' : 'find it in store';
+    if (post.link) {
+      cta.href = post.link;
+      cta.target = '_blank';
+      cta.rel = 'noopener noreferrer';
+    }
+    card.appendChild(cta);
+
+    // Track tap for personalization
+    card.addEventListener('click', () => trackCatTap(post.category));
+
+    return card;
+  }
+
+  // ── PERSONALIZATION ──────────────────────────────
+  let userCatWeights = {};
+
+  async function loadUserCatWeights() {
+    if (!currentUser) return;
+    try {
+      const snap = await getDoc(doc(db, 'users', currentUser.uid));
+      if (snap.exists()) userCatWeights = snap.data().catWeights || {};
+    } catch(e) {}
+  }
+
+  async function trackCatTap(cat) {
+    if (!currentUser || !cat) return;
+    userCatWeights[cat] = (userCatWeights[cat] || 0) + 1;
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        ['catWeights.' + cat]: (userCatWeights[cat])
+      });
+    } catch(e) {}
+  }
+
+  // ── CATEGORY FILTER ──────────────────────────────
+  window.filterFeed = (cat, btn) => {
+    currentCatFilter = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Rebuild displayed cards from cached snapshot
+    loadTrendFeed();
+    // Track filter usage for personalization
+    if (cat !== 'all') trackCatTap(cat);
+  };
+
+  // ── GROUP POSTS (existing, moved below trend feed) ──
+  function loadGroupPosts() {
+    if (!currentGroupId) return;
+    if (unsubscribePosts) unsubscribePosts();
+    const colL = document.getElementById('col-l');
+    const colR = document.getElementById('col-r');
+    if (!colL || !colR) return;
+    colL.innerHTML = ''; colR.innerHTML = '';
+
+    const q = query(
+      collection(db, 'groups', currentGroupId, 'posts'),
+      orderBy('createdAt', 'desc'), limit(40)
+    );
+    unsubscribePosts = onSnapshot(q, (snap) => {
+      if (!colL || !colR) return;
+      colL.innerHTML = ''; colR.innerHTML = '';
+      snap.docs.forEach((d, i) => {
+        const p = d.data();
+        const isMe = p.uid === currentUser?.uid;
+        const el = document.createElement('div');
+        el.className = 'post-card';
+        el.innerHTML =
+          '<div class="post-author">' + esc(p.authorName||'friend') + (isMe ? ' <span class="post-you">you</span>' : '') + '</div>' +
+          '<div class="post-text">' + esc(p.text||'') + '</div>' +
+          '<div class="post-foot">' +
+            '<button class="post-like" onclick="likePost(\'' + d.id + '\',this)" data-l="">' +
+              '🩷 ' + (p.likes||0) +
+            '</button>' +
+          '</div>';
+        (i % 2 === 0 ? colL : colR).appendChild(el);
+      });
+    });
+  }
+
+
   async function loadWeeklyPrompt() {
     if (!currentGroupId) return;
     const weekKey = getWeekKey();
@@ -3319,6 +3548,76 @@
       this.closePath();
     };
   }
+
+
+  // ── POST IT (group post) ────────────────────────
+  window.postIt = async () => {
+    const ta  = document.getElementById('answer-ta');
+    const v   = ta.value.trim();
+    if (!v || !currentGroupId || !currentUser) return;
+    try {
+      await addDoc(collection(db, 'groups', currentGroupId, 'posts'), {
+        text: v,
+        uid: currentUser.uid,
+        authorName: currentUser.displayName,
+        likes: 0,
+        createdAt: serverTimestamp()
+      });
+      ta.value = '';
+      document.getElementById('char-count').textContent = '0 / 200';
+    } catch(e) {
+      alert('could not post, try again !');
+    }
+  };
+
+  // ── LIKE POST ────────────────────────────────────
+  window.likePost = async (postId, btn) => {
+    if (!currentGroupId) return;
+    const n = parseInt(btn.textContent.match(/\d+/)[0]);
+    try {
+      if (btn.dataset.l) {
+        await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: Math.max(0, n-1) });
+        btn.dataset.l = '';
+      } else {
+        await updateDoc(doc(db, 'groups', currentGroupId, 'posts', postId), { likes: n+1 });
+        btn.dataset.l = '1';
+      }
+    } catch(e) {}
+  };
+
+  // ── ACCOUNT MANAGEMENT ───────────────────────────
+  window.deactivateAccount = () => {
+    document.getElementById('deactivate-modal').classList.add('open');
+  };
+
+  window.confirmDeactivate = async () => {
+    if (!currentUser) return;
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        deactivated: true,
+        deactivatedAt: serverTimestamp(),
+        deleteAfter: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      }, { merge: true });
+      await signOut(auth);
+      showScreen('auth');
+    } catch(e) { alert('could not deactivate, try again'); }
+  };
+
+  window.deleteAccount = () => {
+    document.getElementById('delete-modal').classList.add('open');
+  };
+
+  window.confirmDelete = async () => {
+    if (!currentUser) return;
+    try {
+      if (currentGroupId) {
+        await setDoc(doc(db, 'users', currentUser.uid), { groupId: null }, { merge: true });
+      }
+      await deleteDoc(doc(db, 'users', currentUser.uid));
+      await currentUser.delete();
+      showScreen('auth');
+    } catch(e) { alert('could not delete account — you may need to sign in again first'); }
+  };
 
   // INSTALL BANNER
   let deferredInstallPrompt = null;

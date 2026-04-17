@@ -1611,6 +1611,8 @@
 
   async function loadUserGroups() {
     const el = document.getElementById('groups-list');
+    if (!el) return;
+    if (!currentUser) { el.innerHTML = '<div style="color:var(--mid);font-size:12px;font-weight:700;padding:8px 0;">please sign in first</div>'; return; }
     el.innerHTML = '<div style="color:var(--mid);font-size:13px;font-weight:700;padding:8px 0;">loading your groups...</div>';
     try {
       // find all groups where user is a member
@@ -1629,7 +1631,8 @@
         '<div class="group-card-arrow">›</div>'+
       '</div>';
     } catch(e) {
-      el.innerHTML = '<div style="color:var(--mid);font-size:12px;">could not load groups</div>';
+      console.error('loadUserGroups error:', e);
+      el.innerHTML = '<div style="color:var(--mid);font-size:12px;font-weight:700;">could not load groups — check your connection</div>';
     }
   }
 
@@ -1639,11 +1642,8 @@
 
   window.signOut = async () => {
     if (!confirm('sign out?')) return;
-    if (unsubscribeGroup) unsubscribeGroup();
-    if (unsubscribePosts) unsubscribePosts();
-    if (unsubscribeVibe) unsubscribeVibe();
+    cleanupListeners();
     await signOut(auth);
-    showScreen('auth');
   };
 
   window.showRenameModal = () => {
@@ -1724,21 +1724,23 @@
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     if (user) {
-      // User is signed in — check if they have a group
+      // Always go straight to the app — feed works without a group
+      showScreen('app');
+      // Activate feed tab — find the feed button specifically
+      const feedTab = Array.from(document.querySelectorAll('.tab')).find(b => b.textContent.trim() === 'feed');
+      if (feedTab) { feedTab.classList.add('on'); }
+      loadTrendFeed();
+      loadUserCatWeights();
+      // Then load group in the background if they have one
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (snap.exists() && snap.data().groupId) {
           await loadGroup(snap.data().groupId);
-        } else {
-          showScreen('groups');
-          loadUserGroups();
         }
       } catch(e) {
-        showScreen('groups');
-        loadUserGroups();
+        // No group yet — feed still works fine
       }
     } else {
-      // Signed out
       currentUser = null;
       cleanupListeners();
       showScreen('auth');
@@ -1929,8 +1931,10 @@
         document.getElementById('group-posts-section').style.display = 'block';
       }
     }, (err) => {
-      console.error('trendFeed error:', err);
+      console.error('trendFeed error:', err.code, err.message);
       if (loadEl) loadEl.style.display = 'none';
+      if (emptyEl) emptyEl.style.display = 'block';
+      // Don't crash — trend feed may just not have rules set yet
     });
   }
 

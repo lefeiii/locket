@@ -1094,30 +1094,19 @@
   <!-- ── MAIN APP ── -->
   <div id="app-shell" style="display:none; flex-direction:column; flex:1;">
     <div class="topbar">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button class="back-btn" onclick="showGroupsHub()" style="padding:5px 10px;font-size:11px;">← groups</button>
-        <div class="logo">
-          locket
-          <svg viewBox="0 0 28 26" fill="none">
-            <path d="M14 24s-11-7.5-11-14C3 5.7 6.4 3 10 3c2 0 3.5.9 4 2.2C14.5 3.9 16 3 18 3c3.6 0 7 2.7 7 7 0 6.5-11 14-11 14z" fill="#E8736A" stroke="#E8736A" stroke-width="1" stroke-linejoin="round"/>
-            <ellipse cx="14" cy="12" rx="4" ry="3" fill="rgba(255,255,255,0.22)"/>
-            <rect x="12" y="1" width="4" height="5" rx="1.5" fill="#c8505a"/>
-            <rect x="13" y="0" width="2" height="3" rx="0.8" fill="#b04048"/>
-          </svg>
-        </div>
+      <div class="logo">
+        locket
+        <svg viewBox="0 0 28 26" fill="none">
+          <path d="M14 24s-11-7.5-11-14C3 5.7 6.4 3 10 3c2 0 3.5.9 4 2.2C14.5 3.9 16 3 18 3c3.6 0 7 2.7 7 7 0 6.5-11 14-11 14z" fill="#E8736A" stroke="#E8736A" stroke-width="1" stroke-linejoin="round"/>
+          <ellipse cx="14" cy="12" rx="4" ry="3" fill="rgba(255,255,255,0.22)"/>
+          <rect x="12" y="1" width="4" height="5" rx="1.5" fill="#c8505a"/>
+          <rect x="13" y="0" width="2" height="3" rx="0.8" fill="#b04048"/>
+        </svg>
       </div>
-      <div class="group-chip" onclick="openSettings()">
-        <div class="live-dot"></div>
-        <span id="group-chip-name">my group</span>
-      </div>
+      <button class="back-btn" onclick="showUserMenu()" style="padding:5px 12px;font-size:11px;">⚙️ settings</button>
     </div>
 
-    <div class="tabs">
-      <button class="tab on" onclick="goTab('feed',this)">feed</button>
-      <button class="tab" onclick="goTab('album',this)">album</button>
-      <button class="tab" onclick="goTab('vibe',this)">charms</button>
-      <button class="tab" onclick="goTab('invite',this)">+ invite</button>
-      <button class="tab" onclick="goTab('games',this)">🎮 games</button>
+    <div class="tabs" style="display:none;">
     </div>
 
     <div class="body">
@@ -1818,7 +1807,7 @@
       if (!groupSnap.exists()) return;
       currentGroupData = groupSnap.data();
       const members = currentGroupData.members || [];
-      document.getElementById('group-chip-name').textContent = currentGroupData.name + ' · ' + members.length;
+      const chipEl = document.getElementById('group-chip-name'); if (chipEl) chipEl.textContent = currentGroupData.name + ' · ' + members.length;
       document.getElementById('album-title').textContent = currentGroupData.name;
       renderMembers(members);
     });
@@ -1935,6 +1924,38 @@
       if (loadEl) loadEl.style.display = 'none';
       if (emptyEl) emptyEl.style.display = 'block';
       // Don't crash — trend feed may just not have rules set yet
+    });
+  }
+
+  function renderTrendCards(allDocs) {
+    const feedEl  = document.getElementById('trend-feed');
+    const emptyEl = document.getElementById('feed-empty');
+    if (!feedEl) return;
+    feedEl.querySelectorAll('.trend-card').forEach(c => c.remove());
+
+    const weights = userCatWeights || {};
+    let docs = [...allDocs];
+
+    if (currentCatFilter !== 'all') {
+      docs = docs.filter(d => d.category === currentCatFilter);
+    } else {
+      docs.sort((a, b) => {
+        const wa = weights[a.category] || 0;
+        const wb = weights[b.category] || 0;
+        if (wb !== wa) return wb - wa;
+        return (b.publishedAt?.seconds || 0) - (a.publishedAt?.seconds || 0);
+      });
+    }
+
+    if (docs.length === 0) {
+      if (emptyEl) emptyEl.style.display = 'flex';
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    const tilts = ['tilt-l', 'tilt-r', '', 'tilt-l', 'tilt-r'];
+    docs.forEach((post, i) => {
+      feedEl.appendChild(buildTrendCard(post, tilts[i % tilts.length]));
     });
   }
 
@@ -2067,12 +2088,14 @@
   }
 
   // ── CATEGORY FILTER ──────────────────────────────
+  let cachedTrendDocs = []; // cache for filter re-renders
+
   window.filterFeed = (cat, btn) => {
     currentCatFilter = cat;
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    // Rebuild displayed cards from cached snapshot
-    loadTrendFeed();
+    // Re-render from cache instead of re-subscribing
+    renderTrendCards(cachedTrendDocs);
     // Track filter usage for personalization
     if (cat !== 'all') trackCatTap(cat);
   };
@@ -3646,6 +3669,17 @@
       await currentUser.delete();
       showScreen('auth');
     } catch(e) { alert('could not delete account — you may need to sign in again first'); }
+  };
+
+  // ── USER MENU (replaces group settings) ────────
+  window.showUserMenu = () => {
+    const det = document.getElementById('charm-detail');
+    // Simple action sheet
+    const choice = confirm('sign out of locket?');
+    if (choice) {
+      cleanupListeners();
+      signOut(auth);
+    }
   };
 
   // INSTALL BANNER

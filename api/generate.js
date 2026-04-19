@@ -14,178 +14,183 @@ if (!getApps().length) {
 const db = getFirestore();
 export const maxDuration = 60;
 
-const CATEGORIES = [
+function cleanText(str) {
+  if (!str) return null;
+  return str.replace(/<cite[^>]*>/gi,'').replace(/<\/cite>/gi,'').replace(/\[\d+\]/g,'').trim() || null;
+}
+
+function validUrl(url) {
+  return url && typeof url === 'string' && url.startsWith('http') ? url : null;
+}
+
+const SAVE_TOOL = {
+  name: 'save_posts',
+  description: 'Save the 3 trend posts you researched',
+  input_schema: {
+    type: 'object',
+    properties: {
+      posts: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 3,
+        items: {
+          type: 'object',
+          required: ['title','description','originalPrice','locketPrice','savings','where','link','imageUrl'],
+          properties: {
+            title:         { type: 'string' },
+            description:   { type: 'string' },
+            originalPrice: { type: 'string' },
+            locketPrice:   { type: 'string' },
+            savings:       { type: 'string' },
+            where:         { type: 'string' },
+            link:          { type: 'string' },
+            imageUrl:      { type: 'string' },
+          },
+        },
+      },
+    },
+    required: ['posts'],
+  },
+};
+
+const PROMPTS = [
   {
     id: 'drink',
-    prompt: `Find 3 currently trending Starbucks or food/drink hacks for women 18-24 today.
-For EACH item provide:
-- title: the drink name (e.g. "Brown Sugar Oat Shaken Espresso Hack")
-- description: EXACT ordering instructions — base drink + every customization with exact amounts (pumps, toppings, milk type, ice level). Format: "Start with a [size] [base drink]. Ask for: [customization 1], [customization 2]..."
-- originalPrice: normal retail price (e.g. "$8.45")
-- locketPrice: hack/dupe price (e.g. "$5.25 with rewards")
-- savings: calculated difference (e.g. "save $3.20")
-- where: "Starbucks app" or store name
-- link: direct menu link (e.g. "https://www.starbucks.com/menu")
-- imageUrl: a working direct image URL of this exact drink from Starbucks website, their CDN, or a food blog. Must end in .jpg, .png, or .webp`,
+    msg: `Search for 3 trending Starbucks drink hacks or secret menu items popular with women 18-24 right now.
+For each drink call save_posts with:
+- title: drink name
+- description: exact ordering instructions (base drink + each customization with amounts)
+- originalPrice: normal Starbucks price
+- locketPrice: hack/cheaper price
+- savings: dollar amount saved
+- where: "Starbucks"
+- link: https://www.starbucks.com/menu
+- imageUrl: find a direct .jpg or .png image of this drink from starbucks.com or a food blog`,
   },
   {
     id: 'beauty',
-    prompt: `Find 3 trending affordable beauty products or dupes for women 18-24 today.
-For EACH item provide:
-- title: brand + product name (e.g. "e.l.f. Halo Glow Liquid Filter")
-- description: ONE sentence — what it is and what it does (e.g. "Drugstore dupe for Charlotte Tilbury Flawless Filter that gives skin a glowy, blurred finish.")
-- originalPrice: high-end original price (e.g. "$49.00")
-- locketPrice: dupe/affordable price (e.g. "$14.00 at Target")
-- savings: calculated (e.g. "save $35.00")
-- where: exact store (e.g. "Target", "Ulta", "Amazon")
-- link: direct product page URL (not homepage)
-- imageUrl: working direct image URL of this exact product from the brand website, Ulta, Sephora, Target, or Amazon product page. Must end in .jpg, .png, or .webp`,
+    msg: `Search for 3 affordable beauty dupes or viral drugstore products trending for women 18-24 right now.
+For each product call save_posts with:
+- title: brand and product name
+- description: one sentence what it is and what it does
+- originalPrice: high-end original price
+- locketPrice: dupe/drugstore price
+- savings: amount saved
+- where: store name (Target, Ulta, Amazon etc)
+- link: direct product page URL
+- imageUrl: direct .jpg or .png image URL from the brand, Target, Ulta, or Amazon product page`,
   },
   {
     id: 'deals',
-    prompt: `Find 3 real active sales happening RIGHT NOW that women 18-24 would love (fashion, beauty, lifestyle).
-For EACH item provide:
-- title: brand + deal (e.g. "Aritzia Extra 30% Off Sale")
-- description: ONE sentence — what's on sale and any promo code (e.g. "Extra 30% off sale styles, no code needed, applied at checkout.")
-- originalPrice: example item original price (e.g. "$98.00")
-- locketPrice: example item sale price (e.g. "$45.00")
-- savings: calculated savings or percentage (e.g. "save 54%")
+    msg: `Search for 3 real sales or deals active RIGHT NOW that women 18-24 would care about (fashion, beauty, lifestyle).
+For each deal call save_posts with:
+- title: brand name and deal description
+- description: one sentence what is on sale and any promo code
+- originalPrice: typical item price before sale
+- locketPrice: sale price
+- savings: percent or dollar savings
 - where: store name
 - link: direct sale page URL
-- imageUrl: a working image URL showing a product from this sale or the brand's logo/banner. Must end in .jpg, .png, or .webp`,
+- imageUrl: a .jpg or .png image from the brand or sale page`,
   },
   {
     id: 'worthy',
-    prompt: `Find 3 currently hyped products for women 18-24 — give an honest worth it or skip it verdict.
-For EACH item provide:
-- title: "Worth It: [product]" OR "Skip It: [product]" (e.g. "Worth It: Stanley Quencher 30oz")
-- description: ONE honest sentence why (e.g. "Keeps drinks cold 12+ hours and fits car cupholders — the hype is real.")
-- originalPrice: full retail price (e.g. "$45.00")
-- locketPrice: best price you found (e.g. "$38.00 on Amazon")
-- savings: savings vs retail (e.g. "save $7.00") or "best price" if cheapest
-- where: where to buy
+    msg: `Search for 3 hyped products women 18-24 are debating buying. Give an honest worth it or skip it verdict for each.
+For each call save_posts with:
+- title: start with "Worth It: " or "Skip It: " then the product name
+- description: one honest sentence explaining the verdict
+- originalPrice: full retail price
+- locketPrice: best price available online
+- savings: savings vs retail or "best price"
+- where: best place to buy
 - link: direct product URL
-- imageUrl: working direct image URL of this exact product. Must end in .jpg, .png, or .webp`,
+- imageUrl: direct .jpg or .png image of the exact product`,
   },
 ];
-
-function cleanText(str) {
-  if (!str) return null;
-  return str
-    .replace(/<cite[^>]*>/gi, '')
-    .replace(/<\/cite>/gi, '')
-    .replace(/\[\d+\]/g, '')
-    .trim();
-}
-
-function isValidImageUrl(url) {
-  if (!url || typeof url !== 'string') return false;
-  if (!url.startsWith('http')) return false;
-  // Must look like a real image URL
-  const lower = url.toLowerCase();
-  return lower.match(/\.(jpg|jpeg|png|webp|gif)(\?.*)?$/) !== null ||
-         lower.includes('/images/') ||
-         lower.includes('/media/') ||
-         lower.includes('cdn') ||
-         lower.includes('image');
-}
 
 export default async function handler(req, res) {
   if (req.headers['authorization'] !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
-  try {
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const allPosts = [];
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const allPosts = [];
+  const errors = [];
 
-    for (const cat of CATEGORIES) {
-      try {
-        const response = await client.messages.create({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 2000,
-          tools: [
-            { type: 'web_search_20250305', name: 'web_search' },
-            {
-              name: 'save_posts',
-              description: 'Save the trend posts you found',
-              input_schema: {
-                type: 'object',
-                properties: {
-                  posts: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        title:         { type: 'string' },
-                        description:   { type: 'string' },
-                        originalPrice: { type: 'string' },
-                        locketPrice:   { type: 'string' },
-                        savings:       { type: 'string' },
-                        where:         { type: 'string' },
-                        link:          { type: 'string' },
-                        imageUrl:      { type: 'string', description: 'Direct image URL ending in .jpg/.png/.webp' },
-                      },
-                      required: ['title', 'description', 'originalPrice', 'locketPrice', 'savings', 'where', 'link', 'imageUrl'],
-                    },
-                    minItems: 3,
-                    maxItems: 3,
-                  },
-                },
-                required: ['posts'],
-              },
-            },
-          ],
-          tool_choice: { type: 'any' },
-          messages: [{ role: 'user', content: cat.prompt }],
-        });
+  for (const cat of PROMPTS) {
+    try {
+      const response = await client.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
+        tools: [
+          { type: 'web_search_20250305', name: 'web_search' },
+          SAVE_TOOL,
+        ],
+        tool_choice: { type: 'any' },
+        messages: [{ role: 'user', content: cat.msg }],
+      });
 
-        for (const block of response.content) {
-          if (block.type === 'tool_use' && block.name === 'save_posts') {
-            const posts = block.input?.posts || [];
-            posts.forEach(p => {
-              if (p.title && p.description) {
-                allPosts.push({
-                  category:      cat.id,
-                  title:         cleanText(p.title),
-                  description:   cleanText(p.description),
-                  originalPrice: cleanText(p.originalPrice) || null,
-                  locketPrice:   cleanText(p.locketPrice) || null,
-                  savings:       cleanText(p.savings) || null,
-                  where:         cleanText(p.where) || null,
-                  link:          p.link?.startsWith('http') ? p.link : null,
-                  imageUrl:      isValidImageUrl(p.imageUrl) ? p.imageUrl : null,
-                });
-              }
-            });
-            break;
-          }
-        }
-      } catch (catErr) {
-        console.error(`Error for ${cat.id}:`, catErr.message);
+      // Find the save_posts tool call
+      const saveCall = response.content.find(b => b.type === 'tool_use' && b.name === 'save_posts');
+      
+      if (!saveCall) {
+        // Fallback: maybe it returned text — log what we got
+        const textBlock = response.content.find(b => b.type === 'text');
+        errors.push(`${cat.id}: no save_posts call. stop_reason=${response.stop_reason}. text=${textBlock?.text?.slice(0,100)}`);
+        continue;
       }
-    }
 
-    if (allPosts.length === 0) {
-      return res.status(500).json({ error: 'no posts generated' });
-    }
+      const posts = saveCall.input?.posts || [];
+      let added = 0;
+      posts.forEach(p => {
+        if (p.title && p.description) {
+          allPosts.push({
+            category:      cat.id,
+            title:         cleanText(p.title),
+            description:   cleanText(p.description),
+            originalPrice: cleanText(p.originalPrice),
+            locketPrice:   cleanText(p.locketPrice),
+            savings:       cleanText(p.savings),
+            where:         cleanText(p.where),
+            link:          validUrl(p.link),
+            imageUrl:      validUrl(p.imageUrl),
+            approved:      false,
+            publishedAt:   null,
+            createdAt:     Timestamp.now(),
+            draftedAt:     Timestamp.now(),
+          });
+          added++;
+        }
+      });
+      if (added === 0) errors.push(`${cat.id}: save_posts called but 0 valid posts`);
 
+    } catch (e) {
+      errors.push(`${cat.id}: ${e.message}`);
+    }
+  }
+
+  if (allPosts.length === 0) {
+    return res.status(500).json({ 
+      error: 'no posts generated',
+      details: errors,
+    });
+  }
+
+  // Save to Firestore
+  try {
     const batch = db.batch();
-    const now = Timestamp.now();
     allPosts.forEach(post => {
-      const ref = db.collection('trendPosts').doc();
-      batch.set(ref, { ...post, approved: false, publishedAt: null, createdAt: now, draftedAt: now });
+      batch.set(db.collection('trendPosts').doc(), post);
     });
     await batch.commit();
-
-    return res.status(200).json({
-      success: true,
-      drafted: allPosts.length,
-      message: `✨ drafted ${allPosts.length} posts for review!`,
-    });
-
   } catch (e) {
-    console.error('Generate error:', e);
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: 'firestore save failed: ' + e.message });
   }
+
+  return res.status(200).json({
+    success: true,
+    drafted: allPosts.length,
+    message: `✨ drafted ${allPosts.length} posts!`,
+    warnings: errors.length ? errors : undefined,
+  });
 }

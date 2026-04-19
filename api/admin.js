@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
     if (action === 'trigger') {
       // Manually trigger generation
-      const genRes = await fetch(`${process.env.VERCEL_URL}/api/generate`, {
+      const genRes = await fetch(`https://ourlockets.com/api/generate`, {
         method: 'POST',
         headers: { authorization: `Bearer ${process.env.CRON_SECRET}` }
       });

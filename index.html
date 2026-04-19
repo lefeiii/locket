@@ -1875,8 +1875,7 @@
     let q = query(
       collection(db, 'trendPosts'),
       where('approved', '==', true),
-      orderBy('publishedAt', 'desc'),
-      limit(30)
+      limit(30)  // no orderBy — sort client-side to avoid composite index
     );
 
     trendUnsub = onSnapshot(q, (snap) => {

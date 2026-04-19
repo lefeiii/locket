@@ -13,27 +13,7 @@ if (!getApps().length) {
 }
 const db = getFirestore();
 
-// Tell Vercel to allow up to 60 seconds for this function
 export const maxDuration = 60;
-
-const SYSTEM_PROMPT = `You are a trend researcher for Locket, a curated discovery app for young women (18-24) who want to keep up with trends without overspending. Find REAL, CURRENT, SPECIFIC trending items using web search.
-
-Respond ONLY with valid JSON, no markdown. Format:
-{
-  "posts": [
-    {
-      "category": "drink|beauty|deals|worthy",
-      "title": "short punchy title (max 8 words)",
-      "description": "2-3 sentences. specific, honest, helpful.",
-      "originalPrice": "$XX or null",
-      "locketPrice": "$XX (dupe/hack/sale price) or null",
-      "savings": "save $XX or XX% off or null",
-      "where": "store name or website",
-      "link": "direct URL or null",
-      "imageUrl": null
-    }
-  ]
-}`;
 
 export default async function handler(req, res) {
   const authHeader = req.headers['authorization'];
@@ -44,42 +24,81 @@ export default async function handler(req, res) {
   try {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-    // Single call for all categories — faster, avoids timeout
     const response = await client.messages.create({
       model: 'claude-opus-4-5',
       max_tokens: 4000,
-      system: SYSTEM_PROMPT,
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
       messages: [{
         role: 'user',
-        content: `Find 3 posts for each of these 4 categories (12 total) trending TODAY for girls 18-24:
-1. drink — Starbucks hacks, food/drink trends, secret menu items
-2. beauty — affordable dupes, viral products, Sephora finds
-3. deals — sales, drops, limited time offers worth knowing about
-4. worthy — honest "worth it or skip it" verdicts on hyped products
+        content: `You are a trend researcher for Locket, a curated app for women 18-24 who want to keep up with trends without overspending.
 
-Be specific: real product names, actual prices, real stores. Use web search.`
+Use web search to find 12 real, current, specific trending items TODAY across these 4 categories (3 each):
+- drink: Starbucks hacks, food/drink trends, secret menu items
+- beauty: affordable dupes, viral products, Sephora finds  
+- deals: sales, drops, limited time offers
+- worthy: honest "worth it or skip it" verdicts on hyped products
+
+Return ONLY a JSON array, nothing else, no markdown, no explanation:
+[
+  {
+    "category": "drink",
+    "title": "short punchy title",
+    "description": "2-3 specific sentences",
+    "originalPrice": "$XX or null",
+    "locketPrice": "$XX or null",
+    "savings": "save $XX or null",
+    "where": "store or website name",
+    "link": "https://... or null"
+  }
+]`
       }],
     });
 
-    const textBlock = response.content.find(b => b.type === 'text');
-    if (!textBlock) {
-      return res.status(500).json({ error: 'no text response from Claude' });
+    // Extract text from response — handle all content block types
+    let rawText = '';
+    for (const block of response.content) {
+      if (block.type === 'text') {
+        rawText += block.text;
+      }
     }
 
-    let parsed;
+    // Aggressively extract JSON array from whatever Claude returned
+    let posts = [];
+    
+    // Try 1: direct parse
     try {
-      const clean = textBlock.text.replace(/```json|```/g, '').trim();
-      parsed = JSON.parse(clean);
-    } catch(e) {
-      console.error('JSON parse error:', e, textBlock.text.slice(0, 200));
-      return res.status(500).json({ error: 'JSON parse failed', raw: textBlock.text.slice(0, 200) });
+      const direct = rawText.trim();
+      posts = JSON.parse(direct);
+    } catch(_) {}
+
+    // Try 2: extract JSON array between first [ and last ]
+    if (!posts.length) {
+      try {
+        const start = rawText.indexOf('[');
+        const end = rawText.lastIndexOf(']');
+        if (start !== -1 && end > start) {
+          posts = JSON.parse(rawText.slice(start, end + 1));
+        }
+      } catch(_) {}
     }
 
-    const posts = (parsed.posts || []).filter(p => p.title && p.description);
+    // Try 3: extract from code block
+    if (!posts.length) {
+      try {
+        const match = rawText.match(/```(?:json)?\s*([\s\S]+?)\s*```/);
+        if (match) posts = JSON.parse(match[1]);
+      } catch(_) {}
+    }
+
+    // Validate posts
+    posts = (Array.isArray(posts) ? posts : [])
+      .filter(p => p && p.title && p.description && p.category);
 
     if (posts.length === 0) {
-      return res.status(500).json({ error: 'no valid posts generated' });
+      return res.status(500).json({ 
+        error: 'no valid posts extracted',
+        raw: rawText.slice(0, 300)
+      });
     }
 
     // Save to Firestore
@@ -88,11 +107,19 @@ Be specific: real product names, actual prices, real stores. Use web search.`
     posts.forEach(post => {
       const ref = db.collection('trendPosts').doc();
       batch.set(ref, {
-        ...post,
-        approved: false,
-        publishedAt: null,
-        createdAt: now,
-        draftedAt: now,
+        category:      post.category || 'deals',
+        title:         post.title || '',
+        description:   post.description || '',
+        originalPrice: post.originalPrice || null,
+        locketPrice:   post.locketPrice || null,
+        savings:       post.savings || null,
+        where:         post.where || null,
+        link:          post.link || null,
+        imageUrl:      null,
+        approved:      false,
+        publishedAt:   null,
+        createdAt:     now,
+        draftedAt:     now,
       });
     });
     await batch.commit();

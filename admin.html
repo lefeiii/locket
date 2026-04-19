@@ -166,7 +166,8 @@ window.showTab = (tab, btn) => {
 // ── DRAFTS ────────────────────────────────────────
 function loadDrafts() {
   if (unsubDrafts) unsubDrafts();
-  const q = query(collection(db,'trendPosts'), where('approved','==',false), orderBy('createdAt','desc'), limit(60));
+  // No orderBy — avoids needing a composite Firestore index
+  const q = query(collection(db,'trendPosts'), where('approved','==',false), limit(60));
   unsubDrafts = onSnapshot(q, snap => {
     document.getElementById('drafts-loading').style.display = 'none';
     document.getElementById('draft-count').textContent = snap.size;
@@ -174,7 +175,17 @@ function loadDrafts() {
     list.innerHTML = '';
     if (snap.empty) { document.getElementById('drafts-empty').style.display = 'block'; return; }
     document.getElementById('drafts-empty').style.display = 'none';
-    snap.docs.forEach(d => list.appendChild(buildDraftCard(d.id, d.data())));
+    // Sort client-side newest first
+    const docs = snap.docs.slice().sort((a,b) => {
+      const ta = a.data().createdAt?.seconds || 0;
+      const tb = b.data().createdAt?.seconds || 0;
+      return tb - ta;
+    });
+    docs.forEach(d => list.appendChild(buildDraftCard(d.id, d.data())));
+  }, err => {
+    console.error('loadDrafts error:', err);
+    document.getElementById('drafts-loading').style.display = 'none';
+    document.getElementById('drafts-list').innerHTML = '<div style="color:red;padding:12px;font-size:13px;">error loading drafts: ' + err.message + '</div>';
   });
 }
 
@@ -264,7 +275,8 @@ window.reject = async (id, btn) => {
 // ── LIVE ──────────────────────────────────────────
 function loadLive() {
   if (unsubLive) unsubLive();
-  const q = query(collection(db,'trendPosts'), where('approved','==',true), orderBy('publishedAt','desc'), limit(60));
+  // No orderBy — avoids composite index. Sort client-side instead.
+  const q = query(collection(db,'trendPosts'), where('approved','==',true), limit(60));
   unsubLive = onSnapshot(q, snap => {
     document.getElementById('live-loading').style.display = 'none';
     document.getElementById('live-count').textContent = snap.size;
@@ -272,7 +284,12 @@ function loadLive() {
     list.innerHTML = '';
     if (snap.empty) { document.getElementById('live-empty').style.display = 'block'; return; }
     document.getElementById('live-empty').style.display = 'none';
-    snap.docs.forEach(d => {
+    const liveDocs = snap.docs.slice().sort((a,b) => {
+      const ta = a.data().publishedAt?.seconds || 0;
+      const tb = b.data().publishedAt?.seconds || 0;
+      return tb - ta;
+    });
+    liveDocs.forEach(d => {
       const p = d.data();
       const el = document.createElement('div');
       el.className = 'live-card';
@@ -287,6 +304,9 @@ function loadLive() {
       `;
       list.appendChild(el);
     });
+  }, err => {
+    document.getElementById('live-loading').style.display = 'none';
+    document.getElementById('live-list').innerHTML = '<div style="color:red;padding:12px;font-size:13px;">error: ' + err.message + '</div>';
   });
 }
 

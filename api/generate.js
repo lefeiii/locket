@@ -17,62 +17,77 @@ export const maxDuration = 60;
 const CATEGORIES = [
   {
     id: 'drink',
-    prompt: `Find 3 currently trending Starbucks or food/drink items for women 18-24.
-For each drink/food item you MUST provide:
-- title: the name of the drink or item (e.g. "Brown Sugar Oat Shaken Espresso Hack")
-- description: EXACT ordering instructions — start with the base drink, then list every customization with exact amounts (e.g. "Start with a Venti Iced Brown Sugar Oat Shaken Espresso. Ask for: oat milk, 3 pumps brown sugar syrup, 1 pump vanilla, light ice, sweet cream cold foam on top.")
-- originalPrice: the normal Starbucks price for this size (e.g. "$8.45")
-- locketPrice: the price after hack/discount or dupe cost (e.g. "$5.25 with rewards" or "$4.00 dupe at home")
+    prompt: `Find 3 currently trending Starbucks or food/drink hacks for women 18-24 today.
+For EACH item provide:
+- title: the drink name (e.g. "Brown Sugar Oat Shaken Espresso Hack")
+- description: EXACT ordering instructions — base drink + every customization with exact amounts (pumps, toppings, milk type, ice level). Format: "Start with a [size] [base drink]. Ask for: [customization 1], [customization 2]..."
+- originalPrice: normal retail price (e.g. "$8.45")
+- locketPrice: hack/dupe price (e.g. "$5.25 with rewards")
 - savings: calculated difference (e.g. "save $3.20")
-- where: "Starbucks" or specific location/app
-- link: direct link to the Starbucks menu item or ordering app if available, otherwise "https://www.starbucks.com/menu"`,
+- where: "Starbucks app" or store name
+- link: direct menu link (e.g. "https://www.starbucks.com/menu")
+- imageUrl: a working direct image URL of this exact drink from Starbucks website, their CDN, or a food blog. Must end in .jpg, .png, or .webp`,
   },
   {
     id: 'beauty',
-    prompt: `Find 3 currently trending affordable beauty products or dupes for women 18-24.
-For each item you MUST provide:
-- title: product name and brand (e.g. "e.l.f. Halo Glow Liquid Filter Dupe")
-- description: ONE clear sentence describing what the product is and does (e.g. "A drugstore dupe for the Charlotte Tilbury Flawless Filter that gives skin a luminous, blurred finish.")
-- originalPrice: price of the high-end original (e.g. "$49.00 for Charlotte Tilbury")
-- locketPrice: price of the dupe/affordable version (e.g. "$14.00 at Target")
-- savings: calculated difference (e.g. "save $35.00")
-- where: exact store name (e.g. "Target", "Ulta", "Amazon")
-- link: direct link to the product page (not the homepage — the actual product URL)`,
+    prompt: `Find 3 trending affordable beauty products or dupes for women 18-24 today.
+For EACH item provide:
+- title: brand + product name (e.g. "e.l.f. Halo Glow Liquid Filter")
+- description: ONE sentence — what it is and what it does (e.g. "Drugstore dupe for Charlotte Tilbury Flawless Filter that gives skin a glowy, blurred finish.")
+- originalPrice: high-end original price (e.g. "$49.00")
+- locketPrice: dupe/affordable price (e.g. "$14.00 at Target")
+- savings: calculated (e.g. "save $35.00")
+- where: exact store (e.g. "Target", "Ulta", "Amazon")
+- link: direct product page URL (not homepage)
+- imageUrl: working direct image URL of this exact product from the brand website, Ulta, Sephora, Target, or Amazon product page. Must end in .jpg, .png, or .webp`,
   },
   {
     id: 'deals',
-    prompt: `Find 3 real active sales or deals happening RIGHT NOW that women 18-24 would care about (fashion, beauty, lifestyle).
-For each deal you MUST provide:
-- title: brand name + deal (e.g. "Aritzia Extra 30% Off Sale Section")
-- description: ONE sentence on what's on sale and any code needed (e.g. "Extra 30% off already-reduced styles — no code needed, applied at checkout.")
-- originalPrice: example original item price (e.g. "$98.00")
-- locketPrice: example sale price after discount (e.g. "$45.00")
+    prompt: `Find 3 real active sales happening RIGHT NOW that women 18-24 would love (fashion, beauty, lifestyle).
+For EACH item provide:
+- title: brand + deal (e.g. "Aritzia Extra 30% Off Sale")
+- description: ONE sentence — what's on sale and any promo code (e.g. "Extra 30% off sale styles, no code needed, applied at checkout.")
+- originalPrice: example item original price (e.g. "$98.00")
+- locketPrice: example item sale price (e.g. "$45.00")
 - savings: calculated savings or percentage (e.g. "save 54%")
 - where: store name
-- link: direct link to the sale page`,
+- link: direct sale page URL
+- imageUrl: a working image URL showing a product from this sale or the brand's logo/banner. Must end in .jpg, .png, or .webp`,
   },
   {
     id: 'worthy',
-    prompt: `Find 3 currently hyped products that women 18-24 are debating — give an honest "worth it or skip it" verdict.
-For each item you MUST provide:
-- title: "Worth It: [product]" or "Skip It: [product]" (e.g. "Worth It: Stanley Quencher 30oz")
-- description: ONE honest sentence on why it's worth it or not (e.g. "Genuinely keeps drinks cold for 12+ hours and fits most car cupholders — the hype is real.")
+    prompt: `Find 3 currently hyped products for women 18-24 — give an honest worth it or skip it verdict.
+For EACH item provide:
+- title: "Worth It: [product]" OR "Skip It: [product]" (e.g. "Worth It: Stanley Quencher 30oz")
+- description: ONE honest sentence why (e.g. "Keeps drinks cold 12+ hours and fits car cupholders — the hype is real.")
 - originalPrice: full retail price (e.g. "$45.00")
-- locketPrice: best price available / where to get it cheaper (e.g. "$38.00 on Amazon")
-- savings: savings if applicable (e.g. "save $7.00") or "best price" if no cheaper option
-- where: where to buy it
-- link: direct product link`,
+- locketPrice: best price you found (e.g. "$38.00 on Amazon")
+- savings: savings vs retail (e.g. "save $7.00") or "best price" if cheapest
+- where: where to buy
+- link: direct product URL
+- imageUrl: working direct image URL of this exact product. Must end in .jpg, .png, or .webp`,
   },
 ];
 
 function cleanText(str) {
-  if (!str) return str;
-  // Strip <cite> tags and their content markers
+  if (!str) return null;
   return str
     .replace(/<cite[^>]*>/gi, '')
     .replace(/<\/cite>/gi, '')
     .replace(/\[\d+\]/g, '')
     .trim();
+}
+
+function isValidImageUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  if (!url.startsWith('http')) return false;
+  // Must look like a real image URL
+  const lower = url.toLowerCase();
+  return lower.match(/\.(jpg|jpeg|png|webp|gif)(\?.*)?$/) !== null ||
+         lower.includes('/images/') ||
+         lower.includes('/media/') ||
+         lower.includes('cdn') ||
+         lower.includes('image');
 }
 
 export default async function handler(req, res) {
@@ -102,15 +117,16 @@ export default async function handler(req, res) {
                     items: {
                       type: 'object',
                       properties: {
-                        title:         { type: 'string', description: 'Short punchy title' },
-                        description:   { type: 'string', description: 'Detailed description per category rules' },
-                        originalPrice: { type: 'string', description: 'Original price, e.g. $49.00' },
-                        locketPrice:   { type: 'string', description: 'Sale/dupe price, e.g. $14.00' },
-                        savings:       { type: 'string', description: 'Calculated savings, e.g. save $35.00' },
-                        where:         { type: 'string', description: 'Store or website name' },
-                        link:          { type: 'string', description: 'Direct URL to product page' },
+                        title:         { type: 'string' },
+                        description:   { type: 'string' },
+                        originalPrice: { type: 'string' },
+                        locketPrice:   { type: 'string' },
+                        savings:       { type: 'string' },
+                        where:         { type: 'string' },
+                        link:          { type: 'string' },
+                        imageUrl:      { type: 'string', description: 'Direct image URL ending in .jpg/.png/.webp' },
                       },
-                      required: ['title', 'description', 'originalPrice', 'locketPrice', 'savings', 'where', 'link'],
+                      required: ['title', 'description', 'originalPrice', 'locketPrice', 'savings', 'where', 'link', 'imageUrl'],
                     },
                     minItems: 3,
                     maxItems: 3,
@@ -121,10 +137,7 @@ export default async function handler(req, res) {
             },
           ],
           tool_choice: { type: 'any' },
-          messages: [{
-            role: 'user',
-            content: cat.prompt,
-          }],
+          messages: [{ role: 'user', content: cat.prompt }],
         });
 
         for (const block of response.content) {
@@ -140,7 +153,8 @@ export default async function handler(req, res) {
                   locketPrice:   cleanText(p.locketPrice) || null,
                   savings:       cleanText(p.savings) || null,
                   where:         cleanText(p.where) || null,
-                  link:          p.link && p.link.startsWith('http') ? p.link : null,
+                  link:          p.link?.startsWith('http') ? p.link : null,
+                  imageUrl:      isValidImageUrl(p.imageUrl) ? p.imageUrl : null,
                 });
               }
             });
@@ -160,7 +174,7 @@ export default async function handler(req, res) {
     const now = Timestamp.now();
     allPosts.forEach(post => {
       const ref = db.collection('trendPosts').doc();
-      batch.set(ref, { ...post, imageUrl: null, approved: false, publishedAt: null, createdAt: now, draftedAt: now });
+      batch.set(ref, { ...post, approved: false, publishedAt: null, createdAt: now, draftedAt: now });
     });
     await batch.commit();
 

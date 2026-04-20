@@ -1518,6 +1518,11 @@
     getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject
   } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
 
+  // XSS-safe string escaper
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   // expose all onclick functions to global scope immediately
   // (needed because type="module" scopes functions away from HTML onclick handlers)
   window.switchAuthTab = (tab) => {

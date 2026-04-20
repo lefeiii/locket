@@ -79,6 +79,27 @@
     </div>
   </div>
   <div id="status-bar" class="status-bar"></div>
+
+  <!-- Category selector for generation -->
+  <div style="background:#fff;border:1.5px solid rgba(200,180,190,0.18);border-radius:16px;padding:14px 16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(46,32,48,0.06);">
+    <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;color:var(--mid);margin-bottom:10px;">generate for specific categories</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:800;">
+        <input type="checkbox" id="gen-drink"  checked style="accent-color:var(--tomato);width:15px;height:15px;"> ☕ drinks
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:800;">
+        <input type="checkbox" id="gen-beauty" checked style="accent-color:var(--tomato);width:15px;height:15px;"> 💄 beauty
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:800;">
+        <input type="checkbox" id="gen-deals"  checked style="accent-color:var(--tomato);width:15px;height:15px;"> 🛍️ deals
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:800;">
+        <input type="checkbox" id="gen-worthy" checked style="accent-color:var(--tomato);width:15px;height:15px;"> ✅ worth it?
+      </label>
+    </div>
+    <button class="btn-sm primary" onclick="triggerGenerate(this)" style="width:100%;padding:10px;">✨ generate selected categories</button>
+  </div>
+
   <div class="tabs">
     <button class="tab active" onclick="showTab('drafts',this)">📝 drafts (<span id="draft-count">0</span>)</button>
     <button class="tab" onclick="showTab('live',this)">✅ live (<span id="live-count">0</span>)</button>
@@ -360,20 +381,30 @@ window.deletePost = async (id, btn) => {
 
 // ── GENERATE ──────────────────────────────────────────
 window.triggerGenerate = async (btn) => {
-  if (!confirm('generate new posts now? (~$0.01)')) return;
+  // Read selected categories
+  const cats = ['drink','beauty','deals','worthy'].filter(c => {
+    const el = document.getElementById('gen-' + c);
+    return el ? el.checked : true;
+  });
+  if (cats.length === 0) { showStatus('select at least one category!', true); return; }
+
+  const catLabels = { drink:'☕ drinks', beauty:'💄 beauty', deals:'🛍️ deals', worthy:'✅ worth it?' };
+  const selected = cats.map(c => catLabels[c]).join(', ');
+  if (!confirm(`generate posts for: ${selected}? (~$0.01 per category)`)) return;
+
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> generating...';
   try {
     const token = await auth.currentUser.getIdToken();
     const res = await fetch('/api/admin', {
-      method:'POST',
-      headers:{'Content-Type':'application/json', authorization:`Bearer ${token}`},
-      body: JSON.stringify({action:'trigger'})
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', authorization: `Bearer ${token}` },
+      body: JSON.stringify({ action: 'trigger', categories: cats })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    showStatus(data.message || '✨ posts drafted — check drafts tab!');
-  } catch(e) { showStatus('error: '+e.message, true); }
-  btn.disabled=false; btn.innerHTML='✨ generate now';
+    showStatus(data.message || `✨ drafted posts for ${selected} — check drafts tab!`);
+  } catch(e) { showStatus('error: ' + e.message, true); }
+  btn.disabled = false; btn.innerHTML = '✨ generate selected categories';
 };
 
 // ── UTILS ─────────────────────────────────────────────

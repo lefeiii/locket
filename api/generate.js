@@ -91,7 +91,7 @@ For each deal call save_posts with:
 - savings: percent or dollar savings
 - where: store name
 - link: direct sale page URL
-- imageUrl: a .jpg or .png image from the brand or sale page`,
+- imageUrl: find a direct image URL related to this deal. Use images from: i.imgur.com, upload.wikimedia.org, images.unsplash.com, or cdn.pixabay.com. Must be a direct image URL ending in .jpg .png or .webp`,
   },
   {
     id: 'worthy',
@@ -104,7 +104,7 @@ For each call save_posts with:
 - savings: savings vs retail or "best price"
 - where: best place to buy
 - link: direct product URL
-- imageUrl: direct .jpg or .png image of the exact product`,
+- imageUrl: find a direct image URL of this product. Use images from: i.imgur.com, upload.wikimedia.org, images.unsplash.com, or cdn.pixabay.com. Must be a direct image URL ending in .jpg .png or .webp`,
   },
 ];
 

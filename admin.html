@@ -9,164 +9,275 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--ink:#2e2030;--mid:#9a7888;--tomato:#E8736A;--cream:#FEF8F2;--font-b:'Baloo 2',sans-serif;--font-n:'Nunito',sans-serif}
     body{font-family:var(--font-n);background:var(--cream);color:var(--ink);min-height:100vh}
-
-    /* Auth screen */
     #auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;gap:16px}
-    .admin-logo{font-family:var(--font-b);font-size:28px;font-weight:800;color:var(--ink)}
+    .admin-logo{font-family:var(--font-b);font-size:28px;font-weight:800}
     .admin-sub{font-size:13px;color:var(--mid);font-weight:700}
     .admin-input{width:100%;max-width:320px;border:1.5px solid rgba(200,180,190,0.3);border-radius:12px;padding:12px 16px;font-size:14px;font-family:var(--font-n);background:#fff;outline:none}
     .admin-btn{background:var(--ink);color:#fff;border:none;border-radius:999px;padding:12px 32px;font-size:14px;font-weight:800;font-family:var(--font-n);cursor:pointer}
     .admin-error{font-size:12px;color:var(--tomato);font-weight:700}
-
-    /* Main panel */
     #panel{display:none;max-width:800px;margin:0 auto;padding:24px 16px 80px}
     .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(200,180,190,0.2)}
     .panel-title{font-family:var(--font-b);font-size:22px;font-weight:800}
     .panel-actions{display:flex;gap:8px}
-    .btn-sm{border:1.5px solid rgba(200,180,190,0.3);background:#fff;color:var(--ink);border-radius:999px;padding:7px 16px;font-size:12px;font-weight:800;font-family:var(--font-n);cursor:pointer}
+    .btn-sm{border:1.5px solid rgba(200,180,190,0.3);background:#fff;color:var(--ink);border-radius:999px;padding:7px 16px;font-size:12px;font-weight:800;font-family:var(--font-n);cursor:pointer;transition:opacity .15s}
+    .btn-sm:hover{opacity:.8}
     .btn-sm.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
     .btn-sm.danger{background:var(--tomato);color:#fff;border-color:var(--tomato)}
-
-    /* Tabs */
+    .btn-sm.success{background:#3cb46e;color:#fff;border-color:#3cb46e}
     .tabs{display:flex;gap:8px;margin-bottom:20px}
     .tab{border:1.5px solid rgba(200,180,190,0.25);background:rgba(255,255,255,0.7);color:var(--mid);border-radius:999px;padding:7px 16px;font-size:12px;font-weight:800;font-family:var(--font-n);cursor:pointer}
     .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-
-    /* Status banner */
     .status-bar{background:rgba(109,204,148,0.12);border:1px solid rgba(109,204,148,0.3);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:700;color:#1a7a48;margin-bottom:16px;display:none}
     .status-bar.error{background:rgba(232,115,106,0.1);border-color:rgba(232,115,106,0.3);color:var(--tomato)}
 
-    /* Draft card */
-    .draft-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;border:1.5px solid rgba(200,180,190,0.18);box-shadow:0 2px 8px rgba(46,32,48,0.06)}
-    .draft-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
-    .draft-cat{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:var(--mid);margin-bottom:4px}
-    .draft-title{font-family:var(--font-b);font-size:16px;font-weight:800;color:var(--ink)}
-    .draft-actions{display:flex;gap:6px;flex-shrink:0}
-    .draft-field{margin-bottom:10px}
-    .draft-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;color:var(--mid);margin-bottom:4px}
-    .draft-val{font-size:13px;font-weight:700;color:var(--ink);line-height:1.5}
+    /* Draft + live card */
+    .post-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;border:1.5px solid rgba(200,180,190,0.18);box-shadow:0 2px 8px rgba(46,32,48,0.06)}
+    .post-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .post-card-cat{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:var(--mid);margin-bottom:3px}
+    .post-card-title{font-family:var(--font-b);font-size:16px;font-weight:800;color:var(--ink)}
+    .post-card-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+
+    /* Image preview */
+    .img-preview{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:8px;display:block}
+    .img-placeholder{width:100%;height:80px;background:linear-gradient(135deg,#f8f0f4,#f0e8f0);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px}
+
+    /* Fields */
+    .field{margin-bottom:10px}
+    .field-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;color:var(--mid);margin-bottom:4px}
     .editable{border:1.5px solid rgba(200,180,190,0.25);border-radius:10px;padding:8px 12px;font-size:13px;font-family:var(--font-n);width:100%;background:rgba(254,248,242,0.7);outline:none;font-weight:700;color:var(--ink);resize:vertical}
-    .editable:focus{border-color:rgba(220,120,140,0.4)}
+    .editable:focus{border-color:rgba(220,120,140,0.5)}
     .price-row{display:flex;gap:8px}
-    .price-row .editable{flex:1}
+    .price-row .field{flex:1}
 
-    /* Live cards */
-    .live-card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px;border:1.5px solid rgba(200,180,190,0.18);display:flex;align-items:center;gap:12px}
-    .live-card-info{flex:1;min-width:0}
-    .live-card-title{font-weight:800;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .live-card-meta{font-size:11px;color:var(--mid);font-weight:700;margin-top:2px}
+    /* Collapse toggle */
+    .collapse-btn{background:none;border:none;font-size:11px;font-weight:800;color:var(--mid);cursor:pointer;padding:0;margin-bottom:10px}
+    .collapsible{overflow:hidden;transition:max-height .2s}
 
-    /* Empty states */
     .empty-state{text-align:center;padding:48px 0;color:var(--mid);font-size:13px;font-weight:700}
     .empty-state .emoji{font-size:32px;margin-bottom:8px}
-
-    .spinner{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+    .spinner{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px}
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
 
-<!-- Auth -->
 <div id="auth-screen">
   <div class="admin-logo">locket 🩷</div>
-  <div class="admin-sub">admin panel — sign in with your account</div>
+  <div class="admin-sub">admin panel</div>
   <input class="admin-input" id="admin-email" type="email" placeholder="email"/>
-  <input class="admin-input" id="admin-pass"  type="password" placeholder="password"/>
+  <input class="admin-input" id="admin-pass" type="password" placeholder="password"/>
   <button class="admin-btn" onclick="signIn()">sign in</button>
   <div class="admin-error" id="auth-error"></div>
 </div>
 
-<!-- Panel -->
 <div id="panel">
   <div class="panel-header">
     <div class="panel-title">locket admin 🩷</div>
     <div class="panel-actions">
       <button class="btn-sm" onclick="triggerGenerate(this)">✨ generate now</button>
-      <button class="btn-sm" onclick="signOut()">sign out</button>
+      <button class="btn-sm" onclick="doSignOut()">sign out</button>
     </div>
   </div>
-
   <div id="status-bar" class="status-bar"></div>
-
   <div class="tabs">
     <button class="tab active" onclick="showTab('drafts',this)">📝 drafts (<span id="draft-count">0</span>)</button>
     <button class="tab" onclick="showTab('live',this)">✅ live (<span id="live-count">0</span>)</button>
   </div>
-
   <div id="tab-drafts">
     <div id="drafts-loading" class="empty-state"><div class="emoji">⏳</div>loading drafts...</div>
-    <div id="drafts-empty"  class="empty-state" style="display:none"><div class="emoji">🎉</div>no drafts — all caught up!</div>
+    <div id="drafts-empty" class="empty-state" style="display:none"><div class="emoji">🎉</div>no drafts!</div>
     <div id="drafts-list"></div>
   </div>
-
   <div id="tab-live" style="display:none">
     <div id="live-loading" class="empty-state"><div class="emoji">⏳</div>loading live posts...</div>
-    <div id="live-empty"  class="empty-state" style="display:none"><div class="emoji">📭</div>no live posts yet</div>
+    <div id="live-empty" class="empty-state" style="display:none"><div class="emoji">📭</div>no live posts yet</div>
     <div id="live-list"></div>
   </div>
 </div>
 
 <script type="module">
-import { initializeApp }         from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, signOut as fbSignOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
-import { getFirestore, collection, query, where, orderBy, limit, onSnapshot, doc, updateDoc, deleteDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
+import { getFirestore, collection, query, where, limit, onSnapshot, doc, updateDoc, deleteDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
-const firebaseConfig = {
-  apiKey:            "AIzaSyBUNvLE5ZW2mDQpwsHh4hwq8YvVurBP16U",
-  authDomain:        "locket-9b5ae.firebaseapp.com",
-  projectId:         "locket-9b5ae",
-  storageBucket:     "locket-9b5ae.firebasestorage.app",
-  messagingSenderId: "252742374185",
-  appId:             "1:252742374185:web:9219405e65dd9060989d38"
-};
-
-const app  = initializeApp(firebaseConfig);
+const app  = initializeApp({ apiKey:"AIzaSyBUNvLE5ZW2mDQpwsHh4hwq8YvVurBP16U", authDomain:"locket-9b5ae.firebaseapp.com", projectId:"locket-9b5ae", storageBucket:"locket-9b5ae.firebasestorage.app", messagingSenderId:"252742374185", appId:"1:252742374185:web:9219405e65dd9060989d38" });
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-const CAT_LABELS = { drink:'☕ drinks', beauty:'💄 beauty', deals:'🛍️ deals', worthy:'✅ worth it?' };
-
+const CAT = { drink:'☕ drinks', beauty:'💄 beauty', deals:'🛍️ deals', worthy:'✅ worth it?' };
+const EMOJI = { drink:'☕', beauty:'💄', deals:'🛍️', worthy:'✅' };
 let unsubDrafts = null, unsubLive = null;
 
-// ── AUTH ──────────────────────────────────────────
-onAuthStateChanged(auth, user => {
-  if (user) {
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('panel').style.display       = 'block';
-    loadDrafts();
-    loadLive();
-  } else {
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('panel').style.display       = 'none';
-  }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── AUTH ──────────────────────────────────────────────
+onAuthStateChanged(auth, u => {
+  document.getElementById('auth-screen').style.display = u ? 'none' : 'flex';
+  document.getElementById('panel').style.display       = u ? 'block' : 'none';
+  if (u) { loadDrafts(); loadLive(); }
 });
 
 window.signIn = async () => {
-  const email = document.getElementById('admin-email').value;
-  const pass  = document.getElementById('admin-pass').value;
   const errEl = document.getElementById('auth-error');
   errEl.textContent = '';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e) {
-    errEl.textContent = e.message;
-  }
+  try { await signInWithEmailAndPassword(auth, document.getElementById('admin-email').value, document.getElementById('admin-pass').value); }
+  catch(e){ errEl.textContent = e.message; }
 };
+window.doSignOut = () => signOut(auth);
 
-window.signOut = () => fbSignOut(auth);
-
-// ── TABS ──────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────
 window.showTab = (tab, btn) => {
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('tab-drafts').style.display = tab === 'drafts' ? 'block' : 'none';
-  document.getElementById('tab-live').style.display   = tab === 'live'   ? 'block' : 'none';
+  document.getElementById('tab-drafts').style.display = tab==='drafts' ? 'block' : 'none';
+  document.getElementById('tab-live').style.display   = tab==='live'   ? 'block' : 'none';
 };
 
-// ── DRAFTS ────────────────────────────────────────
+// ── SHARED CARD BUILDER ───────────────────────────────
+function buildCard(id, p, isLive) {
+  const div = document.createElement('div');
+  div.className = 'post-card';
+  div.id = 'card-' + id;
+
+  // Header row
+  const top = document.createElement('div');
+  top.className = 'post-card-top';
+  top.innerHTML = `
+    <div>
+      <div class="post-card-cat">${CAT[p.category]||p.category||''}</div>
+      <div class="post-card-title">${esc(p.title)}</div>
+    </div>
+    <div class="post-card-actions" id="actions-${id}"></div>`;
+  div.appendChild(top);
+
+  // Image preview + URL field
+  const imgSection = document.createElement('div');
+  imgSection.className = 'field';
+  imgSection.innerHTML = `<div class="field-label">image ${p.imageUrl ? '✅' : '⚠️ no image — paste a direct .jpg/.png/.webp url below'}</div>`;
+  if (p.imageUrl) {
+    const preview = document.createElement('img');
+    preview.src = p.imageUrl;
+    preview.className = 'img-preview';
+    preview.id = 'img-preview-' + id;
+    preview.onerror = () => { preview.style.display='none'; document.getElementById('img-placeholder-'+id).style.display='flex'; };
+    imgSection.appendChild(preview);
+  }
+  const ph = document.createElement('div');
+  ph.className = 'img-placeholder';
+  ph.id = 'img-placeholder-' + id;
+  ph.style.display = p.imageUrl ? 'none' : 'flex';
+  ph.textContent = EMOJI[p.category] || '✨';
+  imgSection.appendChild(ph);
+  const imgInput = document.createElement('input');
+  imgInput.className = 'editable';
+  imgInput.id = id + '-img';
+  imgInput.value = p.imageUrl || '';
+  imgInput.placeholder = 'https://... paste direct image URL';
+  imgInput.addEventListener('input', () => {
+    const val = imgInput.value.trim();
+    const preview = document.getElementById('img-preview-' + id);
+    if (val.startsWith('http')) {
+      if (!preview) {
+        const newImg = document.createElement('img');
+        newImg.src = val; newImg.className = 'img-preview'; newImg.id = 'img-preview-' + id;
+        newImg.onerror = () => newImg.style.display='none';
+        imgSection.insertBefore(newImg, ph);
+      } else { preview.src = val; preview.style.display = 'block'; }
+      ph.style.display = 'none';
+    }
+  });
+  imgSection.appendChild(imgInput);
+  div.appendChild(imgSection);
+
+  // Collapsible fields
+  const toggle = document.createElement('button');
+  toggle.className = 'collapse-btn';
+  toggle.textContent = '▼ edit details';
+  const fields = document.createElement('div');
+  fields.className = 'collapsible';
+  fields.id = 'fields-' + id;
+  toggle.onclick = () => {
+    const open = fields.style.display !== 'none';
+    fields.style.display = open ? 'none' : 'block';
+    toggle.textContent = (open ? '▼' : '▲') + ' edit details';
+  };
+  div.appendChild(toggle);
+
+  fields.innerHTML = `
+    <div class="field">
+      <div class="field-label">title</div>
+      <input class="editable" id="${id}-title" value="${esc(p.title||'')}"/>
+    </div>
+    <div class="field">
+      <div class="field-label">description</div>
+      <textarea class="editable" id="${id}-desc" rows="3">${esc(p.description||'')}</textarea>
+    </div>
+    <div class="price-row">
+      <div class="field"><div class="field-label">original price</div><input class="editable" id="${id}-orig" value="${esc(p.originalPrice||'')}"/></div>
+      <div class="field"><div class="field-label">locket price</div><input class="editable" id="${id}-lp" value="${esc(p.locketPrice||'')}"/></div>
+      <div class="field"><div class="field-label">savings</div><input class="editable" id="${id}-sv" value="${esc(p.savings||'')}"/></div>
+    </div>
+    <div class="field">
+      <div class="field-label">where to find it</div>
+      <input class="editable" id="${id}-where" value="${esc(p.where||'')}"/>
+    </div>
+    <div class="field">
+      <div class="field-label">link</div>
+      <input class="editable" id="${id}-link" value="${esc(p.link||'')}"/>
+    </div>`;
+  div.appendChild(fields);
+
+  // Action buttons
+  const actionsEl = top.querySelector('.post-card-actions');
+  if (isLive) {
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn-sm success';
+    saveBtn.textContent = '💾 save';
+    saveBtn.onclick = () => saveEdits(id, saveBtn);
+    const unpubBtn = document.createElement('button');
+    unpubBtn.className = 'btn-sm';
+    unpubBtn.textContent = 'unpublish';
+    unpubBtn.onclick = () => unpublish(id, unpubBtn);
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-sm danger';
+    delBtn.textContent = '✕ delete';
+    delBtn.onclick = () => deletePost(id, delBtn);
+    actionsEl.appendChild(saveBtn);
+    actionsEl.appendChild(unpubBtn);
+    actionsEl.appendChild(delBtn);
+  } else {
+    const approveBtn = document.createElement('button');
+    approveBtn.className = 'btn-sm primary';
+    approveBtn.textContent = '✓ approve';
+    approveBtn.onclick = () => approve(id, approveBtn);
+    const rejectBtn = document.createElement('button');
+    rejectBtn.className = 'btn-sm danger';
+    rejectBtn.textContent = '✕ reject';
+    rejectBtn.onclick = () => reject(id, rejectBtn);
+    actionsEl.appendChild(approveBtn);
+    actionsEl.appendChild(rejectBtn);
+  }
+
+  return div;
+}
+
+function getEdits(id) {
+  const v = k => document.getElementById(id+k)?.value?.trim() || null;
+  return {
+    imageUrl:      v('-img'),
+    title:         v('-title'),
+    description:   v('-desc'),
+    originalPrice: v('-orig'),
+    locketPrice:   v('-lp'),
+    savings:       v('-sv'),
+    where:         v('-where'),
+    link:          v('-link'),
+  };
+}
+
+// ── DRAFTS ────────────────────────────────────────────
 function loadDrafts() {
   if (unsubDrafts) unsubDrafts();
-  // No orderBy — avoids needing a composite Firestore index
   const q = query(collection(db,'trendPosts'), where('approved','==',false), limit(60));
   unsubDrafts = onSnapshot(q, snap => {
     document.getElementById('drafts-loading').style.display = 'none';
@@ -175,114 +286,35 @@ function loadDrafts() {
     list.innerHTML = '';
     if (snap.empty) { document.getElementById('drafts-empty').style.display = 'block'; return; }
     document.getElementById('drafts-empty').style.display = 'none';
-    // Sort client-side newest first
-    const docs = snap.docs.slice().sort((a,b) => {
-      const ta = a.data().createdAt?.seconds || 0;
-      const tb = b.data().createdAt?.seconds || 0;
-      return tb - ta;
-    });
-    docs.forEach(d => list.appendChild(buildDraftCard(d.id, d.data())));
+    const sorted = snap.docs.slice().sort((a,b) => (b.data().createdAt?.seconds||0) - (a.data().createdAt?.seconds||0));
+    sorted.forEach(d => list.appendChild(buildCard(d.id, d.data(), false)));
   }, err => {
-    console.error('loadDrafts error:', err);
     document.getElementById('drafts-loading').style.display = 'none';
-    document.getElementById('drafts-list').innerHTML = '<div style="color:red;padding:12px;font-size:13px;">error loading drafts: ' + err.message + '</div>';
+    document.getElementById('drafts-list').innerHTML = `<div style="color:var(--tomato);padding:12px;font-size:12px;font-weight:700">error: ${esc(err.message)}</div>`;
   });
 }
 
-function buildDraftCard(id, p) {
-  const div = document.createElement('div');
-  div.className = 'draft-card';
-  div.id = 'draft-' + id;
-  div.innerHTML = `
-    <div class="draft-top">
-      <div>
-        <div class="draft-cat">${CAT_LABELS[p.category] || p.category}</div>
-        <div class="draft-title">${esc(p.title)}</div>
-      </div>
-      <div class="draft-actions">
-        <button class="btn-sm primary" onclick="approve('${id}',this)">✓ approve</button>
-        <button class="btn-sm danger"  onclick="reject('${id}',this)">✗ reject</button>
-      </div>
-    </div>
-    <div class="draft-field">
-      <div class="draft-label">description</div>
-      <textarea class="editable" id="${id}-desc" rows="3">${esc(p.description||'')}</textarea>
-    </div>
-    <div class="price-row">
-      <div class="draft-field" style="flex:1">
-        <div class="draft-label">original price</div>
-        <input class="editable" id="${id}-orig" value="${esc(p.originalPrice||'')}"/>
-      </div>
-      <div class="draft-field" style="flex:1">
-        <div class="draft-label">locket price / dupe</div>
-        <input class="editable" id="${id}-lp" value="${esc(p.locketPrice||'')}"/>
-      </div>
-      <div class="draft-field" style="flex:1">
-        <div class="draft-label">savings</div>
-        <input class="editable" id="${id}-sv" value="${esc(p.savings||'')}"/>
-      </div>
-    </div>
-    <div class="draft-field">
-      <div class="draft-label">where to find it</div>
-      <input class="editable" id="${id}-where" value="${esc(p.where||'')}"/>
-    </div>
-    <div class="draft-field">
-      <div class="draft-label">link (optional)</div>
-      <input class="editable" id="${id}-link" value="${esc(p.link||'')}"/>
-    </div>
-    <div class="draft-field">
-      <div class="draft-label">image url${p.imageUrl ? ' ✅' : ' ⚠️ missing — paste a direct .jpg or .png url'}</div>
-      ${p.imageUrl ? `<img src="${esc(p.imageUrl)}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:6px;" onerror="this.style.display='none'"/>` : ''}
-      <input class="editable" id="${id}-img" value="${esc(p.imageUrl||'')}" placeholder="https://i.imgur.com/... or paste image url"/>
-    </div>
-  `;
-  return div;
-}
-
 window.approve = async (id, btn) => {
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>approving...';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>approving...';
   try {
-    const desc  = document.getElementById(id+'-desc')?.value?.trim();
-    const orig  = document.getElementById(id+'-orig')?.value?.trim();
-    const lp    = document.getElementById(id+'-lp')?.value?.trim();
-    const sv    = document.getElementById(id+'-sv')?.value?.trim();
-    const where = document.getElementById(id+'-where')?.value?.trim();
-    const link  = document.getElementById(id+'-link')?.value?.trim();
-    const imgUrl = document.getElementById(id+'-img')?.value?.trim();
-    const updates = { approved: true, publishedAt: Timestamp.now() };
-    if (desc)  updates.description   = desc;
-    if (orig)  updates.originalPrice = orig;
-    if (lp)    updates.locketPrice   = lp;
-    if (sv)    updates.savings       = sv;
-    if (where) updates.where         = where;
-    if (link)    updates.link          = link;
-    if (imgUrl)  updates.imageUrl       = imgUrl;
+    const edits = getEdits(id);
+    const updates = { approved:true, publishedAt:Timestamp.now() };
+    Object.entries(edits).forEach(([k,v]) => { if (v !== null) updates[k] = v; });
     await updateDoc(doc(db,'trendPosts',id), updates);
-    showStatus('✅ post approved and live!');
-  } catch(e) {
-    showStatus('error: ' + e.message, true);
-    btn.disabled = false;
-    btn.innerHTML = '✓ approve';
-  }
+    showStatus('✅ approved and live!');
+  } catch(e) { showStatus('error: '+e.message, true); btn.disabled=false; btn.textContent='✓ approve'; }
 };
 
 window.reject = async (id, btn) => {
   if (!confirm('delete this draft?')) return;
   btn.disabled = true;
-  try {
-    await deleteDoc(doc(db,'trendPosts',id));
-    showStatus('🗑️ draft deleted');
-  } catch(e) {
-    showStatus('error: ' + e.message, true);
-    btn.disabled = false;
-  }
+  try { await deleteDoc(doc(db,'trendPosts',id)); showStatus('🗑️ draft deleted'); }
+  catch(e) { showStatus('error: '+e.message, true); btn.disabled=false; }
 };
 
-// ── LIVE ──────────────────────────────────────────
+// ── LIVE ──────────────────────────────────────────────
 function loadLive() {
   if (unsubLive) unsubLive();
-  // No orderBy — avoids composite index. Sort client-side instead.
   const q = query(collection(db,'trendPosts'), where('approved','==',true), limit(60));
   unsubLive = onSnapshot(q, snap => {
     document.getElementById('live-loading').style.display = 'none';
@@ -291,77 +323,66 @@ function loadLive() {
     list.innerHTML = '';
     if (snap.empty) { document.getElementById('live-empty').style.display = 'block'; return; }
     document.getElementById('live-empty').style.display = 'none';
-    const liveDocs = snap.docs.slice().sort((a,b) => {
-      const ta = a.data().publishedAt?.seconds || 0;
-      const tb = b.data().publishedAt?.seconds || 0;
-      return tb - ta;
-    });
-    liveDocs.forEach(d => {
-      const p = d.data();
-      const el = document.createElement('div');
-      el.className = 'live-card';
-      const ts = p.publishedAt?.toDate?.()?.toLocaleDateString('en-CA',{month:'short',day:'numeric'}) || '';
-      el.innerHTML = `
-        <div style="font-size:20px;">${{drink:'☕',beauty:'💄',deals:'🛍️',worthy:'✅'}[p.category]||'✨'}</div>
-        <div class="live-card-info">
-          <div class="live-card-title">${esc(p.title)}</div>
-          <div class="live-card-meta">${CAT_LABELS[p.category]||''} · ${ts}</div>
-        </div>
-        <button class="btn-sm danger" onclick="unpublish('${d.id}',this)">unpublish</button>
-      `;
-      list.appendChild(el);
-    });
+    const sorted = snap.docs.slice().sort((a,b) => (b.data().publishedAt?.seconds||0) - (a.data().publishedAt?.seconds||0));
+    sorted.forEach(d => list.appendChild(buildCard(d.id, d.data(), true)));
   }, err => {
     document.getElementById('live-loading').style.display = 'none';
-    document.getElementById('live-list').innerHTML = '<div style="color:red;padding:12px;font-size:13px;">error: ' + err.message + '</div>';
+    document.getElementById('live-list').innerHTML = `<div style="color:var(--tomato);padding:12px;font-size:12px;font-weight:700">error: ${esc(err.message)}</div>`;
   });
 }
+
+window.saveEdits = async (id, btn) => {
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>saving...';
+  try {
+    const edits = getEdits(id);
+    const updates = {};
+    Object.entries(edits).forEach(([k,v]) => { if (v !== null) updates[k] = v; });
+    if (!Object.keys(updates).length) { showStatus('nothing to save'); btn.disabled=false; btn.textContent='💾 save'; return; }
+    await updateDoc(doc(db,'trendPosts',id), updates);
+    showStatus('✅ saved!');
+  } catch(e) { showStatus('error: '+e.message, true); }
+  btn.disabled=false; btn.textContent='💾 save';
+};
 
 window.unpublish = async (id, btn) => {
   if (!confirm('unpublish this post?')) return;
   btn.disabled = true;
-  try {
-    await updateDoc(doc(db,'trendPosts',id), { approved: false, publishedAt: null });
-    showStatus('post moved back to drafts');
-  } catch(e) {
-    showStatus('error: ' + e.message, true);
-    btn.disabled = false;
-  }
+  try { await updateDoc(doc(db,'trendPosts',id), { approved:false, publishedAt:null }); showStatus('moved back to drafts'); }
+  catch(e) { showStatus('error: '+e.message, true); btn.disabled=false; }
 };
 
-// ── MANUAL TRIGGER ────────────────────────────────
-window.triggerGenerate = async (btn) => {
-  if (!confirm('generate new posts now? this will use API credits (~$0.10).')) return;
+window.deletePost = async (id, btn) => {
+  if (!confirm('permanently delete this post?')) return;
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> generating...';
+  try { await deleteDoc(doc(db,'trendPosts',id)); showStatus('🗑️ deleted'); }
+  catch(e) { showStatus('error: '+e.message, true); btn.disabled=false; }
+};
+
+// ── GENERATE ──────────────────────────────────────────
+window.triggerGenerate = async (btn) => {
+  if (!confirm('generate new posts now? (~$0.01)')) return;
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> generating...';
   try {
     const token = await auth.currentUser.getIdToken();
     const res = await fetch('/api/admin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', authorization: `Bearer ${token}` },
-      body: JSON.stringify({ action: 'trigger' })
+      method:'POST',
+      headers:{'Content-Type':'application/json', authorization:`Bearer ${token}`},
+      body: JSON.stringify({action:'trigger'})
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    showStatus(data.message || `✨ drafted ${data.drafted || '?'} posts — check drafts tab!`);
-  } catch(e) {
-    showStatus('error: ' + e.message, true);
-  }
-  btn.disabled = false;
-  btn.innerHTML = '✨ generate now';
+    showStatus(data.message || '✨ posts drafted — check drafts tab!');
+  } catch(e) { showStatus('error: '+e.message, true); }
+  btn.disabled=false; btn.innerHTML='✨ generate now';
 };
 
-// ── UTILS ─────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────
 function showStatus(msg, isError) {
   const el = document.getElementById('status-bar');
   el.textContent = msg;
   el.className = 'status-bar' + (isError ? ' error' : '');
   el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 4000);
-}
-
-function esc(str) {
-  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  setTimeout(() => el.style.display='none', 4000);
 }
 </script>
 </body>

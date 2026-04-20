@@ -113,11 +113,26 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
+  // Filter to only requested categories (or all if none specified)
+  let body = {};
+  try { body = req.body || {}; } catch(_) {}
+  const requestedCats = Array.isArray(body.categories) && body.categories.length > 0
+    ? body.categories
+    : null; // null = all categories
+
+  const activePrompts = requestedCats
+    ? PROMPTS.filter(p => requestedCats.includes(p.id))
+    : PROMPTS;
+
+  if (activePrompts.length === 0) {
+    return res.status(400).json({ error: 'no valid categories selected' });
+  }
+
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const allPosts = [];
   const errors = [];
 
-  for (const cat of PROMPTS) {
+  for (const cat of activePrompts) {
     try {
       const response = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',

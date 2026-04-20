@@ -64,10 +64,13 @@ export default async function handler(req, res) {
     }
 
     if (action === 'trigger') {
-      // Manually trigger generation
       const genRes = await fetch(`https://ourlockets.com/api/generate`, {
         method: 'POST',
-        headers: { authorization: `Bearer ${process.env.CRON_SECRET}` }
+        headers: {
+          authorization: `Bearer ${process.env.CRON_SECRET}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ categories: req.body.categories || null }),
       });
       const data = await genRes.json();
       return res.json(data);

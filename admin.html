@@ -230,6 +230,11 @@ function buildDraftCard(id, p) {
       <div class="draft-label">link (optional)</div>
       <input class="editable" id="${id}-link" value="${esc(p.link||'')}"/>
     </div>
+    <div class="draft-field">
+      <div class="draft-label">image url${p.imageUrl ? ' ✅' : ' ⚠️ missing — paste a direct .jpg or .png url'}</div>
+      ${p.imageUrl ? `<img src="${esc(p.imageUrl)}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:6px;" onerror="this.style.display='none'"/>` : ''}
+      <input class="editable" id="${id}-img" value="${esc(p.imageUrl||'')}" placeholder="https://i.imgur.com/... or paste image url"/>
+    </div>
   `;
   return div;
 }
@@ -244,13 +249,15 @@ window.approve = async (id, btn) => {
     const sv    = document.getElementById(id+'-sv')?.value?.trim();
     const where = document.getElementById(id+'-where')?.value?.trim();
     const link  = document.getElementById(id+'-link')?.value?.trim();
+    const imgUrl = document.getElementById(id+'-img')?.value?.trim();
     const updates = { approved: true, publishedAt: Timestamp.now() };
     if (desc)  updates.description   = desc;
     if (orig)  updates.originalPrice = orig;
     if (lp)    updates.locketPrice   = lp;
     if (sv)    updates.savings       = sv;
     if (where) updates.where         = where;
-    if (link)  updates.link          = link;
+    if (link)    updates.link          = link;
+    if (imgUrl)  updates.imageUrl       = imgUrl;
     await updateDoc(doc(db,'trendPosts',id), updates);
     showStatus('✅ post approved and live!');
   } catch(e) {

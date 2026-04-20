@@ -1124,6 +1124,7 @@
         </div>
 
         <!-- Trend feed (curated AI cards) -->
+        <div id="feed-debug" style="font-size:11px;color:var(--tomato);font-weight:700;padding:4px 0;min-height:14px;"></div>
         <div id="trend-feed">
           <div class="feed-loading" id="feed-loading">
             <div class="feed-loading-spinner"></div>
@@ -1793,12 +1794,9 @@
     const snap = await getDoc(doc(db, 'groups', groupId));
     if (!snap.exists()) return;
     currentGroupId = groupId;
-    showScreen('app');
-    document.getElementById('invite-code-display').textContent = groupId;
-    loadFeed();
-    loadVibeSuggestions();
-    loadWeeklyPrompt();
-    loadCustomPrompts();
+    // Don't call showScreen or loadFeed — trend feed is already showing
+    const codeEl = document.getElementById('invite-code-display');
+    if (codeEl) codeEl.textContent = groupId;
     loadAlbumPhotos();
 
     // live listener on group doc for real-time member + name updates
@@ -1880,47 +1878,17 @@
 
     trendUnsub = onSnapshot(q, (snap) => {
       if (loadEl) loadEl.style.display = 'none';
-      feedEl.querySelectorAll('.trend-card').forEach(c => c.remove());
-
-      // Get user category weights for personalization
-      const weights = (currentUser && userCatWeights) ? userCatWeights : {};
-
-      // Filter + sort by personalization weight
-      let docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      if (currentCatFilter !== 'all') {
-        docs = docs.filter(d => d.category === currentCatFilter);
-      } else {
-        // Personalized sort: boost categories user taps most
-        docs.sort((a, b) => {
-          const wa = weights[a.category] || 0;
-          const wb = weights[b.category] || 0;
-          if (wb !== wa) return wb - wa;
-          // secondary sort: newest first
-          const ta = a.publishedAt?.seconds || 0;
-          const tb = b.publishedAt?.seconds || 0;
-          return tb - ta;
-        });
-      }
-
-      if (docs.length === 0) {
-        if (emptyEl) emptyEl.style.display = 'flex';
-        return;
-      }
-
-      const tilts = ['tilt-l', 'tilt-r', '', 'tilt-l', 'tilt-r'];
-      docs.forEach((post, i) => {
-        const card = buildTrendCard(post, tilts[i % tilts.length]);
-        feedEl.appendChild(card);
-      });
-
-      // Show group section if in a group
-      if (currentGroupId) {
-        document.getElementById('group-divider').style.display = 'flex';
-        document.getElementById('group-posts-section').style.display = 'block';
-      }
+      // Cache all docs so filterFeed can re-render without re-subscribing
+      cachedTrendDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Debug: show doc count on screen temporarily
+      const debugEl = document.getElementById('feed-debug');
+      if (debugEl) debugEl.textContent = 'snapshot fired: ' + snap.size + ' approved posts found';
+      renderTrendCards(cachedTrendDocs);
     }, (err) => {
       console.error('trendFeed error:', err.code, err.message);
       if (loadEl) loadEl.style.display = 'none';
+      const debugEl = document.getElementById('feed-debug');
+      if (debugEl) debugEl.textContent = 'firestore error: ' + err.code + ' — ' + err.message;
       if (emptyEl) emptyEl.style.display = 'block';
       // Don't crash — trend feed may just not have rules set yet
     });

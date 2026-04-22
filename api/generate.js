@@ -25,10 +25,14 @@ function validUrl(url) {
 
 const SAVE_TOOL = {
   name: 'save_posts',
-  description: 'Save the 3 trend posts you researched',
+  description: 'Save the trend posts you found',
   input_schema: {
     type: 'object',
     properties: {
+      skip: {
+        type: 'boolean',
+        description: 'Set to true if nothing genuinely new is trending today in this category — saves money by not generating duplicate content',
+      },
       posts: {
         type: 'array',
         minItems: 1,
@@ -48,63 +52,87 @@ const SAVE_TOOL = {
           },
         },
       },
+      skip: {
+        type: 'boolean',
+        description: 'Set to true if there is genuinely nothing new to report in this category today',
+      },
     },
-    required: ['posts'],
+    required: [],
   },
 };
 
 const PROMPTS = [
   {
     id: 'drink',
-    msg: `Search for 3 trending Starbucks drink hacks or secret menu items popular with women 18-24 right now.
-For each drink call save_posts with:
+    msg: (recent) => `Search TikTok, Instagram Reels, and food blogs for Starbucks drink hacks or secret menu items going viral RIGHT NOW in the last 48 hours. Focus on things trending on TikTok FYP.
+
+${recent}
+
+For each NEW drink (not in the recent list above) call save_posts with:
 - title: drink name
-- description: exact ordering instructions (base drink + each customization with amounts)
-- originalPrice: normal Starbucks price
-- locketPrice: hack/cheaper price
+- description: EXACT ordering instructions — base drink + each customization with exact amounts (pumps, milk type, toppings, ice level). Format: "Start with a [size] [base]. Ask for: [customization 1], [customization 2]..."
+- originalPrice: the price on starbucks.com for this drink and size
+- locketPrice: the hack/cheaper price (e.g. with Starbucks rewards, or cheaper dupe)
 - savings: dollar amount saved
-- where: "Starbucks"
+- where: "Starbucks app" or "Starbucks"
 - link: https://www.starbucks.com/menu
-- imageUrl: find a direct .jpg or .png image of this drink from starbucks.com or a food blog`,
+- imageUrl: a direct .jpg or .png image URL from i.imgur.com, images.unsplash.com, or upload.wikimedia.org
+
+If nothing genuinely new is trending today, set skip: true in save_posts.`,
   },
   {
     id: 'beauty',
-    msg: `Search for 3 affordable beauty dupes or viral drugstore products trending for women 18-24 right now.
-For each product call save_posts with:
+    msg: (recent) => `Search TikTok, Instagram Reels, and beauty blogs for affordable beauty products or viral drugstore dupes trending RIGHT NOW in the last 48 hours. Look for things blowing up on TikTok BeautyTok.
+
+${recent}
+
+For each NEW product (not in the recent list above) call save_posts with:
 - title: brand and product name
-- description: one sentence what it is and what it does
-- originalPrice: high-end original price
-- locketPrice: dupe/drugstore price
-- savings: amount saved
-- where: store name (Target, Ulta, Amazon etc)
+- description: one sentence — what it is and what it does
+- originalPrice: the price on the brand's OFFICIAL website (not Amazon, not Target)
+- locketPrice: drugstore/dupe price at the cheapest retailer
+- savings: amount saved vs the original
+- where: exact store name (Target, Ulta, Amazon, etc)
 - link: direct product page URL
-- imageUrl: direct .jpg or .png image URL from the brand, Target, Ulta, or Amazon product page`,
+- imageUrl: direct .jpg or .png image from i.imgur.com, images.unsplash.com, or the brand's official CDN
+
+If nothing genuinely new is trending today, set skip: true in save_posts.`,
   },
   {
     id: 'deals',
-    msg: `Search for 3 real sales or deals active RIGHT NOW that women 18-24 would care about (fashion, beauty, lifestyle).
-For each deal call save_posts with:
-- title: brand name and deal description
-- description: one sentence what is on sale and any promo code
-- originalPrice: typical item price before sale
-- locketPrice: sale price
+    msg: (recent) => `Search TikTok, Instagram, and deal sites for EXCLUSIVE or VIRAL sales and drops happening RIGHT NOW that girls 18-24 are talking about. Look for things like limited time student discounts, flash sales, brand drops, secret promo codes being shared on TikTok. NOT generic "store is having a sale" — find the ones people are actually rushing for.
+
+${recent}
+
+For each NEW deal (not in the recent list above) call save_posts with:
+- title: brand + deal (e.g. "Starbucks $1 Bear Cup for Students Until April 25th")
+- description: one sentence — what the deal is, any code needed, and deadline if applicable
+- originalPrice: original item price from the brand's official website
+- locketPrice: the sale/deal price
 - savings: percent or dollar savings
-- where: store name
-- link: direct sale page URL
-- imageUrl: find a direct image URL related to this deal. Use images from: i.imgur.com, upload.wikimedia.org, images.unsplash.com, or cdn.pixabay.com. Must be a direct image URL ending in .jpg .png or .webp`,
+- where: exact store name or app
+- link: direct link to the sale or deal page
+- imageUrl: direct .jpg or .png image from i.imgur.com, images.unsplash.com, or brand CDN
+
+If nothing genuinely new or exciting is happening today, set skip: true in save_posts.`,
   },
   {
     id: 'worthy',
-    msg: `Search for 3 hyped products women 18-24 are debating buying. Give an honest worth it or skip it verdict for each.
-For each call save_posts with:
-- title: start with "Worth It: " or "Skip It: " then the product name
-- description: one honest sentence explaining the verdict
-- originalPrice: full retail price
-- locketPrice: best price available online
-- savings: savings vs retail or "best price"
-- where: best place to buy
+    msg: (recent) => `Search TikTok and Instagram for hyped products women 18-24 are currently debating buying — things that are viral RIGHT NOW. Look at TikTok reviews, "is it worth it" videos trending in the last 48 hours.
+
+${recent}
+
+For each NEW product (not in the recent list above) call save_posts with:
+- title: "Worth It: [product]" OR "Skip It: [product]"
+- description: one honest sentence explaining the verdict based on real reviews
+- originalPrice: price on the brand's OFFICIAL website
+- locketPrice: best price found online right now
+- savings: savings vs official price, or "best price" if cheapest
+- where: best place to buy it
 - link: direct product URL
-- imageUrl: find a direct image URL of this product. Use images from: i.imgur.com, upload.wikimedia.org, images.unsplash.com, or cdn.pixabay.com. Must be a direct image URL ending in .jpg .png or .webp`,
+- imageUrl: direct .jpg or .png image from i.imgur.com, images.unsplash.com, or brand CDN
+
+If nothing genuinely new is being hyped today, set skip: true in save_posts.`,
   },
 ];
 
@@ -113,12 +141,10 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
-  // Filter to only requested categories (or all if none specified)
   let body = {};
   try { body = req.body || {}; } catch(_) {}
   const requestedCats = Array.isArray(body.categories) && body.categories.length > 0
-    ? body.categories
-    : null; // null = all categories
+    ? body.categories : null;
 
   const activePrompts = requestedCats
     ? PROMPTS.filter(p => requestedCats.includes(p.id))
@@ -128,12 +154,32 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'no valid categories selected' });
   }
 
+  // Fetch recent posts (last 7 days) to avoid repeats
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const recentSnap = await db.collection('trendPosts')
+    .where('createdAt', '>=', Timestamp.fromDate(sevenDaysAgo))
+    .limit(100)
+    .get();
+
+  const recentByCategory = {};
+  recentSnap.docs.forEach(d => {
+    const p = d.data();
+    if (!recentByCategory[p.category]) recentByCategory[p.category] = [];
+    if (p.title) recentByCategory[p.category].push(p.title);
+  });
+
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const allPosts = [];
   const errors = [];
+  let skipped = 0;
 
   for (const cat of activePrompts) {
     try {
+      const recentTitles = recentByCategory[cat.id] || [];
+      const recentBlock = recentTitles.length > 0
+        ? `IMPORTANT — these were already posted recently, do NOT repeat them:\n${recentTitles.map(t => `- ${t}`).join('\n')}`
+        : '';
+
       const response = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1500,
@@ -142,21 +188,23 @@ export default async function handler(req, res) {
           SAVE_TOOL,
         ],
         tool_choice: { type: 'any' },
-        messages: [{ role: 'user', content: cat.msg }],
+        messages: [{ role: 'user', content: cat.msg(recentBlock) }],
       });
 
-      // Find the save_posts tool call
       const saveCall = response.content.find(b => b.type === 'tool_use' && b.name === 'save_posts');
-      
       if (!saveCall) {
-        // Fallback: maybe it returned text — log what we got
-        const textBlock = response.content.find(b => b.type === 'text');
-        errors.push(`${cat.id}: no save_posts call. stop_reason=${response.stop_reason}. text=${textBlock?.text?.slice(0,100)}`);
+        const tb = response.content.find(b => b.type === 'text');
+        errors.push(`${cat.id}: no save_posts call. text=${tb?.text?.slice(0,80)}`);
+        continue;
+      }
+
+      // If AI says nothing new, skip this category
+      if (saveCall.input?.skip === true) {
+        skipped++;
         continue;
       }
 
       const posts = saveCall.input?.posts || [];
-      let added = 0;
       posts.forEach(p => {
         if (p.title && p.description) {
           allPosts.push({
@@ -174,38 +222,33 @@ export default async function handler(req, res) {
             createdAt:     Timestamp.now(),
             draftedAt:     Timestamp.now(),
           });
-          added++;
         }
       });
-      if (added === 0) errors.push(`${cat.id}: save_posts called but 0 valid posts`);
-
-    } catch (e) {
+    } catch(e) {
       errors.push(`${cat.id}: ${e.message}`);
     }
   }
 
-  if (allPosts.length === 0) {
-    return res.status(500).json({ 
-      error: 'no posts generated',
-      details: errors,
-    });
+  if (allPosts.length === 0 && skipped === 0) {
+    return res.status(500).json({ error: 'no posts generated', details: errors });
   }
 
   // Save to Firestore
   try {
     const batch = db.batch();
-    allPosts.forEach(post => {
-      batch.set(db.collection('trendPosts').doc(), post);
-    });
+    allPosts.forEach(post => batch.set(db.collection('trendPosts').doc(), post));
     await batch.commit();
-  } catch (e) {
+  } catch(e) {
     return res.status(500).json({ error: 'firestore save failed: ' + e.message });
   }
 
   return res.status(200).json({
     success: true,
     drafted: allPosts.length,
-    message: `✨ drafted ${allPosts.length} posts!`,
+    skipped,
+    message: allPosts.length > 0
+      ? `✨ drafted ${allPosts.length} posts!${skipped > 0 ? ` (${skipped} categories had nothing new)` : ''}`
+      : `nothing new today — all ${skipped} categories are up to date!`,
     warnings: errors.length ? errors : undefined,
   });
 }

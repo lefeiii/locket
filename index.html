@@ -425,6 +425,16 @@
       box-shadow: 0 1px 3px rgba(46,32,48,0.1);
     }
 
+    .btn-edit {
+      border: 1.5px solid rgba(200,180,190,0.3);
+      background: #fff; color: var(--mid);
+      border-radius: 999px; padding: 5px 14px;
+      font-size: 11px; font-weight: 800;
+      font-family: var(--font-n); cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-edit:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
     /* Section divider */
     .section-divider {
       display: flex; align-items: center; gap: 10px;
@@ -828,6 +838,77 @@
 <div class="phone">
   <div class="notch"></div>
 
+  <!-- USER SETTINGS SCREEN -->
+  <div id="user-settings-screen" style="display:none;flex-direction:column;min-height:100vh;background:var(--cream);">
+    <div class="settings-topbar">
+      <button class="back-btn" onclick="showScreen('app')">← back</button>
+      <div class="settings-title">settings</div>
+    </div>
+    <div class="settings-body">
+
+      <!-- Profile -->
+      <div class="settings-section-label">your profile</div>
+      <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px;">
+        <div class="settings-row-label">display name</div>
+        <div style="display:flex;gap:8px;width:100%;align-items:center;">
+          <input
+            id="user-settings-name-input"
+            type="text"
+            maxlength="30"
+            placeholder="your name"
+            style="flex:1;border:1.5px solid rgba(200,180,190,0.3);border-radius:12px;padding:10px 14px;font-size:14px;font-family:var(--font-n);font-weight:700;background:#fff;outline:none;color:var(--ink);"
+            onfocus="this.style.borderColor='rgba(220,120,140,0.5)'"
+            onblur="this.style.borderColor='rgba(200,180,190,0.3)'"
+          />
+          <button class="btn-edit" onclick="confirmEditName()" style="white-space:nowrap;">save name</button>
+        </div>
+        <div id="user-settings-name-saved" style="font-size:11px;color:#3cb46e;font-weight:700;display:none;">✅ saved!</div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-left">
+          <div class="settings-row-label">email</div>
+          <div class="settings-row-sub" id="user-settings-email-display">loading...</div>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="settings-section-label">support</div>
+      <div class="settings-row" onclick="contactFounder()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">connect with the founder</div>
+          <div class="settings-row-sub">questions, feedback, just say hi 💌</div>
+        </div>
+        <div class="settings-row-icon">💌</div>
+      </div>
+
+      <!-- Account -->
+      <div class="settings-section-label">account</div>
+      <div class="settings-row" onclick="showUserMenu()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">sign out</div>
+          <div class="settings-row-sub">see you soon 👋</div>
+        </div>
+        <div class="settings-row-icon">👋</div>
+      </div>
+      <div class="settings-row settings-danger" onclick="deactivateAccount()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">deactivate account</div>
+          <div class="settings-row-sub">pauses for 30 days — if you don't come back, we'll delete it</div>
+        </div>
+        <div class="settings-row-icon">😴</div>
+      </div>
+      <div class="settings-row settings-danger" onclick="deleteAccount()">
+        <div class="settings-row-left">
+          <div class="settings-row-label">delete account permanently</div>
+          <div class="settings-row-sub">this cannot be undone</div>
+        </div>
+        <div class="settings-row-icon">🗑️</div>
+      </div>
+
+    </div>
+  </div>
+
+
   <!-- INSTALL BANNER -->
   <div id="install-banner">
     <div class="install-top">
@@ -1103,7 +1184,7 @@
           <rect x="13" y="0" width="2" height="3" rx="0.8" fill="#b04048"/>
         </svg>
       </div>
-      <button class="back-btn" onclick="showUserMenu()" style="padding:5px 12px;font-size:11px;">⚙️ settings</button>
+      <button class="back-btn" onclick="openUserSettings()" style="padding:5px 12px;font-size:11px;">⚙️ settings</button>
     </div>
 
     <div class="tabs" style="display:none;">
@@ -1557,11 +1638,12 @@
 
   // ── SCREENS ──────────────────────────────────────
   function showScreen(name) {
-    document.getElementById('auth-screen').style.display     = name === 'auth'     ? 'flex' : 'none';
-    document.getElementById('group-screen').style.display    = name === 'group'    ? 'flex' : 'none';
-    document.getElementById('groups-screen').style.display   = name === 'groups'   ? 'flex' : 'none';
-    document.getElementById('settings-screen').style.display = name === 'settings' ? 'flex' : 'none';
-    document.getElementById('app-shell').style.display       = name === 'app'      ? 'flex' : 'none';
+    document.getElementById('auth-screen').style.display        = name === 'auth'          ? 'flex' : 'none';
+    document.getElementById('group-screen').style.display       = name === 'group'         ? 'flex' : 'none';
+    document.getElementById('groups-screen').style.display      = name === 'groups'        ? 'flex' : 'none';
+    document.getElementById('settings-screen').style.display    = name === 'settings'      ? 'flex' : 'none';
+    document.getElementById('user-settings-screen').style.display = name === 'user-settings' ? 'flex' : 'none';
+    document.getElementById('app-shell').style.display          = name === 'app'           ? 'flex' : 'none';
   }
 
   function cleanupListeners() {
@@ -3641,6 +3723,36 @@
       await currentUser.delete();
       showScreen('auth');
     } catch(e) { alert('could not delete account — you may need to sign in again first'); }
+  };
+
+  // ── USER SETTINGS SCREEN ────────────────────────
+  window.openUserSettings = () => {
+    const nameInp = document.getElementById('user-settings-name-input');
+    const emailEl = document.getElementById('user-settings-email-display');
+    const savedEl = document.getElementById('user-settings-name-saved');
+    if (nameInp) nameInp.value = currentUser?.displayName || '';
+    if (emailEl) emailEl.textContent = currentUser?.email || '';
+    if (savedEl) savedEl.style.display = 'none';
+    showScreen('user-settings');
+  };
+
+  window.showEditNameModal = () => {
+    // No longer needed — name editing is inline in settings
+  };
+
+  window.confirmEditName = async () => {
+    const inp   = document.getElementById('user-settings-name-input');
+    const saved = document.getElementById('user-settings-name-saved');
+    const val   = inp?.value?.trim();
+    if (!val || !currentUser) return;
+    try {
+      await updateProfile(currentUser, { displayName: val });
+      await updateDoc(doc(db, 'users', currentUser.uid), { name: val });
+      if (saved) {
+        saved.style.display = 'block';
+        setTimeout(() => { saved.style.display = 'none'; }, 2500);
+      }
+    } catch(e) { alert('could not update name, try again'); }
   };
 
   // ── USER MENU (replaces group settings) ────────

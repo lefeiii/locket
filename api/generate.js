@@ -49,6 +49,7 @@ const SAVE_TOOL = {
             where:         { type: 'string' },
             link:          { type: 'string' },
             imageUrl:      { type: 'string' },
+            expiresAt:     { type: 'string', description: 'ISO date YYYY-MM-DD if this deal expires on a known date, otherwise omit' },
           },
         },
       },
@@ -82,7 +83,7 @@ If nothing genuinely new is trending today, set skip: true in save_posts.`,
   },
   {
     id: 'beauty',
-    msg: (recent) => `Search TikTok, Instagram Reels, and beauty blogs for affordable beauty products or viral drugstore dupes trending RIGHT NOW in the last 48 hours. Look for things blowing up on TikTok BeautyTok.
+    msg: (recent) => `Search TikTok BeautyTok, Instagram Reels, and beauty blogs for trending makeup, skincare, and haircare products going viral RIGHT NOW. STRICTLY makeup, skincare, and haircare only — NO clothing, accessories, or food.
 
 ${recent}
 
@@ -99,22 +100,23 @@ For each NEW product (not in the recent list above) call save_posts with:
 If nothing genuinely new is trending today, set skip: true in save_posts.`,
   },
   {
-    id: 'deals',
-    msg: (recent) => `Search TikTok, Instagram, and deal sites for EXCLUSIVE or VIRAL sales and drops happening RIGHT NOW that girls 18-24 are talking about. Look for things like limited time student discounts, flash sales, brand drops, secret promo codes being shared on TikTok. NOT generic "store is having a sale" — find the ones people are actually rushing for.
+    id: 'fits',
+    msg: (recent) => `Search TikTok FYP, Instagram Reels, and fashion blogs for trending clothing, shoes, and accessories going viral RIGHT NOW for women 18-24. Find outfit trends, affordable dupes of designer looks, viral fashion finds. STRICTLY clothes, shoes, bags, and accessories only — NO beauty or food.
 
 ${recent}
 
-For each NEW deal (not in the recent list above) call save_posts with:
-- title: brand + deal (e.g. "Starbucks $1 Bear Cup for Students Until April 25th")
-- description: one sentence — what the deal is, any code needed, and deadline if applicable
-- originalPrice: original item price from the brand's official website
-- locketPrice: the sale/deal price
-- savings: percent or dollar savings
-- where: exact store name or app
-- link: direct link to the sale or deal page
+For each NEW fashion find (not in the recent list above) call save_posts with:
+- title: item + brand (e.g. "Amazon Aritzia Effortless Pant Dupe")
+- description: one sentence — what it is, what trend it fits, why people love it
+- originalPrice: price on the brand's OFFICIAL website
+- locketPrice: best dupe or sale price found
+- savings: dollar or percent savings
+- where: exact store or website
+- link: direct product or sale URL
 - imageUrl: direct .jpg or .png image from i.imgur.com, images.unsplash.com, or brand CDN
+- expiresAt: ISO date YYYY-MM-DD only if this is a limited time sale with a known end date
 
-If nothing genuinely new or exciting is happening today, set skip: true in save_posts.`,
+If nothing genuinely new is trending today in fashion/clothing, set skip: true in save_posts.`,
   },
   {
     id: 'worthy',
@@ -207,6 +209,14 @@ export default async function handler(req, res) {
       const posts = saveCall.input?.posts || [];
       posts.forEach(p => {
         if (p.title && p.description) {
+          // Parse expiresAt if provided
+          let expiresAt = null;
+          if (p.expiresAt) {
+            try {
+              const d = new Date(p.expiresAt);
+              if (!isNaN(d.getTime())) expiresAt = Timestamp.fromDate(d);
+            } catch(_) {}
+          }
           allPosts.push({
             category:      cat.id,
             title:         cleanText(p.title),
@@ -217,6 +227,7 @@ export default async function handler(req, res) {
             where:         cleanText(p.where),
             link:          validUrl(p.link),
             imageUrl:      validUrl(p.imageUrl),
+            expiresAt,
             approved:      false,
             publishedAt:   null,
             createdAt:     Timestamp.now(),

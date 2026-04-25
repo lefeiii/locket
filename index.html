@@ -415,6 +415,22 @@
       cursor: default;
     }
 
+    /* lock(it) button */
+    .lock-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 5px; width: 100%; margin-top: 8px;
+      background: transparent; color: var(--mid);
+      border: 1.5px solid rgba(200,180,190,0.3);
+      border-radius: 999px; padding: 8px;
+      font-family: var(--font-b); font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .lock-btn:hover { border-color: var(--tomato); color: var(--tomato); }
+    .lock-btn.locked {
+      background: rgba(232,115,106,0.08);
+      border-color: var(--tomato); color: var(--tomato);
+    }
+
     /* Tape strip decoration at top of polaroid */
     .trend-tape {
       position: absolute; top: -8px; left: 50%;
@@ -1200,12 +1216,11 @@
           <button class="cat-btn active" data-cat="all"    onclick="filterFeed('all',this)">✨ all</button>
           <button class="cat-btn" data-cat="drink"  onclick="filterFeed('drink',this)">☕ drinks</button>
           <button class="cat-btn" data-cat="beauty" onclick="filterFeed('beauty',this)">💄 beauty</button>
-          <button class="cat-btn" data-cat="deals"  onclick="filterFeed('deals',this)">🛍️ deals</button>
-          <button class="cat-btn" data-cat="worthy" onclick="filterFeed('worthy',this)">✅ worth it?</button>
+          <button class="cat-btn" data-cat="fits"   onclick="filterFeed('fits',this)">👗 fits</button>
+          <button class="cat-btn" data-cat="locked" onclick="showLockedFeed(this)">🔒 lock(it)</button>
         </div>
 
         <!-- Trend feed (curated AI cards) -->
-        <div id="feed-debug" style="font-size:11px;color:var(--tomato);font-weight:700;padding:4px 0;min-height:14px;"></div>
         <div id="trend-feed">
           <div class="feed-loading" id="feed-loading">
             <div class="feed-loading-spinner"></div>
@@ -1645,6 +1660,7 @@
     document.getElementById('user-settings-screen').style.display = name === 'user-settings' ? 'flex' : 'none';
     document.getElementById('app-shell').style.display          = name === 'app'           ? 'flex' : 'none';
   }
+  window.showScreen = showScreen; // expose to HTML onclick handlers
 
   function cleanupListeners() {
     if (unsubscribePosts)         { unsubscribePosts();         unsubscribePosts = null; }
@@ -1808,6 +1824,7 @@
       if (feedTab) { feedTab.classList.add('on'); }
       loadTrendFeed();
       loadUserCatWeights();
+      loadLockedPosts();
       // Then load group in the background if they have one
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
@@ -1967,15 +1984,10 @@
       if (loadEl) loadEl.style.display = 'none';
       // Cache all docs so filterFeed can re-render without re-subscribing
       cachedTrendDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      // Debug: show doc count on screen temporarily
-      const debugEl = document.getElementById('feed-debug');
-      if (debugEl) debugEl.textContent = 'snapshot fired: ' + snap.size + ' approved posts found';
       renderTrendCards(cachedTrendDocs);
     }, (err) => {
       console.error('trendFeed error:', err.code, err.message);
       if (loadEl) loadEl.style.display = 'none';
-      const debugEl = document.getElementById('feed-debug');
-      if (debugEl) debugEl.textContent = 'firestore error: ' + err.code + ' — ' + err.message;
       if (emptyEl) emptyEl.style.display = 'block';
       // Don't crash — trend feed may just not have rules set yet
     });
@@ -1992,14 +2004,9 @@
 
     if (currentCatFilter !== 'all') {
       docs = docs.filter(d => d.category === currentCatFilter);
-    } else {
-      docs.sort((a, b) => {
-        const wa = weights[a.category] || 0;
-        const wb = weights[b.category] || 0;
-        if (wb !== wa) return wb - wa;
-        return (b.publishedAt?.seconds || 0) - (a.publishedAt?.seconds || 0);
-      });
     }
+    // Always sort newest first
+    docs.sort((a, b) => (b.publishedAt?.seconds || 0) - (a.publishedAt?.seconds || 0));
 
     if (docs.length === 0) {
       if (emptyEl) emptyEl.style.display = 'flex';
@@ -2009,7 +2016,8 @@
 
     const tilts = ['tilt-l', 'tilt-r', '', 'tilt-l', 'tilt-r'];
     docs.forEach((post, i) => {
-      feedEl.appendChild(buildTrendCard(post, tilts[i % tilts.length]));
+      const p = { ...post, _isLocked: lockedPostIds.has(post.id) };
+      feedEl.appendChild(buildTrendCard(p, tilts[i % tilts.length]));
     });
   }
 
@@ -2019,9 +2027,9 @@
 
     const catLabels = {
       drink: '☕ drinks', beauty: '💄 beauty',
-      deals: '🛍️ deals', worthy: '✅ worth it?'
+      fits: '👗 fits', worthy: '✅ worth it?', locked: '🔒 lock(it)'
     };
-    const catEmojis = { drink:'☕', beauty:'💄', deals:'🛍️', worthy:'✅' };
+    const catEmojis = { drink:'☕', beauty:'💄', fits:'👗', worthy:'✅', locked:'🔒' };
     const placeholderEmoji = catEmojis[post.category] || '✨';
 
     // Tape decoration
@@ -2114,11 +2122,82 @@
     }
     card.appendChild(cta);
 
+    // lock(it) button — skip for the locked feed itself to avoid meta confusion
+    if (post.category !== 'locked') {
+      const lockBtn = document.createElement('button');
+      lockBtn.className = 'lock-btn' + (post._isLocked ? ' locked' : '');
+      lockBtn.innerHTML = post._isLocked ? '🔒 lock(it)ed' : '🔒 lock(it)';
+      lockBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleLockPost(post.id, lockBtn);
+      };
+      card.appendChild(lockBtn);
+    }
+
     // Track tap for personalization
     card.addEventListener('click', () => trackCatTap(post.category));
 
     return card;
   }
+
+  // ── LOCK(IT) — saved posts ────────────────────────
+  let lockedPostIds = new Set();
+
+  async function loadLockedPosts() {
+    if (!currentUser) return;
+    try {
+      const snap = await getDoc(doc(db, 'users', currentUser.uid));
+      const ids = snap.data()?.lockedPosts || [];
+      lockedPostIds = new Set(ids);
+    } catch(e) {}
+  }
+
+  window.toggleLockPost = async (postId, btn) => {
+    if (!currentUser || !postId) return;
+    const isNowLocked = !lockedPostIds.has(postId);
+    if (isNowLocked) {
+      lockedPostIds.add(postId);
+    } else {
+      lockedPostIds.delete(postId);
+    }
+    btn.className = 'lock-btn' + (isNowLocked ? ' locked' : '');
+    btn.innerHTML = isNowLocked ? '🔒 lock(it)ed' : '🔒 lock(it)';
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        lockedPosts: Array.from(lockedPostIds),
+      });
+    } catch(e) {
+      // Revert on failure
+      if (isNowLocked) lockedPostIds.delete(postId);
+      else lockedPostIds.add(postId);
+      btn.className = 'lock-btn' + (lockedPostIds.has(postId) ? ' locked' : '');
+      btn.innerHTML = lockedPostIds.has(postId) ? '🔒 lock(it)ed' : '🔒 lock(it)';
+    }
+  };
+
+  window.showLockedFeed = (btn) => {
+    currentCatFilter = 'locked';
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Build locked feed from cached docs
+    const lockedDocs = cachedTrendDocs.filter(d => lockedPostIds.has(d.id));
+    const feedEl  = document.getElementById('trend-feed');
+    const emptyEl = document.getElementById('feed-empty');
+    feedEl.querySelectorAll('.trend-card').forEach(c => c.remove());
+    if (lockedDocs.length === 0) {
+      if (emptyEl) {
+        emptyEl.style.display = 'flex';
+        emptyEl.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">🔒</div>nothing lock(it)ed yet — tap 🔒 on any card!';
+      }
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+    const tilts = ['tilt-l','tilt-r','','tilt-l','tilt-r'];
+    lockedDocs.forEach((post, i) => {
+      const p = { ...post, _isLocked: true };
+      feedEl.appendChild(buildTrendCard(p, tilts[i % tilts.length]));
+    });
+  };
 
   // ── PERSONALIZATION ──────────────────────────────
   let userCatWeights = {};

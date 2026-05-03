@@ -326,6 +326,29 @@
        TREND FEED & POLAROID CARDS
     ══════════════════════════════════ */
 
+    /* Saturday Starbies banner */
+    .starbies-banner {
+      background: linear-gradient(135deg, #e8736a 0%, #c85a52 100%);
+      border-radius: 16px; padding: 14px 16px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 4px 16px rgba(232,115,106,0.3);
+    }
+    .starbies-icon { font-size: 32px; flex-shrink: 0; }
+    .starbies-text { flex: 1; }
+    .starbies-title {
+      font-family: var(--font-b); font-size: 16px; font-weight: 800;
+      color: #fff; margin-bottom: 2px;
+    }
+    .starbies-sub { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8); }
+    .tip-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; margin: 16px 0 4px;
+      background: transparent; border: 1.5px dashed rgba(200,180,190,0.4);
+      border-radius: 999px; padding: 11px;
+      font-family: var(--font-n); font-size: 12px; font-weight: 800;
+      color: var(--mid); cursor: pointer; transition: all 0.15s;
+    }
+    .tip-btn:hover { border-color: var(--tomato); color: var(--tomato); background: rgba(232,115,106,0.05); }
     /* Category filter bar */
     .cat-bar {
       display: flex; gap: 7px; overflow-x: auto; padding-bottom: 12px;
@@ -1307,6 +1330,14 @@
           <button class="cat-btn" data-cat="locked" onclick="showLockedFeed(this)">🔒 lock(it)</button>
         </div>
 
+        <!-- Saturday Starbies banner -->
+        <div class="starbies-banner" id="starbies-banner" style="display:none;">
+          <div class="starbies-icon">&#9749;</div>
+          <div class="starbies-text">
+            <div class="starbies-title">saturday starbies &#128153;</div>
+            <div class="starbies-sub">your weekly insider Starbucks drop &#8212; you deserve it after a long week</div>
+          </div>
+        </div>
         <!-- Trend feed (curated AI cards) -->
         <div id="trend-feed">
           <div class="feed-loading" id="feed-loading">
@@ -1318,6 +1349,11 @@
             no finds in this category yet!
           </div>
         </div>
+
+        <!-- Tip the founder -->
+        <button class="tip-btn" onclick="tipFounder()">
+          &#128140; found something we should know about? tip us!
+        </button>
 
         <!-- Divider into group section -->
         <div class="section-divider" id="group-divider" style="display:none;">
@@ -1913,6 +1949,7 @@
       loadUserCatWeights();
       loadLockedPosts();
       checkOnboarding();
+      initSaturdayStarbies();
       // Then load group in the background if they have one
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
@@ -2227,6 +2264,20 @@
 
     return card;
   }
+
+    // ── SATURDAY STARBIES ───────────────────────────────
+  function initSaturdayStarbies() {
+    const isSat = new Date().getDay() === 6;
+    const banner = document.getElementById('starbies-banner');
+    if (banner) banner.style.display = isSat ? 'flex' : 'none';
+  }
+
+  // ── TIP THE FOUNDER ──────────────────────────────────
+  window.tipFounder = () => {
+    const subject = encodeURIComponent('locket tip');
+    const body = encodeURIComponent('hey! found something for locket. what is it: . link: . price: .');
+    window.location.href = 'mailto:hellokayleec@gmail.com?subject=' + subject + '&body=' + body;
+  };
 
   // ── ONBOARDING ──────────────────────────────────────
   function checkOnboarding() {

@@ -1304,7 +1304,6 @@
           <button class="cat-btn active" data-cat="all"    onclick="filterFeed('all',this)">✨ all</button>
           <button class="cat-btn" data-cat="drink"  onclick="filterFeed('drink',this)">☕ drinks</button>
           <button class="cat-btn" data-cat="beauty" onclick="filterFeed('beauty',this)">💄 beauty</button>
-          <button class="cat-btn" data-cat="fits"   onclick="filterFeed('fits',this)">👗 fits</button>
           <button class="cat-btn" data-cat="locked" onclick="showLockedFeed(this)">🔒 lock(it)</button>
         </div>
 
@@ -2116,9 +2115,9 @@
 
     const catLabels = {
       drink: '☕ drinks', beauty: '💄 beauty',
-      fits: '👗 fits', worthy: '✅ worth it?', locked: '🔒 lock(it)'
+      worthy: '✅ worth it?', locked: '🔒 lock(it)'
     };
-    const catEmojis = { drink:'☕', beauty:'💄', fits:'👗', worthy:'✅', locked:'🔒' };
+    const catEmojis = { drink:'☕', beauty:'💄', worthy:'✅', locked:'🔒' };
     const placeholderEmoji = catEmojis[post.category] || '✨';
 
     // Tape decoration

@@ -18,7 +18,6 @@ function cleanText(str) {
   if (!str) return null;
   return str.replace(/<cite[^>]*>/gi,'').replace(/<\/cite>/gi,'').replace(/\[\d+\]/g,'').trim() || null;
 }
-
 function validUrl(url) {
   return url && typeof url === 'string' && url.startsWith('http') ? url : null;
 }
@@ -29,10 +28,6 @@ const SAVE_TOOL = {
   input_schema: {
     type: 'object',
     properties: {
-      skip: {
-        type: 'boolean',
-        description: 'Set to true if nothing genuinely new is trending today in this category — saves money by not generating duplicate content',
-      },
       posts: {
         type: 'array',
         minItems: 1,
@@ -49,92 +44,71 @@ const SAVE_TOOL = {
             where:         { type: 'string' },
             link:          { type: 'string' },
             imageUrl:      { type: 'string' },
-            expiresAt:     { type: 'string', description: 'ISO date YYYY-MM-DD if this deal expires on a known date, otherwise omit' },
+            expiresAt:     { type: 'string', description: 'ISO date YYYY-MM-DD if this deal has a known end date, otherwise omit' },
           },
         },
       },
       skip: {
         type: 'boolean',
-        description: 'Set to true if there is genuinely nothing new to report in this category today',
+        description: 'Set to true if there is genuinely nothing new to report today',
       },
     },
-    required: [],
+    required: ['posts'],
   },
 };
 
 const PROMPTS = [
   {
     id: 'drink',
-    msg: (recent) => `Search TikTok, Instagram Reels, and food blogs for Starbucks drink hacks or secret menu items going viral RIGHT NOW in the last 48 hours. Focus on things trending on TikTok FYP.
+    msg: (recent) => `You are a Starbucks expert finding viral drink hacks for women 18-24.
+
+STEP 1: Search TikTok and Instagram for Starbucks drinks going viral RIGHT NOW in the last 48 hours.
+
+STEP 2: For each drink you find, go to starbucks.com/menu and find the EXACT price for that drink size. Do not estimate — look it up directly.
+
+STEP 3: Calculate the hack price accurately. If using Starbucks Rewards, find the actual stars/redemption cost. If it's a DIY dupe, find the actual ingredient cost.
 
 ${recent}
 
-For each NEW drink (not in the recent list above) call save_posts with:
-- title: drink name
-- description: EXACT ordering instructions — base drink + each customization with exact amounts (pumps, milk type, toppings, ice level). Format: "Start with a [size] [base]. Ask for: [customization 1], [customization 2]..."
-- originalPrice: the price on starbucks.com for this drink and size
-- locketPrice: the hack/cheaper price (e.g. with Starbucks rewards, or cheaper dupe)
-- savings: dollar amount saved
+For each NEW drink (not in recent list) call save_posts with:
+- title: the drink name (clear and specific)
+- description: EXACT ordering instructions — "Start with a [Venti/Grande/etc] [base drink]. Ask for: [each customization with exact pumps/amounts/specifics]."
+- originalPrice: the price you found on starbucks.com for this exact drink and size (e.g. "$7.45"). ONLY use starbucks.com prices.
+- locketPrice: the actual hack price with your working (e.g. "$4.25 with Gold Stars" or "$3.50 DIY at home")
+- savings: calculated difference (e.g. "save $3.20")
 - where: "Starbucks app" or "Starbucks"
-- link: https://www.starbucks.com/menu
-- imageUrl: a direct .jpg or .png image URL from i.imgur.com, images.unsplash.com, or upload.wikimedia.org
+- link: the direct starbucks.com menu URL for this drink if it exists, otherwise "https://www.starbucks.com/menu"
+- imageUrl: search for a direct image URL of this specific drink ending in .jpg or .png from starbucks.com, starbuckscdn.com, or a well-known food blog
 
-If nothing genuinely new is trending today, set skip: true in save_posts.`,
+PRICING ACCURACY IS CRITICAL. Double-check every price before saving. If you cannot verify a price with certainty, do not include that post.
+
+If nothing genuinely new is trending today, set skip: true.`,
   },
   {
     id: 'beauty',
-    msg: (recent) => `Search TikTok BeautyTok, Instagram Reels, and beauty blogs for trending makeup, skincare, and haircare products going viral RIGHT NOW. STRICTLY makeup, skincare, and haircare only — NO clothing, accessories, or food.
+    msg: (recent) => `You are a beauty expert finding viral makeup, skincare, and haircare finds for women 18-24. STRICTLY makeup, skincare, and haircare — no clothing, accessories, or food.
+
+STEP 1: Search TikTok BeautyTok and Instagram Reels for makeup/skincare/haircare products going viral RIGHT NOW in the last 48 hours.
+
+STEP 2: For the original (high-end) product — go directly to the brand's official website and find the exact current price. Screenshot mentally and confirm the number.
+
+STEP 3: For the dupe/affordable version — go to the retailer's product page (Target.com, Ulta.com, Amazon.com) and find the exact listed price right now. Confirm it is currently in stock at that price.
 
 ${recent}
 
-For each NEW product (not in the recent list above) call save_posts with:
-- title: brand and product name
-- description: one sentence — what it is and what it does
-- originalPrice: the price on the brand's OFFICIAL website (not Amazon, not Target)
-- locketPrice: drugstore/dupe price at the cheapest retailer
-- savings: amount saved vs the original
-- where: exact store name (Target, Ulta, Amazon, etc)
-- link: direct product page URL
-- imageUrl: direct .jpg or .png image from i.imgur.com, images.unsplash.com, or the brand's official CDN
+For each NEW product (not in recent list) call save_posts with:
+- title: "Brand + Product Name" or "Brand Dupe for [High-End Product]"
+- description: one clear sentence — what it is, what it does, why people love it
+- originalPrice: the price you found on the BRAND'S OWN WEBSITE (e.g. Charlotte Tilbury's site, not Sephora). Format: "$XX.XX at [Brand Name]"
+- locketPrice: the exact price you found on the retailer page right now. Format: "$XX.XX at Target" or "$XX.XX on Amazon"
+- savings: calculated difference (e.g. "save $35.00")
+- where: exact retailer name (Target, Ulta, Amazon, Drugstore, etc)
+- link: direct URL to the affordable product's page on the retailer site
+- imageUrl: direct .jpg or .png image URL of the product from the retailer or brand's CDN
 
-If nothing genuinely new is trending today, set skip: true in save_posts.`,
-  },
-  {
-    id: 'fits',
-    msg: (recent) => `Search TikTok FYP, Instagram Reels, and fashion blogs for trending clothing, shoes, and accessories going viral RIGHT NOW for women 18-24. Find outfit trends, affordable dupes of designer looks, viral fashion finds. STRICTLY clothes, shoes, bags, and accessories only — NO beauty or food.
+PRICING ACCURACY IS CRITICAL. Go to the actual product pages and read the prices. Do not guess or estimate. If you cannot verify both prices with certainty, do not include that post.
 
-${recent}
-
-For each NEW fashion find (not in the recent list above) call save_posts with:
-- title: item + brand (e.g. "Amazon Aritzia Effortless Pant Dupe")
-- description: one sentence — what it is, what trend it fits, why people love it
-- originalPrice: price on the brand's OFFICIAL website
-- locketPrice: best dupe or sale price found
-- savings: dollar or percent savings
-- where: exact store or website
-- link: direct product or sale URL
-- imageUrl: direct .jpg or .png image from i.imgur.com, images.unsplash.com, or brand CDN
-- expiresAt: ISO date YYYY-MM-DD only if this is a limited time sale with a known end date
-
-If nothing genuinely new is trending today in fashion/clothing, set skip: true in save_posts.`,
-  },
-  {
-    id: 'worthy',
-    msg: (recent) => `Search TikTok and Instagram for hyped products women 18-24 are currently debating buying — things that are viral RIGHT NOW. Look at TikTok reviews, "is it worth it" videos trending in the last 48 hours.
-
-${recent}
-
-For each NEW product (not in the recent list above) call save_posts with:
-- title: "Worth It: [product]" OR "Skip It: [product]"
-- description: one honest sentence explaining the verdict based on real reviews
-- originalPrice: price on the brand's OFFICIAL website
-- locketPrice: best price found online right now
-- savings: savings vs official price, or "best price" if cheapest
-- where: best place to buy it
-- link: direct product URL
-- imageUrl: direct .jpg or .png image from i.imgur.com, images.unsplash.com, or brand CDN
-
-If nothing genuinely new is being hyped today, set skip: true in save_posts.`,
+If nothing genuinely new is trending today in beauty, set skip: true.`,
   },
 ];
 
@@ -179,12 +153,12 @@ export default async function handler(req, res) {
     try {
       const recentTitles = recentByCategory[cat.id] || [];
       const recentBlock = recentTitles.length > 0
-        ? `IMPORTANT — these were already posted recently, do NOT repeat them:\n${recentTitles.map(t => `- ${t}`).join('\n')}`
+        ? `IMPORTANT — already posted recently, do NOT repeat:\n${recentTitles.map(t => `- ${t}`).join('\n')}`
         : '';
 
       const response = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1500,
+        max_tokens: 2000,
         tools: [
           { type: 'web_search_20250305', name: 'web_search' },
           SAVE_TOOL,
@@ -200,7 +174,6 @@ export default async function handler(req, res) {
         continue;
       }
 
-      // If AI says nothing new, skip this category
       if (saveCall.input?.skip === true) {
         skipped++;
         continue;
@@ -209,7 +182,6 @@ export default async function handler(req, res) {
       const posts = saveCall.input?.posts || [];
       posts.forEach(p => {
         if (p.title && p.description) {
-          // Parse expiresAt if provided
           let expiresAt = null;
           if (p.expiresAt) {
             try {
@@ -244,7 +216,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'no posts generated', details: errors });
   }
 
-  // Save to Firestore
   try {
     const batch = db.batch();
     allPosts.forEach(post => batch.set(db.collection('trendPosts').doc(), post));
@@ -258,8 +229,8 @@ export default async function handler(req, res) {
     drafted: allPosts.length,
     skipped,
     message: allPosts.length > 0
-      ? `✨ drafted ${allPosts.length} posts!${skipped > 0 ? ` (${skipped} categories had nothing new)` : ''}`
-      : `nothing new today — all ${skipped} categories are up to date!`,
+      ? `✨ drafted ${allPosts.length} posts!${skipped > 0 ? ` (${skipped} had nothing new)` : ''}`
+      : `nothing new today!`,
     warnings: errors.length ? errors : undefined,
   });
 }

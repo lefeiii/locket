@@ -31,7 +31,7 @@ const SAVE_TOOL = {
       posts: {
         type: 'array',
         minItems: 1,
-        maxItems: 3,
+        maxItems: 4,
         items: {
           type: 'object',
           required: ['title','description','originalPrice','locketPrice','savings','where','link','imageUrl'],
@@ -60,7 +60,8 @@ const SAVE_TOOL = {
 const PROMPTS = [
   {
     id: 'drink',
-    msg: (recent) => `You are a Starbucks expert finding viral drink hacks for women 18-24.
+    msg: (recent, ctx={}) => `You are a Starbucks expert finding viral drink hacks for women 18-24.
+${ctx.isSaturday ? `TODAY IS SATURDAY STARBIES DAY 🩷☕ — Find 5 of the best Starbucks drinks trending right now. This is a special weekly themed drop for girls who go to Starbucks on Saturdays after a week of school. Make them feel like they're in on a secret.` : 'Find 4 trending Starbucks drinks.'}
 
 STEP 1: Search TikTok and Instagram for Starbucks drinks going viral RIGHT NOW in the last 48 hours.
 
@@ -70,7 +71,7 @@ STEP 3: Calculate the hack price accurately. If using Starbucks Rewards, find th
 
 ${recent}
 
-For each NEW drink (not in recent list) call save_posts with:
+Find 4 drinks if today is Saturday (it's a special Starbies day!), otherwise find 3. For each NEW drink (not in recent list) call save_posts with:
 - title: the drink name (clear and specific)
 - description: EXACT ordering instructions — "Start with a [Venti/Grande/etc] [base drink]. Ask for: [each customization with exact pumps/amounts/specifics]."
 - originalPrice: the price you found on starbucks.com for this exact drink and size (e.g. "$7.45"). ONLY use starbucks.com prices.
@@ -86,7 +87,7 @@ If nothing genuinely new is trending today, set skip: true.`,
   },
   {
     id: 'beauty',
-    msg: (recent) => `You are a beauty expert finding viral makeup, skincare, and haircare finds for women 18-24. STRICTLY makeup, skincare, and haircare — no clothing, accessories, or food.
+    msg: (recent, ctx={}) => `You are a beauty expert finding viral makeup, skincare, and haircare finds for women 18-24. STRICTLY makeup, skincare, and haircare — no clothing, accessories, or food.
 
 STEP 1: Search TikTok BeautyTok and Instagram Reels for makeup/skincare/haircare products going viral RIGHT NOW in the last 48 hours.
 
@@ -96,7 +97,7 @@ STEP 3: For the dupe/affordable version — go to the retailer's product page (T
 
 ${recent}
 
-For each NEW product (not in recent list) call save_posts with:
+Find 4 products today. For each NEW product (not in recent list) call save_posts with:
 - title: "Brand + Product Name" or "Brand Dupe for [High-End Product]"
 - description: one clear sentence — what it is, what it does, why people love it
 - originalPrice: the price you found on the BRAND'S OWN WEBSITE (e.g. Charlotte Tilbury's site, not Sephora). Format: "$XX.XX at [Brand Name]"
@@ -122,9 +123,17 @@ export default async function handler(req, res) {
   const requestedCats = Array.isArray(body.categories) && body.categories.length > 0
     ? body.categories : null;
 
+  // Saturday Starbies — drinks only on Saturdays with special messaging
+  const isSaturday = new Date().getDay() === 6;
+
   const activePrompts = requestedCats
     ? PROMPTS.filter(p => requestedCats.includes(p.id))
-    : PROMPTS;
+    : isSaturday
+      ? PROMPTS.filter(p => p.id === 'drink')  // Saturdays = drinks only
+      : PROMPTS;
+
+  // Flag for Saturday so prompt knows
+  const context = { isSaturday };
 
   if (activePrompts.length === 0) {
     return res.status(400).json({ error: 'no valid categories selected' });
@@ -164,7 +173,7 @@ export default async function handler(req, res) {
           SAVE_TOOL,
         ],
         tool_choice: { type: 'any' },
-        messages: [{ role: 'user', content: cat.msg(recentBlock) }],
+        messages: [{ role: 'user', content: cat.msg(recentBlock, context) }],
       });
 
       const saveCall = response.content.find(b => b.type === 'tool_use' && b.name === 'save_posts');
@@ -191,6 +200,7 @@ export default async function handler(req, res) {
           }
           allPosts.push({
             category:      cat.id,
+            isSaturdayStarbies: context.isSaturday && cat.id === 'drink',
             title:         cleanText(p.title),
             description:   cleanText(p.description),
             originalPrice: cleanText(p.originalPrice),

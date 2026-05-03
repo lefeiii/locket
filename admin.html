@@ -90,9 +90,7 @@
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:800;">
         <input type="checkbox" id="gen-beauty" checked style="accent-color:var(--tomato);width:15px;height:15px;"> 💄 beauty
       </label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:800;">
-        <input type="checkbox" id="gen-fits"   checked style="accent-color:var(--tomato);width:15px;height:15px;"> 👗 fits
-      </label>
+
     </div>
     <button class="btn-sm primary" onclick="triggerGenerate(this)" style="width:100%;padding:10px;">✨ generate selected categories</button>
   </div>
@@ -122,8 +120,8 @@ const app  = initializeApp({ apiKey:"AIzaSyBUNvLE5ZW2mDQpwsHh4hwq8YvVurBP16U", a
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-const CAT = { drink:'☕ drinks', beauty:'💄 beauty', fits:'👗 fits' };
-const EMOJI = { drink:'☕', beauty:'💄', fits:'👗' };
+const CAT = { drink:'☕ drinks', beauty:'💄 beauty' };
+const EMOJI = { drink:'☕', beauty:'💄' };
 let unsubDrafts = null, unsubLive = null;
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -379,7 +377,7 @@ window.deletePost = async (id, btn) => {
 // ── GENERATE ──────────────────────────────────────────
 window.triggerGenerate = async (btn) => {
   // Read selected categories
-  const cats = ['drink','beauty','fits'].filter(c => {
+  const cats = ['drink','beauty'].filter(c => {
     const el = document.getElementById('gen-' + c);
     return el ? el.checked : true;
   });

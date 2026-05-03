@@ -268,6 +268,61 @@
     .install-android .install-steps { display: none; }
 
     /* ══════════════════════════════════
+       ONBOARDING
+    ══════════════════════════════════ */
+    #onboarding-screen {
+      position: fixed; inset: 0; z-index: 999;
+      background: var(--cream);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 28px 48px;
+      text-align: center;
+    }
+    .ob-logo {
+      font-family: var(--font-b); font-size: 32px; font-weight: 800;
+      color: var(--ink); margin-bottom: 6px;
+    }
+    .ob-tagline {
+      font-size: 13px; font-weight: 700; color: var(--mid);
+      margin-bottom: 40px;
+    }
+    .ob-steps {
+      display: flex; flex-direction: column; gap: 20px;
+      width: 100%; max-width: 320px; margin-bottom: 44px;
+    }
+    .ob-step {
+      display: flex; align-items: flex-start; gap: 14px; text-align: left;
+    }
+    .ob-step-icon {
+      font-size: 28px; flex-shrink: 0; width: 48px; height: 48px;
+      background: #fff; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(46,32,48,0.08);
+    }
+    .ob-step-text { flex: 1; }
+    .ob-step-title {
+      font-family: var(--font-b); font-size: 15px; font-weight: 800;
+      color: var(--ink); margin-bottom: 2px;
+    }
+    .ob-step-sub {
+      font-size: 12px; font-weight: 700; color: var(--mid);
+      line-height: 1.5;
+    }
+    .ob-cta {
+      width: 100%; max-width: 320px;
+      background: var(--ink); color: #fff; border: none;
+      border-radius: 999px; padding: 16px;
+      font-family: var(--font-b); font-size: 16px; font-weight: 800;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .ob-cta:hover { opacity: 0.85; }
+    .ob-skip {
+      margin-top: 14px; font-size: 12px; font-weight: 700;
+      color: var(--mid); background: none; border: none;
+      cursor: pointer; text-decoration: underline;
+    }
+
+    /* ══════════════════════════════════
        TREND FEED & POLAROID CARDS
     ══════════════════════════════════ */
 
@@ -924,6 +979,39 @@
     </div>
   </div>
 
+
+  <!-- ONBOARDING SCREEN -->
+  <div id="onboarding-screen" style="display:none;">
+    <div class="ob-logo">locket 🩷</div>
+    <div class="ob-tagline">keep up, spend less, your insider angel.</div>
+
+    <div class="ob-steps">
+      <div class="ob-step">
+        <div class="ob-step-icon">☕</div>
+        <div class="ob-step-text">
+          <div class="ob-step-title">daily finds, curated for you</div>
+          <div class="ob-step-sub">every morning we drop the hottest drink hacks, beauty dupes, fits, and deals.</div>
+        </div>
+      </div>
+      <div class="ob-step">
+        <div class="ob-step-icon">🔒</div>
+        <div class="ob-step-text">
+          <div class="ob-step-title">lock(it) your favourites</div>
+          <div class="ob-step-sub">tap 🔒 on any card to save deals you want to come back to.</div>
+        </div>
+      </div>
+      <div class="ob-step">
+        <div class="ob-step-icon">💸</div>
+        <div class="ob-step-text">
+          <div class="ob-step-title">keep up without going broke</div>
+          <div class="ob-step-sub">real prices, honest verdicts, no sponsored content ever.</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="ob-cta" onclick="finishOnboarding()">let's go 🩷</button>
+    <button class="ob-skip" onclick="finishOnboarding()">skip for now</button>
+  </div>
 
   <!-- INSTALL BANNER -->
   <div id="install-banner">
@@ -1825,6 +1913,7 @@
       loadTrendFeed();
       loadUserCatWeights();
       loadLockedPosts();
+      checkOnboarding();
       // Then load group in the background if they have one
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
@@ -2140,6 +2229,23 @@
     return card;
   }
 
+  // ── ONBOARDING ──────────────────────────────────────
+  function checkOnboarding() {
+    const seen = localStorage.getItem('locket_ob_seen');
+    if (!seen) {
+      document.getElementById('onboarding-screen').style.display = 'flex';
+    }
+  }
+
+  window.finishOnboarding = () => {
+    localStorage.setItem('locket_ob_seen', '1');
+    const el = document.getElementById('onboarding-screen');
+    // Fade out smoothly
+    el.style.transition = 'opacity 0.4s ease';
+    el.style.opacity = '0';
+    setTimeout(() => { el.style.display = 'none'; el.style.opacity = '1'; }, 400);
+  };
+
   // ── LOCK(IT) — saved posts ────────────────────────
   let lockedPostIds = new Set();
 
@@ -2175,27 +2281,61 @@
     }
   };
 
-  window.showLockedFeed = (btn) => {
+  window.showLockedFeed = async (btn) => {
     currentCatFilter = 'locked';
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    // Build locked feed from cached docs
-    const lockedDocs = cachedTrendDocs.filter(d => lockedPostIds.has(d.id));
+
     const feedEl  = document.getElementById('trend-feed');
     const emptyEl = document.getElementById('feed-empty');
+    const loadEl  = document.getElementById('feed-loading');
     feedEl.querySelectorAll('.trend-card').forEach(c => c.remove());
-    if (lockedDocs.length === 0) {
+
+    if (lockedPostIds.size === 0) {
       if (emptyEl) {
         emptyEl.style.display = 'flex';
-        emptyEl.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">🔒</div>nothing lock(it)ed yet — tap 🔒 on any card!';
+        emptyEl.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">🔒</div>nothing lock(it)ed yet!<br><span style="font-size:11px;">tap 🔒 on any card to save it</span>';
+      }
+      return;
+    }
+
+    // First try cache — fast path
+    const fromCache = cachedTrendDocs.filter(d => lockedPostIds.has(d.id));
+
+    // Check if all locked IDs are in cache
+    const missingIds = [...lockedPostIds].filter(id => !cachedTrendDocs.find(d => d.id === id));
+
+    let allLocked = fromCache;
+
+    if (missingIds.length > 0) {
+      // Fetch missing posts directly from Firestore
+      if (loadEl) loadEl.style.display = 'flex';
+      try {
+        const fetched = await Promise.all(
+          missingIds.map(id => getDoc(doc(db, 'trendPosts', id)))
+        );
+        fetched.forEach(snap => {
+          if (snap.exists()) allLocked.push({ id: snap.id, ...snap.data() });
+        });
+      } catch(e) { console.error('locked fetch error:', e); }
+      if (loadEl) loadEl.style.display = 'none';
+    }
+
+    // Sort newest first
+    allLocked.sort((a, b) => (b.publishedAt?.seconds || 0) - (a.publishedAt?.seconds || 0));
+
+    if (allLocked.length === 0) {
+      if (emptyEl) {
+        emptyEl.style.display = 'flex';
+        emptyEl.innerHTML = '<div style="font-size:28px;margin-bottom:8px;">🔒</div>your saved posts may have been removed';
       }
       return;
     }
     if (emptyEl) emptyEl.style.display = 'none';
+
     const tilts = ['tilt-l','tilt-r','','tilt-l','tilt-r'];
-    lockedDocs.forEach((post, i) => {
-      const p = { ...post, _isLocked: true };
-      feedEl.appendChild(buildTrendCard(p, tilts[i % tilts.length]));
+    allLocked.forEach((post, i) => {
+      feedEl.appendChild(buildTrendCard({ ...post, _isLocked: true }, tilts[i % tilts.length]));
     });
   };
 

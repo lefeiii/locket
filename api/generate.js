@@ -73,7 +73,8 @@ ${recent}
 
 Find 4 drinks if today is Saturday (it's a special Starbies day!), otherwise find 3. For each NEW drink (not in recent list) call save_posts with:
 - title: the drink name (clear and specific)
-- description: EXACT ordering instructions — "Start with a [Venti/Grande/etc] [base drink]. Ask for: [each customization with exact pumps/amounts/specifics]."
+- description: MUST follow this exact format with two clearly labelled sections:
+  "BASE: [size] [exact base drink name as it appears on the Starbucks menu, e.g. Iced Brown Sugar Oat Shaken Espresso / Vanilla Sweet Cream Cold Brew / Matcha Tea Latte]. CUSTOMIZATIONS: [list every modification with exact amounts, e.g. add 2 pumps brown sugar syrup, sub oat milk, add vanilla sweet cream cold foam, light ice, caramel drizzle on top]." — The BASE must be a real orderable Starbucks drink. The CUSTOMIZATIONS section must be separate and specific.
 - originalPrice: the price you found on starbucks.com for this exact drink and size (e.g. "$7.45"). ONLY use starbucks.com prices.
 - locketPrice: the actual hack price with your working (e.g. "$4.25 with Gold Stars" or "$3.50 DIY at home")
 - savings: calculated difference (e.g. "save $3.20")

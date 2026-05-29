@@ -63,7 +63,7 @@ export default async function StoryDetailPage({ params }: { params: Promise<{ id
   const related = sampleStories.filter(
     (item) =>
       item.id !== story.id &&
-      (item.story_arc_id === story.story_arc_id || item.category === "Update" || item.previous_story_reference === story.title)
+      (item.story_arc_id === story.story_arc_id || item.category === "the update dropped" || item.previous_story_reference === story.title)
   );
 
   return (

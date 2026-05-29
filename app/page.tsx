@@ -1,0 +1,101 @@
+import Link from "next/link";
+import { ArrowDown, PenLine } from "lucide-react";
+import { AppNav, BrandBar } from "@/components/AppNav";
+import { FeedFilters } from "@/components/FeedFilters";
+import { NotificationPreview } from "@/components/NotificationPreview";
+import { StoryCard } from "@/components/StoryCard";
+import { emotionalScore, sampleStories } from "@/lib/sample-data";
+import { supabase } from "@/lib/supabase";
+import type { Story } from "@/lib/types";
+
+async function getStories(): Promise<Story[]> {
+  if (!supabase) {
+    return [...sampleStories].sort((a, b) => emotionalScore(b) - emotionalScore(a));
+  }
+
+  const { data, error } = await supabase
+    .from("stories")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (error || !data?.length) {
+    return [...sampleStories].sort((a, b) => emotionalScore(b) - emotionalScore(a));
+  }
+
+  return (data as Story[]).sort((a, b) => emotionalScore(b) - emotionalScore(a));
+}
+
+function filterStories(stories: Story[], activeFilter: string) {
+  const unresolvedStatuses = ["Unresolved", "Update pending", "Crashed out again", "Currently avoiding them"];
+
+  switch (activeFilter) {
+    case "Following":
+      return stories.filter((story) => (story.follower_count ?? 0) > 9000 || story.anonymous_name === "DramaBunny");
+    case "Vote Now":
+      return stories.filter((story) => story.has_active_poll);
+    case "Updates":
+      return stories.filter((story) => story.is_update);
+    case "Unresolved":
+      return stories.filter((story) => !story.is_resolved || unresolvedStatuses.includes(story.status ?? ""));
+    default:
+      return stories;
+  }
+}
+
+export default async function Home({ searchParams }: { searchParams?: Promise<{ filter?: string }> }) {
+  const params = await searchParams;
+  const feedFilters = ["For You", "Following", "Vote Now", "Updates", "Unresolved"];
+  const activeFilter = feedFilters.includes(params?.filter ?? "") ? params?.filter ?? "For You" : "For You";
+  const stories = await getStories();
+  const visibleStories = filterStories(stories, activeFilter);
+
+  return (
+    <main className="pb-24">
+      <BrandBar />
+
+      <section className="mx-auto max-w-lg px-4 pb-5 pt-5">
+        <div className="rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-6 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#787775]">Locket</p>
+          <h1 className="mt-3 text-4xl font-medium leading-tight text-[#4b4b47]">
+            Read the drama. Post the update. Stay anonymous.
+          </h1>
+          <p className="mt-4 text-sm font-medium leading-6 text-[#4b4b47]">
+            Follow recurring anonymous characters, binge messy arcs, and get pulled back when the next update drops.
+            The feed boosts unresolved cliffhangers, active chains, and high-emotion reactions.
+          </p>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <a
+              className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#787775] px-4 text-sm font-medium text-[#f8f8f6]"
+              href="#feed"
+            >
+              <ArrowDown size={18} />
+              Start Reading
+            </a>
+            <Link
+              className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#f8c0c8] px-4 text-sm font-medium text-[#4b4b47]"
+              href="/create"
+            >
+              <PenLine size={18} />
+              Post Your Story
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <FeedFilters active={activeFilter} />
+      <NotificationPreview stories={stories} />
+
+      <section
+        className="mx-auto flex max-h-[calc(100svh-4.25rem)] max-w-lg snap-y snap-mandatory flex-col gap-5 overflow-y-auto px-4 pb-24 no-scrollbar"
+        id="feed"
+      >
+        {(visibleStories.length ? visibleStories : stories).map((story) => (
+          <StoryCard immersive key={story.id} story={story} />
+        ))}
+      </section>
+
+      <AppNav />
+    </main>
+  );
+}

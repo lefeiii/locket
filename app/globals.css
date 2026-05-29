@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Inter", "SF Pro Display", "Segoe UI", sans-serif;
+  --shell-charcoal: #4b4b47;
+  --shell-sage: #787775;
+  --shell-pink: #f8c0c8;
+  --shell-mist: #e1e2e6;
+  --shell-foam: #f8f8f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--shell-charcoal);
+  background: #ebebeb;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.story-snap {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

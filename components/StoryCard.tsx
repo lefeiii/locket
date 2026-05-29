@@ -9,13 +9,17 @@ import { FollowButton } from "@/components/FollowButton";
 import { ReportModal } from "@/components/ReportModal";
 
 const categoryStyles: Record<Story["category"], string> = {
-  Crush: "bg-[#e1e2e6] text-[#4b4b47]",
-  Friendship: "bg-[#e1e2e6] text-[#4b4b47]",
-  School: "bg-[#e1e2e6] text-[#4b4b47]",
-  Family: "bg-[#e1e2e6] text-[#4b4b47]",
-  AITA: "bg-[#e1e2e6] text-[#4b4b47]",
-  Update: "bg-[#e1e2e6] text-[#4b4b47]",
-  Cheating: "bg-[#e1e2e6] text-[#4b4b47]"
+  "my crush era": "bg-[#f8c0c8] text-[#4b4b47]",
+  "mommy issues": "bg-[#e1e2e6] text-[#4b4b47]",
+  "daddy issues": "bg-[#e1e2e6] text-[#4b4b47]",
+  "not a girls girl today because:": "bg-[#e1e2e6] text-[#4b4b47]",
+  "im the girl bestfriend yall": "bg-[#e1e2e6] text-[#4b4b47]",
+  "school was NOT it": "bg-[#e1e2e6] text-[#4b4b47]",
+  "slay or be slayed": "bg-[#e1e2e6] text-[#4b4b47]",
+  "he's so cooked": "bg-[#e1e2e6] text-[#4b4b47]",
+  "she's so cooked": "bg-[#e1e2e6] text-[#4b4b47]",
+  "ok but AITA tho": "bg-[#e1e2e6] text-[#4b4b47]",
+  "the update dropped": "bg-[#e1e2e6] text-[#4b4b47]"
 };
 
 type StoryCardProps = {

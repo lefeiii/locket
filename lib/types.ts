@@ -1,4 +1,15 @@
-export type StoryCategory = "Crush" | "Friendship" | "School" | "Family" | "AITA" | "Update" | "Cheating";
+export type StoryCategory =
+  | "my crush era"
+  | "mommy issues"
+  | "daddy issues"
+  | "not a girls girl today because:"
+  | "im the girl bestfriend yall"
+  | "school was NOT it"
+  | "slay or be slayed"
+  | "he's so cooked"
+  | "she's so cooked"
+  | "ok but AITA tho"
+  | "the update dropped";
 
 export type ReactionKey =
   | "I NEED THE UPDATE"
@@ -12,11 +23,13 @@ export type ReactionCounts = Record<ReactionKey, number>;
 
 export type Story = {
   id: string;
+  user_id?: string | null;
   anonymous_name: string;
   title: string;
   category: StoryCategory;
   body: string;
   is_update: boolean;
+  is_hidden?: boolean;
   previous_story_reference: string | null;
   story_arc_id?: string | null;
   arc_title?: string | null;

@@ -1,6 +1,6 @@
 import type { PersonaBadge, ReactionCounts, SeasonalWrapped, Story, StoryPoll } from "@/lib/types";
 
-export const categories = ["Crush", "Friendship", "School", "Family", "AITA", "Update", "Cheating"] as const;
+export const categories = ["my crush era", "mommy issues", "daddy issues", "not a girls girl today because:", "im the girl bestfriend yall", "school was NOT it", "slay or be slayed", "he's so cooked", "she's so cooked", "ok but AITA tho", "the update dropped"] as const;
 
 export const reactionLabels = [
   "I NEED THE UPDATE",
@@ -40,7 +40,7 @@ export const sampleStories: Story[] = [
     id: "sample-crush",
     anonymous_name: "DramaBunny",
     title: "My hallway crush asked for my playlist",
-    category: "Crush",
+    category: "my crush era",
     body:
       "He said he needed new music for practice, but then he liked every single sad song on it within ten minutes. Today he walked past me and said track seven was too specific. Track seven is literally called 'I know you know.'",
     is_update: false,
@@ -70,7 +70,7 @@ export const sampleStories: Story[] = [
     id: "sample-friendship",
     anonymous_name: "Crybaby444",
     title: "My best friend has a private group chat without me",
-    category: "Friendship",
+    category: "not a girls girl today because:",
     body:
       "I found out because she accidentally screenshared it during homework help. The chat name is an inside joke from my own birthday party. I acted normal, but my stomach has been doing gymnastics since.",
     is_update: false,
@@ -99,7 +99,7 @@ export const sampleStories: Story[] = [
     id: "sample-school",
     anonymous_name: "SchoolTeaGhost",
     title: "Someone submitted my poem to the assembly",
-    category: "School",
+    category: "school was NOT it",
     body:
       "It was in a shared doc for class feedback only. Now the teacher wants me to read it Friday, and everyone keeps asking who it is about. The answer is: nobody who needs that much public attention.",
     is_update: false,
@@ -127,7 +127,7 @@ export const sampleStories: Story[] = [
     id: "sample-aita",
     anonymous_name: "DiaryBandit",
     title: "AITA for not covering for my lab partner?",
-    category: "AITA",
+    category: "ok but AITA tho",
     body:
       "We had two weeks. I did my half, they kept saying 'tonight for sure,' and then asked me to say we both lost access to the file. I told the teacher the truth, and now their friends are acting like I betrayed them.",
     is_update: false,
@@ -155,7 +155,7 @@ export const sampleStories: Story[] = [
     id: "sample-update",
     anonymous_name: "DramaBunny",
     title: "Update 2: the playlist boy made me one back",
-    category: "Update",
+    category: "the update dropped",
     body:
       "He sent a playlist called 'track seven response' and the first song was so obvious I had to put my phone face down. I have not replied because I need three business days and maybe a committee.",
     is_update: true,
@@ -185,7 +185,7 @@ export const sampleStories: Story[] = [
     id: "sample-family",
     anonymous_name: "SecretSprite",
     title: "My cousin read my notes app at dinner",
-    category: "Family",
+    category: "mommy issues",
     body:
       "She grabbed my phone to pick music and somehow opened a note titled 'things I cannot say out loud.' Now she keeps giving me meaningful looks across the table like she has a Netflix recap to deliver.",
     is_update: false,
@@ -253,7 +253,7 @@ export const sampleWrapped: SeasonalWrapped[] = [
     recap_data: {
       stories_read: 47,
       stories_posted: 3,
-      most_reacted_category: "Crush",
+      most_reacted_category: "my crush era",
       votes_cast: 12,
       most_used_reaction: "I NEED THE UPDATE",
       most_followed_story_arc: "The playlist boy saga",
@@ -277,7 +277,7 @@ export const sampleWrapped: SeasonalWrapped[] = [
     recap_data: {
       stories_read: 68,
       stories_posted: 5,
-      most_reacted_category: "Friendship",
+      most_reacted_category: "not a girls girl today because:",
       votes_cast: 19,
       most_used_reaction: "Girl stand up",
       most_followed_story_arc: "The private group chat fallout",

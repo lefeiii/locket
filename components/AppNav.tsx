@@ -1,15 +1,31 @@
+"use client";
 import { Bell, BookOpenText, CirclePlus, Gift, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-const items = [
-  { href: "/", label: "Feed", icon: BookOpenText },
-  { href: "/create", label: "Post", icon: CirclePlus },
-  { href: "/wrapped", label: "Wrapped", icon: Gift },
-  { href: "/profile/DramaBunny", label: "Profile", icon: UserRound }
-];
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export function AppNav() {
+  const [profileHref, setProfileHref] = useState("/login");
+
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) { setProfileHref("/login"); return; }
+      supabase!.from("users").select("username").eq("id", data.user.id).single()
+        .then(({ data: profile }) => {
+          setProfileHref(profile?.username ? `/profile/${encodeURIComponent(profile.username)}` : "/login");
+        });
+    });
+  }, []);
+
+  const items = [
+    { href: "/", label: "Feed", icon: BookOpenText },
+    { href: "/create", label: "Post", icon: CirclePlus },
+    { href: "/wrapped", label: "Wrapped", icon: Gift },
+    { href: profileHref, label: "Profile", icon: UserRound },
+  ];
+
   return (
     <nav className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-full border border-[#d8d3ce] bg-[#f8f8f6] p-2 shadow-lg">
       <div className="grid grid-cols-4 gap-1">
@@ -17,7 +33,7 @@ export function AppNav() {
           <Link
             className="flex min-h-12 items-center justify-center gap-2 rounded-full px-2 text-xs font-medium text-[#4b4b47] transition hover:bg-[#e1e2e6]"
             href={href}
-            key={href}
+            key={label}
           >
             <Icon size={18} />
             <span>{label}</span>

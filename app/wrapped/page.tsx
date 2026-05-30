@@ -1,8 +1,7 @@
 import { Download, Share, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { AppNav, BrandBar } from "@/components/AppNav";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
 
 // ── Season windows ────────────────────────────────────────────────────────────
 // Winter Wildin' = Sep 1 → Dec 31 of the *previous* calendar year
@@ -36,13 +35,6 @@ function getSeasonWindows() {
 }
 
 // ── Headline generator ────────────────────────────────────────────────────────
-function makeHeadline(storiesRead: number, votescast: number): string {
-  if (storiesRead === 0) return "Your season starts now.";
-  if (storiesRead < 5) return `You dipped your toes in with ${storiesRead} stories.`;
-  if (storiesRead < 20) return `You survived ${storiesRead} friendship disasters.`;
-  if (storiesRead < 50) return `Your ${season_name ?? "season"} lore was dangerously active.`;
-  return `${storiesRead} stories. You are the main character.`;
-}
 
 // ── Insight lines ─────────────────────────────────────────────────────────────
 function makeLines(
@@ -101,7 +93,10 @@ type SeasonRecap = {
 
 // ── Data fetching ─────────────────────────────────────────────────────────────
 async function fetchRecaps(): Promise<{ recaps: SeasonRecap[]; isLoggedIn: boolean }> {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const {
     data: { user },
@@ -232,7 +227,7 @@ async function fetchRecaps(): Promise<{ recaps: SeasonRecap[]; isLoggedIn: boole
   return { recaps, isLoggedIn: !!user };
 }
 
-// Headline needs the season name, so extract it here
+// ── Headline generator ───────────────────────────────────────────────────────
 function makeHeadlineForSeason(storiesRead: number, votescast: number, seasonName: string): string {
   if (storiesRead === 0) return "Your season starts now.";
   if (storiesRead < 5) return `You dipped your toes in with ${storiesRead} stories.`;

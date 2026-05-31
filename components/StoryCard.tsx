@@ -2,12 +2,13 @@
 
 import { Bookmark, Flag, MessageCircle, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { reactionLabels, samplePolls } from "@/lib/sample-data";
 import type { ReactionKey, Story } from "@/lib/types";
 import { FollowButton } from "@/components/FollowButton";
 import { ReportModal } from "@/components/ReportModal";
 import { supabase } from "@/lib/supabase";
+import { InlineCommentForm } from "@/components/CommentForm";
 
 const categoryStyles: Record<Story["category"], string> = {
   "my crush era": "bg-[#f8c0c8] text-[#4b4b47]",
@@ -35,6 +36,8 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
   }) as Story["reactions"]);
   const [saved, setSaved] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const commentRef = useRef<HTMLDivElement>(null);
   const hasActivePoll = story.has_active_poll || samplePolls.some((poll) => poll.story_id === story.id && poll.is_active);
   const storyContext = [story.update_label, story.status, story.cliffhanger && !story.is_resolved ? "unresolved" : null]
     .filter(Boolean)
@@ -122,13 +125,24 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-3 text-[#4b4b47]">
-            <Link
-              className="flex items-center gap-2 rounded-full bg-[#e1e2e6] px-3 py-2 text-sm font-medium"
-              href={`/story/${story.id}`}
+            <button
+              className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
+              onClick={() => {
+                setCommentOpen((v) => {
+                  const next = !v;
+                  if (next) {
+                    setTimeout(() => {
+                      commentRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                    }, 50);
+                  }
+                  return next;
+                });
+              }}
+              type="button"
             >
               <MessageCircle size={18} />
               {story.comments_count ?? 0}
-            </Link>
+            </button>
             <div className="flex gap-2">
               <button
                 aria-label="Save story"
@@ -148,6 +162,12 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
             </div>
           </div>
         </div>
+
+        {commentOpen && (
+          <div ref={commentRef} className="mt-3">
+            <InlineCommentForm onDone={() => setCommentOpen(false)} storyId={story.id} />
+          </div>
+        )}
       </article>
 
       <ReportModal

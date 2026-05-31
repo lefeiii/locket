@@ -6,8 +6,8 @@ import { FollowButton } from "@/components/FollowButton";
 import { PollCard } from "@/components/PollCard";
 import { StoryCard } from "@/components/StoryCard";
 import { StorytimeExport } from "@/components/StorytimeExport";
-import { UpdateAlarmButton } from "@/components/UpdateAlarmButton";
 import { getStoryArc, samplePolls, sampleStories } from "@/lib/sample-data";
+import { StoryOwnerActions } from "@/components/StoryOwnerActions";
 import { supabase } from "@/lib/supabase";
 import type { Comment, Story } from "@/lib/types";
 
@@ -137,9 +137,16 @@ export default async function StoryDetailPage({
 
         <div className="mt-4 grid grid-cols-1 gap-3">
           <FollowButton storyId={story.id} />
-          <FollowButton posterName={story.anonymous_name} />
-          <UpdateAlarmButton />
         </div>
+
+        <StoryOwnerActions
+          storyId={story.id}
+          authorName={story.anonymous_name}
+          initialTitle={story.title}
+          initialBody={story.body}
+          initialCategory={story.category}
+          initialIsHidden={story.is_hidden ?? false}
+        />
 
         {poll ? (
           <div className="mt-6" id="poll">

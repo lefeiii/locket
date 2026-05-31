@@ -2,9 +2,9 @@
 
 import { Bell, Bookmark, Flag, MessageCircle, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { reactionLabels, samplePolls } from "@/lib/sample-data";
-import type { ReactionKey, Story } from "@/lib/types";
+import type { Comment, ReactionKey, Story } from "@/lib/types";
 import { ReportModal } from "@/components/ReportModal";
 import { supabase } from "@/lib/supabase";
 import { InlineCommentForm } from "@/components/CommentForm";
@@ -43,7 +43,26 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
   const [saved, setSaved] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
   const commentRef = useRef<HTMLDivElement>(null);
+
+  // Fetch comments when panel opens
+  useEffect(() => {
+    if (!commentOpen || commentsLoaded) return;
+    const client = supabase;
+    if (!client || story.id.startsWith("sample-")) { setCommentsLoaded(true); return; }
+    client
+      .from("comments")
+      .select("*")
+      .eq("story_id", story.id)
+      .order("created_at", { ascending: false })
+      .limit(3)
+      .then(({ data }) => {
+        setComments(([...(data ?? [])] as Comment[]).reverse());
+        setCommentsLoaded(true);
+      });
+  }, [commentOpen, commentsLoaded, story.id]);
   const hasActivePoll = story.has_active_poll || samplePolls.some((poll) => poll.story_id === story.id && poll.is_active);
   const storyContext = [story.update_label, story.status, story.cliffhanger && !story.is_resolved ? "unresolved" : null]
     .filter(Boolean)
@@ -165,7 +184,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
                 {story.comments_count ?? 0}
               </button>
               <span className="flex items-center gap-1 rounded-full bg-[#e1e2e6] px-3 py-2 text-sm font-medium text-[#4b4b47]">
-                <Bell size={15} />{story.follower_count ?? 0}
+                <Bell size={15} /> {story.follower_count ?? 0}
               </span>
             </div>
             <div className="flex gap-2">
@@ -189,8 +208,37 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
         </div>
 
         {commentOpen && (
-          <div ref={commentRef} className="mt-3">
-            <InlineCommentForm onDone={() => setCommentOpen(false)} storyId={story.id} />
+          <div ref={commentRef} className="mt-3 grid gap-2">
+            {/* Existing comments — latest 3 */}
+            {!commentsLoaded ? (
+              <p className="px-1 text-xs text-[#787775]">loading comments…</p>
+            ) : comments.length === 0 ? (
+              <p className="px-1 text-xs text-[#787775]">no comments yet — be the first!</p>
+            ) : (
+              <>
+                {comments.map((c) => (
+                  <div key={c.id} className="rounded-2xl bg-[#e1e2e6] px-4 py-3">
+                    <p className="text-xs font-medium uppercase tracking-[0.15em] text-[#787775]">@{c.anonymous_name}</p>
+                    <p className="mt-1 text-sm font-medium leading-6 text-[#4b4b47]">{c.body}</p>
+                  </div>
+                ))}
+                {(story.comments_count ?? 0) > 3 && (
+                  <Link
+                    href={`/story/${story.id}`}
+                    className="text-center text-xs font-medium text-[#787775] underline underline-offset-2"
+                  >
+                    see all {story.comments_count} comments →
+                  </Link>
+                )}
+              </>
+            )}
+            <InlineCommentForm
+              onDone={() => {
+                setCommentOpen(false);
+                setCommentsLoaded(false);
+              }}
+              storyId={story.id}
+            />
           </div>
         )}
       </article>

@@ -159,8 +159,6 @@ export function InlineCommentForm({ storyId, onDone }: InlineCommentFormProps) {
         story_id: storyId,
         anonymous_name: username,
         body: body.trim(),
-        reply_to_id: replyToId ?? null,
-        reply_to_name: replyToName ?? null,
       });
       if (error) { setStatus("error"); return; }
       setStatus("saved");

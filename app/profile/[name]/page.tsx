@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [editingBio, setEditingBio] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [saving, setSaving] = useState(false);
+  const [recentComments, setRecentComments] = useState<{id: string; story_id: string; story_title: string; anonymous_name: string; body: string; created_at: string}[]>([]);
 
   const isOwn = currentUsername === name;
 
@@ -44,12 +45,32 @@ export default function ProfilePage() {
       .then(({ data }) => {
         setStories(data ?? []);
         setLoading(false);
+
+        // Fetch recent comments on own stories (only for profile owner)
+        const storyIds = (data ?? []).map((s: {id: string}) => s.id);
+        if (storyIds.length > 0) {
+          client
+            .from("comments")
+            .select("id, story_id, anonymous_name, body, created_at")
+            .in("story_id", storyIds)
+            .order("created_at", { ascending: false })
+            .limit(10)
+            .then(({ data: commentData }) => {
+              const storyMap: Record<string, string> = {};
+              (data ?? []).forEach((s: {id: string; title: string}) => { storyMap[s.id] = s.title; });
+              setRecentComments(
+                (commentData ?? []).map((c: {id: string; story_id: string; anonymous_name: string; body: string; created_at: string}) => ({
+                  ...c,
+                  story_title: storyMap[c.story_id] ?? "Unknown story",
+                }))
+              );
+            });
+        }
       });
   }, [name]);
 
   async function handleSaveUsername() {
     const client = supabase;
-    if (!client) return;
     if (!client || !currentUserId) return;
     if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setSaveMsg("letters, numbers, . _ - only (2-30 chars)"); return; }
     setSaving(true);
@@ -70,7 +91,6 @@ export default function ProfilePage() {
 
   async function handleSaveBio() {
     const client = supabase;
-    if (!client) return;
     if (!client || !currentUserId) return;
     setSaving(true);
     const { error } = await client.from("users").update({ bio }).eq("id", currentUserId);
@@ -96,7 +116,6 @@ export default function ProfilePage() {
 
   async function handleDeleteAccount() {
     const client = supabase;
-    if (!client) return;
     if (!client || !currentUserId) return;
     if (!confirm("Delete your account permanently? This cannot be undone.")) return;
     await client.from("users").delete().eq("id", currentUserId);
@@ -201,6 +220,24 @@ export default function ProfilePage() {
             </div>
           )}
         </section>
+
+        {/* Recent comments on your stories — only visible to owner */}
+        {isOwn && recentComments.length > 0 && (
+          <section className="mt-6">
+            <div className="mb-3 flex items-center gap-2">
+              <h2 className="text-xl font-medium text-[#4b4b47]">💬 recent comments</h2>
+            </div>
+            <div className="grid gap-3">
+              {recentComments.map(comment => (
+                <Link key={comment.id} href={`/story/${comment.story_id}`} className="block rounded-3xl bg-[#f8f8f6] p-4 shadow-sm">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">@{comment.anonymous_name} on</p>
+                  <p className="mt-0.5 text-sm font-medium text-[#4b4b47] truncate">{comment.story_title}</p>
+                  <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-[#787775]">{comment.body}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Own profile actions */}
         {isOwn && (

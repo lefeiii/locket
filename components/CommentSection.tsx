@@ -142,7 +142,7 @@ export function CommentSection({ comments, storyId }: Props) {
     </section>
 
     <ReportModal
-      open={!!reportingComment}
+      open={reportingComment !== null}
       onClose={() => setReportingComment(null)}
       commentId={reportingComment ?? undefined}
       storyId={storyId}

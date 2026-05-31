@@ -6,9 +6,12 @@ import { supabase } from "@/lib/supabase";
 
 type CommentFormProps = {
   storyId: string;
+  replyToId?: string;
+  replyToName?: string;
+  onCancelReply?: () => void;
 };
 
-export function CommentForm({ storyId }: CommentFormProps) {
+export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: CommentFormProps) {
   const [username, setUsername] = useState<string>("");
   const [authLoaded, setAuthLoaded] = useState(false);
   const [body, setBody] = useState("");
@@ -45,6 +48,8 @@ export function CommentForm({ storyId }: CommentFormProps) {
         story_id: storyId,
         anonymous_name: username,
         body: body.trim(),
+        reply_to_id: replyToId ?? null,
+        reply_to_name: replyToName ?? null,
       });
 
       if (error) {
@@ -75,10 +80,18 @@ export function CommentForm({ storyId }: CommentFormProps) {
         )}
       </div>
 
+      {replyToName && (
+        <div className="flex items-center justify-between rounded-2xl bg-[#f8c0c8] px-4 py-2">
+          <p className="text-xs font-medium text-[#4b4b47]">replying to <span className="font-semibold">@{replyToName}</span></p>
+          {onCancelReply && (
+            <button onClick={onCancelReply} className="text-xs text-[#787775] underline underline-offset-2" type="button">cancel</button>
+          )}
+        </div>
+      )}
       <textarea
         className="min-h-24 resize-none rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-sm font-medium text-[#4b4b47] outline-none ring-[#f8c0c8] focus:ring-4"
         onChange={(e) => setBody(e.target.value)}
-        placeholder="Add a comment… 💬"
+        placeholder={replyToName ? `Reply to @${replyToName}…` : "Add a comment… 💬"}
         value={body}
         autoComplete="off"
       />
@@ -146,6 +159,8 @@ export function InlineCommentForm({ storyId, onDone }: InlineCommentFormProps) {
         story_id: storyId,
         anonymous_name: username,
         body: body.trim(),
+        reply_to_id: replyToId ?? null,
+        reply_to_name: replyToName ?? null,
       });
       if (error) { setStatus("error"); return; }
       setStatus("saved");

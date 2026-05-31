@@ -45,7 +45,26 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
   const [commentOpen, setCommentOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoaded, setCommentsLoaded] = useState(false);
+  const [arcParts, setArcParts] = useState<{id: string; title: string; part_number: number | null; update_label: string | null}[]>([]);
+  const [arcLoaded, setArcLoaded] = useState(false);
   const commentRef = useRef<HTMLDivElement>(null);
+
+  // Fetch other parts in this arc when story is an update
+  useEffect(() => {
+    if (!story.story_arc_id || !story.is_update || arcLoaded) return;
+    const client = supabase;
+    if (!client || story.id.startsWith("sample-")) { setArcLoaded(true); return; }
+    client
+      .from("stories")
+      .select("id, title, part_number, update_label")
+      .eq("story_arc_id", story.story_arc_id)
+      .eq("is_hidden", false)
+      .order("part_number", { ascending: true })
+      .then(({ data }) => {
+        setArcParts((data ?? []).filter(p => p.id !== story.id));
+        setArcLoaded(true);
+      });
+  }, [story.story_arc_id, story.id, arcLoaded]);
 
   // Fetch comments when panel opens
   useEffect(() => {
@@ -137,6 +156,19 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
               Previous: {story.previous_story_reference}
             </p>
           ) : null}
+          {arcParts.length > 0 && (
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {arcParts.map((part) => (
+                <Link
+                  key={part.id}
+                  href={`/story/${part.id}`}
+                  className="shrink-0 rounded-full border border-[#d8d3ce] bg-[#f8f8f6] px-3 py-1.5 text-xs font-medium text-[#787775] hover:bg-[#e1e2e6]"
+                >
+                  {part.update_label ?? `Part ${part.part_number ?? "?"}`}
+                </Link>
+              ))}
+            </div>
+          )}
           <p className="mt-5 whitespace-pre-line text-[1.05rem] font-medium leading-7 text-[#4b4b47]">{story.body}</p>
           {story.cliffhanger ? (
             <p className="mt-4 rounded-3xl bg-[#f8c0c8] p-4 text-xl font-medium leading-snug text-[#4b4b47]">

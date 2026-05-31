@@ -49,7 +49,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
   return (
     <>
       <article
-        className={`story-snap flex ${immersive ? "min-h-[calc(100svh-5rem)]" : "min-h-[34rem]"} w-full shrink-0 flex-col justify-between rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm`}
+        className={`story-snap flex ${immersive ? "min-h-[calc(100svh-5rem)]" : "min-h-0"} w-full shrink-0 flex-col justify-between rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm`}
       >
         <div>
           <div className="mb-4 flex items-center justify-between gap-3">

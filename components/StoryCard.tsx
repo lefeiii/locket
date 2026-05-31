@@ -1,11 +1,10 @@
 "use client";
 
-import { Bookmark, Flag, MessageCircle, Send, Sparkles } from "lucide-react";
+import { Bell, Bookmark, Flag, MessageCircle, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { reactionLabels, samplePolls } from "@/lib/sample-data";
 import type { ReactionKey, Story } from "@/lib/types";
-import { FollowButton } from "@/components/FollowButton";
 import { ReportModal } from "@/components/ReportModal";
 import { supabase } from "@/lib/supabase";
 import { InlineCommentForm } from "@/components/CommentForm";
@@ -100,11 +99,10 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
           <Link href={`/story/${story.id}`}>
             <h2 className="text-3xl font-medium leading-tight text-[#4b4b47] sm:text-4xl">{story.title}</h2>
           </Link>
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <Link className="flex min-w-0 items-center gap-2 text-sm font-medium text-[#787775]" href={`/profile/${story.anonymous_name}`}>
-              <span className="min-w-0 truncate">@{story.anonymous_name}</span>
+          <div className="mt-3 flex min-w-0 items-center gap-2 text-sm font-medium text-[#787775]">
+            <Link className="min-w-0 truncate" href={`/profile/${story.anonymous_name}`}>
+              @{story.anonymous_name}
             </Link>
-            <FollowButton compact posterName={story.anonymous_name} />
           </div>
           <div className="mt-4 space-y-2 text-sm font-medium leading-6 text-[#787775]">
             {storyContext ? <p>{storyContext}</p> : null}
@@ -147,8 +145,9 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-3 text-[#4b4b47]">
-            <button
-              className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
+            <div className="flex items-center gap-2">
+              <button
+                className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
               onClick={() => {
                 setCommentOpen((v) => {
                   const next = !v;
@@ -161,10 +160,14 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
                 });
               }}
               type="button"
-            >
-              <MessageCircle size={18} />
-              {story.comments_count ?? 0}
-            </button>
+              >
+                <MessageCircle size={18} />
+                {story.comments_count ?? 0}
+              </button>
+              <span className="flex items-center gap-1 rounded-full bg-[#e1e2e6] px-3 py-2 text-sm font-medium text-[#4b4b47]">
+                <Bell size={15} />{story.follower_count ?? 0}
+              </span>
+            </div>
             <div className="flex gap-2">
               <button
                 aria-label="Save story"

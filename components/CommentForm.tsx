@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -12,7 +12,6 @@ export function CommentForm({ storyId }: CommentFormProps) {
   const [username, setUsername] = useState<string>("");
   const [body, setBody] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
   // Load the real logged-in username on mount
@@ -73,16 +72,11 @@ export function CommentForm({ storyId }: CommentFormProps) {
       </div>
 
       <textarea
-        ref={textareaRef}
         className="min-h-24 resize-none rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-sm font-medium text-[#4b4b47] outline-none ring-[#f8c0c8] focus:ring-4"
         onChange={(e) => setBody(e.target.value)}
         placeholder="Add a comment… 💬"
         value={body}
-        // These let emoji keyboards work on iOS/iPadOS
         autoComplete="off"
-        autoCorrect="on"
-        spellCheck={true}
-        enterKeyHint="send"
       />
 
       <button
@@ -94,6 +88,11 @@ export function CommentForm({ storyId }: CommentFormProps) {
         {status === "saving" ? "Adding…" : "Add comment"}
       </button>
 
+      {!username && status === "idle" && (
+        <p className="text-center text-sm text-[#787775]">
+          <a href="/login" className="underline underline-offset-2 text-[#4b4b47]">Log in</a> to leave a comment.
+        </p>
+      )}
       {status === "saved" && (
         <p className="text-center text-sm font-medium text-[#4b4b47]">Comment added ✓</p>
       )}

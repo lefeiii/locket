@@ -31,18 +31,12 @@ async function getStories(): Promise<Story[]> {
 }
 
 function filterStories(stories: Story[], activeFilter: string) {
-  const unresolvedStatuses = ["Unresolved", "Update pending", "Crashed out again", "Currently avoiding them"];
-
   switch (activeFilter) {
     case "Following":
       // Real follow logic requires client-side auth; show all stories as fallback
       return stories;
-    case "Vote Now":
-      return stories.filter((story) => story.has_active_poll);
     case "Updates":
       return stories.filter((story) => story.is_update);
-    case "Unresolved":
-      return stories.filter((story) => !story.is_resolved || unresolvedStatuses.includes(story.status ?? ""));
     default:
       return stories;
   }
@@ -50,7 +44,7 @@ function filterStories(stories: Story[], activeFilter: string) {
 
 export default async function Home({ searchParams }: { searchParams?: Promise<{ filter?: string }> }) {
   const params = await searchParams;
-  const feedFilters = ["For You", "Following", "Vote Now", "Updates", "Unresolved"];
+  const feedFilters = ["For You", "Following", "Updates"];
   const activeFilter = feedFilters.includes(params?.filter ?? "") ? params?.filter ?? "For You" : "For You";
   const stories = await getStories();
   const visibleStories = filterStories(stories, activeFilter);

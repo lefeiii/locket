@@ -71,25 +71,41 @@ export default function CreatePage() {
       reactions: emptyReactions()
     };
 
+    // Get auth token to pass to server-side API route
     const client = supabase;
     if (!client) {
       setErrorMsg("Database not connected. Please try again later.");
       setStatus("error");
       return;
     }
-    const { data, error } = await client.from("stories").insert(payload).select("id").single();
-    if (error) {
-      setErrorMsg(error.message ?? "Could not post story. Please try again.");
+    const { data: { session } } = await client.auth.getSession();
+    if (!session) {
+      setErrorMsg("You must be logged in to post.");
+      setStatus("error");
+      router.push("/login");
+      return;
+    }
+
+    // Submit through server-side route — safety check + rate limit enforced there
+    const res = await fetch("/api/submit-story", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ payload, pollQuestion: pollQuestion.trim(), pollOptions: cleanedPollOptions, hasPoll }),
+    });
+
+    const json = await res.json();
+    if (!res.ok) {
+      setErrorMsg(json.error ?? "Could not post story. Please try again.");
       setStatus("error");
       return;
     }
-    if (data?.id && hasPoll) {
-      await client.from("story_polls").insert({ story_id: data.id, question: pollQuestion.trim(), options: cleanedPollOptions, is_active: true });
-    }
+
     setStatus("saved");
     setTitle(""); setBody(""); setPreviousReference(""); setCliffhanger(""); setPollQuestion(""); setPollOptions(["", ""]); setIsUpdate(false);
-    // Redirect to the new story after a short delay
-    setTimeout(() => router.push(`/story/${data.id}`), 1000);
+    setTimeout(() => router.push(`/story/${json.id}`), 1000);
   }
 
   return (

@@ -37,6 +37,7 @@ export function CommentSection({ comments, storyId }: Props) {
   }
 
   return (
+    <>
     <section className="mt-6 rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <MessageCircle size={20} />
@@ -147,5 +148,6 @@ export function CommentSection({ comments, storyId }: Props) {
       commentId={reportingComment ?? undefined}
       storyId={storyId}
     />
+    </>
   );
 }

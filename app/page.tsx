@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowDown, PenLine } from "lucide-react";
 import { AppNav, BrandBar } from "@/components/AppNav";
 import { FeedFilters } from "@/components/FeedFilters";
+import { StorySearch } from "@/components/StorySearch";
 import { StoryCard } from "@/components/StoryCard";
 import { emotionalScore, sampleStories } from "@/lib/sample-data";
 import { supabase } from "@/lib/supabase";
@@ -88,6 +89,7 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
       </section>
 
       <FeedFilters active={activeFilter} />
+      <StorySearch />
 
       <section
         className="mx-auto flex max-w-lg flex-col gap-5 px-4 pb-28"

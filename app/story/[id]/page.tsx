@@ -1,7 +1,7 @@
-import { ArrowLeft, Flag, GitBranch, MessageCircle } from "lucide-react";
+import { ArrowLeft, GitBranch } from "lucide-react";
 import Link from "next/link";
 import { AppNav, BrandBar } from "@/components/AppNav";
-import { CommentForm } from "@/components/CommentForm";
+import { CommentSection } from "@/components/CommentSection";
 import { FollowButton } from "@/components/FollowButton";
 import { PollCard } from "@/components/PollCard";
 import { StoryCard } from "@/components/StoryCard";
@@ -47,7 +47,7 @@ async function getComments(storyId: string): Promise<Comment[]> {
 
   const { data } = await supabase
     .from("comments")
-    .select("*")
+    .select("*, reply_to_id, reply_to_name")
     .eq("story_id", storyId)
     .order("created_at", { ascending: true });
 
@@ -184,45 +184,8 @@ export default async function StoryDetailPage({
           </section>
         )}
 
-        {/* Comments — this section re-renders on router.refresh() from CommentForm */}
-        <section className="mt-6 rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm">
-          <div className="mb-4 flex items-center gap-2">
-            <MessageCircle size={20} />
-            <h2 className="text-xl font-medium text-[#4b4b47]">
-              Comments {comments.length > 0 && <span className="text-[#787775]">({comments.length})</span>}
-            </h2>
-          </div>
-
-          {comments.length === 0 ? (
-            <p className="rounded-2xl bg-[#e1e2e6] p-4 text-sm font-medium text-[#787775]">
-              No comments yet. Be the first 👀
-            </p>
-          ) : (
-            <div className="grid gap-3">
-              {comments.map((comment) => (
-                <div className="rounded-2xl bg-[#e1e2e6] p-4" key={comment.id}>
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">
-                      @{comment.anonymous_name}
-                    </p>
-                    <button
-                      aria-label="Report comment"
-                      className="text-[#787775]"
-                      type="button"
-                    >
-                      <Flag size={15} />
-                    </button>
-                  </div>
-                  <p className="mt-1 text-sm font-medium leading-6 text-[#4b4b47]">
-                    {comment.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <CommentForm storyId={story.id} />
-        </section>
+        {/* Comments with replies */}
+        <CommentSection comments={comments} storyId={story.id} />
 
         <section className="mt-6">
           <StorytimeExport story={story} />

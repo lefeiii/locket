@@ -8,8 +8,6 @@ import { AppNav, BrandBar } from "@/components/AppNav";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
 
-type ProfileUser = { id: string; username: string; bio: string | null };
-
 export default function ProfilePage() {
   const params = useParams();
   const router = useRouter();
@@ -18,7 +16,6 @@ export default function ProfilePage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
   const [stories, setStories] = useState<Story[]>([]);
-  const [followerCount, setFollowerCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [bio, setBio] = useState("");
   const [editingUsername, setEditingUsername] = useState(false);
@@ -34,7 +31,7 @@ export default function ProfilePage() {
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) return;
       setCurrentUserId(data.user.id);
-      supabase!.from("users").select("username, bio").eq("id", data.user.id).single()
+      supabase.from("users").select("username, bio").eq("id", data.user.id).single()
         .then(({ data: profile }) => {
           if (profile) { setCurrentUsername(profile.username); if (profile.username === name) setBio(profile.bio ?? ""); }
         });
@@ -43,13 +40,10 @@ export default function ProfilePage() {
     // Load stories
     supabase.from("stories").select("*").eq("anonymous_name", name).eq("is_hidden", false)
       .order("created_at", { ascending: false })
-      .then(({ data }) => setStories(data ?? []));
-
-    // Real follower count
-    supabase.from("follows").select("*", { count: "exact", head: true }).eq("followed_name", name)
-      .then(({ count }) => setFollowerCount(count ?? 0));
-
-    setLoading(false);
+      .then(({ data }) => {
+        setStories(data ?? []);
+        setLoading(false);
+      });
   }, [name]);
 
   async function handleSaveUsername() {
@@ -59,7 +53,15 @@ export default function ProfilePage() {
     const { data: taken } = await supabase.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).single();
     if (taken) { setSaveMsg("username already taken"); setSaving(false); return; }
     const { error } = await supabase.from("users").update({ username: newUsername }).eq("id", currentUserId);
-    if (error) { setSaveMsg("could not update username"); } else { setSaveMsg("username updated!"); setEditingUsername(false); router.push(`/profile/${encodeURIComponent(newUsername)}`); }
+    if (error) {
+      setSaveMsg("could not update username");
+    } else {
+      // Also update anonymous_name on all their stories so they stay in sync
+      await supabase.from("stories").update({ anonymous_name: newUsername }).eq("anonymous_name", name);
+      setSaveMsg("username updated!");
+      setEditingUsername(false);
+      router.push(`/profile/${encodeURIComponent(newUsername)}`);
+    }
     setSaving(false);
   }
 
@@ -143,16 +145,10 @@ export default function ProfilePage() {
             )
           ) : null}
 
-          {/* Real stats */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-[#e1e2e6] p-4">
-              <p className="text-3xl font-medium text-[#4b4b47]">{loading ? "—" : stories.length}</p>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Stories</p>
-            </div>
-            <div className="rounded-2xl bg-[#e1e2e6] p-4">
-              <p className="text-3xl font-medium text-[#4b4b47]">{loading ? "—" : followerCount}</p>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Followers</p>
-            </div>
+          {/* Stats — stories only */}
+          <div className="rounded-2xl bg-[#e1e2e6] p-4">
+            <p className="text-3xl font-medium text-[#4b4b47]">{loading ? "—" : stories.length}</p>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Stories</p>
           </div>
         </div>
 
@@ -175,6 +171,9 @@ export default function ProfilePage() {
                     <h3 className="mt-1 text-xl font-medium leading-tight text-[#4b4b47]">{story.title}</h3>
                     {story.cliffhanger && <p className="mt-2 rounded-2xl bg-[#f8c0c8] p-3 text-sm font-medium text-[#4b4b47]">{story.cliffhanger}</p>}
                     <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-[#4b4b47]">{story.body}</p>
+                    <p className="mt-2 text-xs font-medium text-[#787775]">
+                      {story.follower_count ?? 0} {(story.follower_count ?? 0) === 1 ? "follower" : "followers"}
+                    </p>
                   </Link>
                   {isOwn && (
                     <div className="mt-3 flex gap-3 border-t border-[#e1e2e6] pt-3">

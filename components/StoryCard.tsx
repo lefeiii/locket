@@ -1,13 +1,14 @@
 "use client";
 
-import { Bell, Bookmark, Flag, MessageCircle, Send, Sparkles } from "lucide-react";
+import { Flag, MessageCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { reactionLabels, samplePolls } from "@/lib/sample-data";
+import { reactionLabels } from "@/lib/sample-data";
 import type { Comment, ReactionKey, Story } from "@/lib/types";
 import { ReportModal } from "@/components/ReportModal";
 import { supabase } from "@/lib/supabase";
 import { InlineCommentForm } from "@/components/CommentForm";
+import { FollowButton } from "@/components/FollowButton";
 
 const categoryStyles: Record<Story["category"], string> = {
   "my crush era": "bg-[#f8c0c8] text-[#4b4b47]",
@@ -40,7 +41,6 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
     userReaction: null,
   }));
   const { counts, userReaction } = reactionState;
-  const [saved, setSaved] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -63,7 +63,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
         setCommentsLoaded(true);
       });
   }, [commentOpen, commentsLoaded, story.id]);
-  const hasActivePoll = story.has_active_poll || samplePolls.some((poll) => poll.story_id === story.id && poll.is_active);
+  const hasActivePoll = story.has_active_poll ?? false;
   const storyContext = [story.update_label, story.status, story.cliffhanger && !story.is_resolved ? "unresolved" : null]
     .filter(Boolean)
     .join(" · ");
@@ -163,46 +163,27 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
             ))}
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-3 text-[#4b4b47]">
+          <div className="mt-4 flex items-center gap-3 text-[#4b4b47]">
             <div className="flex items-center gap-2">
               <button
                 className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
-              onClick={() => {
-                setCommentOpen((v) => {
-                  const next = !v;
-                  if (next) {
-                    setTimeout(() => {
-                      commentRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                    }, 50);
-                  }
-                  return next;
-                });
-              }}
-              type="button"
+                onClick={() => {
+                  setCommentOpen((v) => {
+                    const next = !v;
+                    if (next) {
+                      setTimeout(() => {
+                        commentRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                      }, 50);
+                    }
+                    return next;
+                  });
+                }}
+                type="button"
               >
                 <MessageCircle size={18} />
                 {story.comments_count ?? 0}
               </button>
-              <span className="flex items-center gap-1 rounded-full bg-[#e1e2e6] px-3 py-2 text-sm font-medium text-[#4b4b47]">
-                <Bell size={15} /> {story.follower_count ?? 0}
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                aria-label="Save story"
-                className={`grid h-11 w-11 place-items-center rounded-full ${saved ? "bg-[#f8c0c8] text-[#f8f8f6]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
-                onClick={() => setSaved((value) => !value)}
-                type="button"
-              >
-                <Bookmark fill={saved ? "currentColor" : "none"} size={19} />
-              </button>
-              <button
-                aria-label="Share story"
-                className="grid h-11 w-11 place-items-center rounded-full bg-[#e1e2e6] text-[#4b4b47]"
-                type="button"
-              >
-                <Send size={19} />
-              </button>
+              <FollowButton compact storyId={story.id} />
             </div>
           </div>
         </div>

@@ -82,10 +82,13 @@ type SeasonRecap = {
   color: string;
   storiesRead: number;
   votescast: number;
+  commentsLeft: number;
   topCategory: string | null;
   topReaction: string | null;
   topDramaLabel: string | null;
   topDramaArc: string | null;
+  mostDramaticWeek: string | null;
+  personalityType: string | null;
   followed: number;
   headline: string;
   lines: string[];
@@ -104,6 +107,13 @@ async function fetchRecaps(): Promise<{ recaps: SeasonRecap[]; isLoggedIn: boole
 
   const seasons = getSeasonWindows();
   const recaps: SeasonRecap[] = [];
+
+  // Fetch username once outside the loop to avoid redundant DB calls
+  let currentUsername: string | null = null;
+  if (user) {
+    const { data: userProfile } = await supabase.from("users").select("username").eq("id", user.id).single();
+    currentUsername = userProfile?.username ?? null;
+  }
 
   for (const season of seasons) {
     // Stories read (all stories visible in the feed during this window)
@@ -185,6 +195,50 @@ async function fetchRecaps(): Promise<{ recaps: SeasonRecap[]; isLoggedIn: boole
       followed = count ?? 0;
     }
 
+    // Most dramatic week — find 7-day window with most stories
+    let mostDramaticWeek: string | null = null;
+    const { data: allStoriesInSeason } = await supabase
+      .from("stories")
+      .select("created_at")
+      .gte("created_at", season.from)
+      .lte("created_at", season.to)
+      .eq("is_hidden", false);
+
+    if ((allStoriesInSeason ?? []).length > 0) {
+      const weekCounts: Record<string, number> = {};
+      for (const row of allStoriesInSeason ?? []) {
+        const d = new Date(row.created_at);
+        // Round down to nearest Monday
+        const day = d.getDay();
+        const diff = (day === 0 ? -6 : 1 - day);
+        const monday = new Date(d);
+        monday.setDate(d.getDate() + diff);
+        monday.setHours(0, 0, 0, 0);
+        const key = monday.toISOString();
+        weekCounts[key] = (weekCounts[key] ?? 0) + 1;
+      }
+      const topWeekKey = Object.keys(weekCounts).sort((a, b) => weekCounts[b] - weekCounts[a])[0];
+      if (topWeekKey) {
+        const weekStart = new Date(topWeekKey);
+        const weekEnd = new Date(topWeekKey);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        mostDramaticWeek = `${fmt(weekStart)} – ${fmt(weekEnd)} (${weekCounts[topWeekKey]} stories)`;
+      }
+    }
+
+    // Comments left on stories this season
+    let commentsLeft = 0;
+    if (user && currentUsername) {
+      const { count } = await supabase
+        .from("comments")
+        .select("id", { count: "exact", head: true })
+        .eq("anonymous_name", currentUsername)
+        .gte("created_at", season.from)
+        .lte("created_at", season.to);
+      commentsLeft = count ?? 0;
+    }
+
     // Top emotional label = top reaction key mapped to a short label
     const labelMap: Record<string, string> = {
       "I NEED THE UPDATE": "Cliffhanger addict",
@@ -195,6 +249,16 @@ async function fetchRecaps(): Promise<{ recaps: SeasonRecap[]; isLoggedIn: boole
       "Team OP": "Loyal ally",
     };
     const topDramaLabel = topReaction ? (labelMap[topReaction] ?? topReaction) : null;
+
+    const personalityMap: Record<string, string> = {
+      "I NEED THE UPDATE": "You're a serial cliffhanger chaser. Closure is not in your vocabulary.",
+      "Girl stand up": "You're the hype girl the internet deserves. Loud and proud.",
+      "This is insane": "You show up for chaos. Front row, every time.",
+      "Crying for you": "You feel everything. That's not a weakness, that's a superpower.",
+      "That would ruin me": "You're a dramatic empath and you know it.",
+      "Team OP": "Ride or die. No questions asked.",
+    };
+    const personalityType = topReaction ? (personalityMap[topReaction] ?? null) : null;
 
     const headline = makeHeadlineForSeason(storiesRead ?? 0, votescast, season.season_name);
     const lines = makeLines(
@@ -214,10 +278,13 @@ async function fetchRecaps(): Promise<{ recaps: SeasonRecap[]; isLoggedIn: boole
       color: season.color,
       storiesRead: storiesRead ?? 0,
       votescast,
+      commentsLeft,
       topCategory,
       topReaction,
       topDramaLabel,
       topDramaArc,
+      mostDramaticWeek,
+      personalityType,
       followed,
       headline,
       lines,
@@ -320,6 +387,18 @@ export default async function WrappedPage() {
                         <p className="text-3xl font-medium text-[#4b4b47]">{recap.votescast}</p>
                         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Votes</p>
                       </div>
+                      {recap.commentsLeft > 0 && (
+                        <div className="rounded-2xl bg-[#e1e2e6] p-4">
+                          <p className="text-3xl font-medium text-[#4b4b47]">{recap.commentsLeft}</p>
+                          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Comments left</p>
+                        </div>
+                      )}
+                      {recap.followed > 0 && (
+                        <div className="rounded-2xl bg-[#e1e2e6] p-4">
+                          <p className="text-3xl font-medium text-[#4b4b47]">{recap.followed}</p>
+                          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Stories followed</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Insight lines */}
@@ -333,6 +412,22 @@ export default async function WrappedPage() {
                         </p>
                       ))}
                     </div>
+
+                    {/* Most dramatic week */}
+                    {recap.mostDramaticWeek && (
+                      <div className="mt-4 rounded-2xl border border-[#d8d3ce] p-4">
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">🔥 Most dramatic week</p>
+                        <p className="mt-1 text-base font-medium text-[#4b4b47]">{recap.mostDramaticWeek}</p>
+                      </div>
+                    )}
+
+                    {/* Personality type */}
+                    {recap.personalityType && (
+                      <div className="mt-4 rounded-2xl bg-[#f8c0c8] p-4">
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#4b4b47]">✨ Your drama personality</p>
+                        <p className="mt-1 text-sm font-medium leading-6 text-[#4b4b47]">{recap.personalityType}</p>
+                      </div>
+                    )}
 
                     {/* Top drama era */}
                     {(recap.topDramaLabel || recap.topDramaArc) && (
@@ -367,9 +462,9 @@ export default async function WrappedPage() {
                       </button>
                       <Link
                         className="flex min-h-11 items-center justify-center rounded-2xl bg-[#e1e2e6] px-2 text-center text-xs font-medium text-[#4b4b47]"
-                        href="/?filter=Unresolved"
+                        href="/"
                       >
-                        Top Era
+                        Read More
                       </Link>
                     </div>
                   </>

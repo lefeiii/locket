@@ -3,9 +3,7 @@ import Link from "next/link";
 const filters = [
   "For You",
   "Following",
-  "Vote Now",
   "Updates",
-  "Unresolved"
 ];
 
 export function FeedFilters({ active }: { active: string }) {

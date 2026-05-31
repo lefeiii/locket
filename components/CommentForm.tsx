@@ -105,7 +105,6 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
         {status === "saving" ? "Adding…" : "Add comment"}
       </button>
 
-
       {status === "saved" && (
         <p className="text-center text-sm font-medium text-[#4b4b47]">Comment added ✓</p>
       )}

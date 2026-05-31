@@ -30,10 +30,17 @@ type StoryCardProps = {
 };
 
 export function StoryCard({ story, immersive = false }: StoryCardProps) {
-  const [counts, setCounts] = useState(() => ({
-    ...Object.fromEntries(reactionLabels.map((label) => [label, 0])),
-    ...story.reactions
-  }) as Story["reactions"]);
+  const [reactionState, setReactionState] = useState<{
+    counts: Story["reactions"];
+    userReaction: ReactionKey | null;
+  }>(() => ({
+    counts: {
+      ...Object.fromEntries(reactionLabels.map((label) => [label, 0])),
+      ...story.reactions
+    } as Story["reactions"],
+    userReaction: null,
+  }));
+  const { counts, userReaction } = reactionState;
   const [saved, setSaved] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
@@ -44,17 +51,28 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
     .join(" · ");
 
   function react(label: ReactionKey) {
-    const next = { ...counts, [label]: (counts[label] ?? 0) + 1 };
-    setCounts(next);
-    // Persist reaction to Supabase — fire and forget
-    const client = supabase;
-    if (client && !story.id.startsWith("sample-")) {
-      client
-        .from("stories")
-        .update({ reactions: next })
-        .eq("id", story.id)
-        .then(() => {});
-    }
+    setReactionState((prev) => {
+      const alreadyReacted = prev.userReaction === label;
+      const next = { ...prev.counts };
+      if (alreadyReacted) {
+        next[label] = Math.max(0, (next[label] ?? 0) - 1);
+      } else {
+        if (prev.userReaction) {
+          next[prev.userReaction] = Math.max(0, (next[prev.userReaction] ?? 0) - 1);
+        }
+        next[label] = (next[label] ?? 0) + 1;
+      }
+      // Persist to Supabase — fire and forget
+      const client = supabase;
+      if (client && !story.id.startsWith("sample-")) {
+        client
+          .from("stories")
+          .update({ reactions: next })
+          .eq("id", story.id)
+          .then(() => {});
+      }
+      return { counts: next, userReaction: alreadyReacted ? null : label };
+    });
   }
 
   return (
@@ -65,7 +83,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
         <div>
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2">
-              <span className={`rounded-full px-3 py-1 text-xs font-medium ${categoryStyles[story.category]}`}>
+              <span className={`rounded-full px-3 py-1 text-xs font-medium ${categoryStyles[story.category] ?? "bg-[#e1e2e6] text-[#4b4b47]"}`}>
                 {story.category}
               </span>
             </div>
@@ -111,15 +129,19 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
         </div>
 
         <div className="mt-7">
-          <div className="flex snap-x gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
             {reactionLabels.map((label) => (
               <button
-                className="shrink-0 rounded-full border border-[#d8d3ce] bg-[#f8f8f6] px-4 py-2 text-sm font-medium text-[#4b4b47] shadow-sm active:scale-95"
+                className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium shadow-sm active:scale-95 ${
+                  userReaction === label
+                    ? "border-[#f8c0c8] bg-[#f8c0c8] text-[#4b4b47]"
+                    : "border-[#d8d3ce] bg-[#f8f8f6] text-[#4b4b47]"
+                }`}
                 key={label}
                 onClick={() => react(label)}
                 type="button"
               >
-                {label} <span className="text-[#787775]">{counts[label]}</span>
+                {label} <span className={userReaction === label ? "text-[#4b4b47]" : "text-[#787775]"}>{counts[label]}</span>
               </button>
             ))}
           </div>

@@ -31,7 +31,8 @@ function filterStories(stories: Story[], activeFilter: string) {
 
   switch (activeFilter) {
     case "Following":
-      return stories.filter((story) => (story.follower_count ?? 0) > 9000 || story.anonymous_name === "DramaBunny");
+      // Real follow logic requires client-side auth; show all stories as fallback
+      return stories;
     case "Vote Now":
       return stories.filter((story) => story.has_active_poll);
     case "Updates":
@@ -87,11 +88,11 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
       <NotificationPreview stories={stories} />
 
       <section
-        className="mx-auto flex max-h-[calc(100svh-4.25rem)] max-w-lg snap-y snap-mandatory flex-col gap-5 overflow-y-auto px-4 pb-24 no-scrollbar"
+        className="mx-auto flex max-w-lg flex-col gap-5 px-4 pb-28"
         id="feed"
       >
         {(visibleStories.length ? visibleStories : stories).map((story) => (
-          <StoryCard immersive key={story.id} story={story} />
+          <StoryCard key={story.id} story={story} />
         ))}
       </section>
 

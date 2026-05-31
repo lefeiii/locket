@@ -17,11 +17,12 @@ export function CommentForm({ storyId }: CommentFormProps) {
 
   // Load the real logged-in username on mount
   useEffect(() => {
-    if (!supabase) return;
-    supabase.auth.getUser().then(({ data }) => {
+    const client = supabase;
+    if (!client) return;
+    client.auth.getUser().then(({ data }) => {
       const uid = data?.user?.id;
       if (!uid) return;
-      supabase
+      client
         .from("users")
         .select("username")
         .eq("id", uid)
@@ -37,8 +38,9 @@ export function CommentForm({ storyId }: CommentFormProps) {
 
     setStatus("saving");
 
-    if (supabase && !storyId.startsWith("sample-")) {
-      const { error } = await supabase.from("comments").insert({
+    const client = supabase;
+    if (client && !storyId.startsWith("sample-")) {
+      const { error } = await client.from("comments").insert({
         story_id: storyId,
         anonymous_name: username,
         body: body.trim(),

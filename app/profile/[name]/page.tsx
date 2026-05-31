@@ -27,18 +27,19 @@ export default function ProfilePage() {
   const isOwn = currentUsername === name;
 
   useEffect(() => {
-    if (!supabase) { setLoading(false); return; }
-    supabase.auth.getUser().then(({ data }) => {
+    const client = supabase;
+    if (!client) { setLoading(false); return; }
+    client.auth.getUser().then(({ data }) => {
       if (!data.user) return;
       setCurrentUserId(data.user.id);
-      supabase.from("users").select("username, bio").eq("id", data.user.id).single()
+      client.from("users").select("username, bio").eq("id", data.user.id).single()
         .then(({ data: profile }) => {
           if (profile) { setCurrentUsername(profile.username); if (profile.username === name) setBio(profile.bio ?? ""); }
         });
     });
 
     // Load stories
-    supabase.from("stories").select("*").eq("anonymous_name", name).eq("is_hidden", false)
+    client.from("stories").select("*").eq("anonymous_name", name).eq("is_hidden", false)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         setStories(data ?? []);
@@ -47,17 +48,19 @@ export default function ProfilePage() {
   }, [name]);
 
   async function handleSaveUsername() {
-    if (!supabase || !currentUserId) return;
+    const client = supabase;
+    if (!client) return;
+    if (!client || !currentUserId) return;
     if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setSaveMsg("letters, numbers, . _ - only (2-30 chars)"); return; }
     setSaving(true);
-    const { data: taken } = await supabase.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).single();
+    const { data: taken } = await client.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).single();
     if (taken) { setSaveMsg("username already taken"); setSaving(false); return; }
-    const { error } = await supabase.from("users").update({ username: newUsername }).eq("id", currentUserId);
+    const { error } = await client.from("users").update({ username: newUsername }).eq("id", currentUserId);
     if (error) {
       setSaveMsg("could not update username");
     } else {
       // Also update anonymous_name on all their stories so they stay in sync
-      await supabase.from("stories").update({ anonymous_name: newUsername }).eq("anonymous_name", name);
+      await client.from("stories").update({ anonymous_name: newUsername }).eq("anonymous_name", name);
       setSaveMsg("username updated!");
       setEditingUsername(false);
       router.push(`/profile/${encodeURIComponent(newUsername)}`);
@@ -66,30 +69,38 @@ export default function ProfilePage() {
   }
 
   async function handleSaveBio() {
-    if (!supabase || !currentUserId) return;
+    const client = supabase;
+    if (!client) return;
+    if (!client || !currentUserId) return;
     setSaving(true);
-    const { error } = await supabase.from("users").update({ bio }).eq("id", currentUserId);
+    const { error } = await client.from("users").update({ bio }).eq("id", currentUserId);
     setSaveMsg(error ? "could not update bio" : "bio saved!");
     setEditingBio(false); setSaving(false);
   }
 
   async function handleHide(storyId: string) {
-    if (!supabase || !confirm("Hide this story from your profile?")) return;
-    await supabase.from("stories").update({ is_hidden: true }).eq("id", storyId);
+    const client = supabase;
+    if (!client) return;
+    if (!client || !confirm("Hide this story from your profile?")) return;
+    await client.from("stories").update({ is_hidden: true }).eq("id", storyId);
     setStories(prev => prev.filter(s => s.id !== storyId));
   }
 
   async function handleDelete(storyId: string) {
-    if (!supabase || !confirm("Delete this story permanently? This cannot be undone.")) return;
-    await supabase.from("stories").delete().eq("id", storyId);
+    const client = supabase;
+    if (!client) return;
+    if (!client || !confirm("Delete this story permanently? This cannot be undone.")) return;
+    await client.from("stories").delete().eq("id", storyId);
     setStories(prev => prev.filter(s => s.id !== storyId));
   }
 
   async function handleDeleteAccount() {
-    if (!supabase || !currentUserId) return;
+    const client = supabase;
+    if (!client) return;
+    if (!client || !currentUserId) return;
     if (!confirm("Delete your account permanently? This cannot be undone.")) return;
-    await supabase.from("users").delete().eq("id", currentUserId);
-    await supabase.auth.signOut();
+    await client.from("users").delete().eq("id", currentUserId);
+    await client.auth.signOut();
     router.push("/signup");
   }
 

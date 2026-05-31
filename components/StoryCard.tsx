@@ -1,206 +1,222 @@
 "use client";
 
-import { Bell, Bookmark, Flag, MessageCircle, Send, Sparkles } from "lucide-react";
+import { ArrowLeft, EyeOff, GitBranch, Instagram, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { reactionLabels, samplePolls } from "@/lib/sample-data";
-import type { ReactionKey, Story } from "@/lib/types";
-import { ReportModal } from "@/components/ReportModal";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { AppNav, BrandBar } from "@/components/AppNav";
 import { supabase } from "@/lib/supabase";
-import { InlineCommentForm } from "@/components/CommentForm";
+import type { Story } from "@/lib/types";
 
-const categoryStyles: Record<Story["category"], string> = {
-  "my crush era": "bg-[#f8c0c8] text-[#4b4b47]",
-  "mommy issues": "bg-[#e1e2e6] text-[#4b4b47]",
-  "daddy issues": "bg-[#e1e2e6] text-[#4b4b47]",
-  "not a girls girl today because:": "bg-[#e1e2e6] text-[#4b4b47]",
-  "im the girl bestfriend yall": "bg-[#e1e2e6] text-[#4b4b47]",
-  "school was NOT it": "bg-[#e1e2e6] text-[#4b4b47]",
-  "slay or be slayed": "bg-[#e1e2e6] text-[#4b4b47]",
-  "he's so cooked": "bg-[#e1e2e6] text-[#4b4b47]",
-  "she's so cooked": "bg-[#e1e2e6] text-[#4b4b47]",
-  "ok but AITA tho": "bg-[#e1e2e6] text-[#4b4b47]",
-  "the update dropped": "bg-[#e1e2e6] text-[#4b4b47]"
-};
+export default function ProfilePage() {
+  const params = useParams();
+  const router = useRouter();
+  const name = decodeURIComponent(params?.name as string ?? "");
 
-type StoryCardProps = {
-  story: Story;
-  immersive?: boolean;
-};
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [bio, setBio] = useState("");
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState(name);
+  const [editingBio, setEditingBio] = useState(false);
+  const [saveMsg, setSaveMsg] = useState("");
+  const [saving, setSaving] = useState(false);
 
-export function StoryCard({ story, immersive = false }: StoryCardProps) {
-  const [reactionState, setReactionState] = useState<{
-    counts: Story["reactions"];
-    userReaction: ReactionKey | null;
-  }>(() => ({
-    counts: {
-      ...Object.fromEntries(reactionLabels.map((label) => [label, 0])),
-      ...story.reactions
-    } as Story["reactions"],
-    userReaction: null,
-  }));
-  const { counts, userReaction } = reactionState;
-  const [saved, setSaved] = useState(false);
-  const [reportOpen, setReportOpen] = useState(false);
-  const [commentOpen, setCommentOpen] = useState(false);
-  const commentRef = useRef<HTMLDivElement>(null);
-  const hasActivePoll = story.has_active_poll || samplePolls.some((poll) => poll.story_id === story.id && poll.is_active);
-  const storyContext = [story.update_label, story.status, story.cliffhanger && !story.is_resolved ? "unresolved" : null]
-    .filter(Boolean)
-    .join(" · ");
+  const isOwn = currentUsername === name;
 
-  function react(label: ReactionKey) {
-    setReactionState((prev) => {
-      const alreadyReacted = prev.userReaction === label;
-      const next = { ...prev.counts };
-      if (alreadyReacted) {
-        next[label] = Math.max(0, (next[label] ?? 0) - 1);
-      } else {
-        if (prev.userReaction) {
-          next[prev.userReaction] = Math.max(0, (next[prev.userReaction] ?? 0) - 1);
-        }
-        next[label] = (next[label] ?? 0) + 1;
-      }
-      // Persist to Supabase — fire and forget
-      const client = supabase;
-      if (client && !story.id.startsWith("sample-")) {
-        client
-          .from("stories")
-          .update({ reactions: next })
-          .eq("id", story.id)
-          .then(() => {});
-      }
-      return { counts: next, userReaction: alreadyReacted ? null : label };
+  useEffect(() => {
+    const client = supabase;
+    if (!client) { setLoading(false); return; }
+    client.auth.getUser().then(({ data }) => {
+      if (!data.user) return;
+      setCurrentUserId(data.user.id);
+      client.from("users").select("username, bio").eq("id", data.user.id).single()
+        .then(({ data: profile }) => {
+          if (profile) { setCurrentUsername(profile.username); if (profile.username === name) setBio(profile.bio ?? ""); }
+        });
     });
+
+    // Load stories
+    client.from("stories").select("*").eq("anonymous_name", name).eq("is_hidden", false)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setStories(data ?? []);
+        setLoading(false);
+      });
+  }, [name]);
+
+  async function handleSaveUsername() {
+    const client = supabase;
+    if (!client) return;
+    if (!client || !currentUserId) return;
+    if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setSaveMsg("letters, numbers, . _ - only (2-30 chars)"); return; }
+    setSaving(true);
+    const { data: taken } = await client.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).single();
+    if (taken) { setSaveMsg("username already taken"); setSaving(false); return; }
+    const { error } = await client.from("users").update({ username: newUsername }).eq("id", currentUserId);
+    if (error) {
+      setSaveMsg("could not update username");
+    } else {
+      // Also update anonymous_name on all their stories so they stay in sync
+      await client.from("stories").update({ anonymous_name: newUsername }).eq("anonymous_name", name);
+      setSaveMsg("username updated!");
+      setEditingUsername(false);
+      router.push(`/profile/${encodeURIComponent(newUsername)}`);
+    }
+    setSaving(false);
+  }
+
+  async function handleSaveBio() {
+    const client = supabase;
+    if (!client) return;
+    if (!client || !currentUserId) return;
+    setSaving(true);
+    const { error } = await client.from("users").update({ bio }).eq("id", currentUserId);
+    setSaveMsg(error ? "could not update bio" : "bio saved!");
+    setEditingBio(false); setSaving(false);
+  }
+
+  async function handleHide(storyId: string) {
+    const client = supabase;
+    if (!client) return;
+    if (!client || !confirm("Hide this story from your profile?")) return;
+    await client.from("stories").update({ is_hidden: true }).eq("id", storyId);
+    setStories(prev => prev.filter(s => s.id !== storyId));
+  }
+
+  async function handleDelete(storyId: string) {
+    const client = supabase;
+    if (!client) return;
+    if (!client || !confirm("Delete this story permanently? This cannot be undone.")) return;
+    await client.from("stories").delete().eq("id", storyId);
+    setStories(prev => prev.filter(s => s.id !== storyId));
+  }
+
+  async function handleDeleteAccount() {
+    const client = supabase;
+    if (!client) return;
+    if (!client || !currentUserId) return;
+    if (!confirm("Delete your account permanently? This cannot be undone.")) return;
+    await client.from("users").delete().eq("id", currentUserId);
+    await client.auth.signOut();
+    router.push("/signup");
   }
 
   return (
-    <>
-      <article
-        className={`flex ${immersive ? "min-h-[calc(100svh-5rem)]" : ""} w-full flex-col justify-between rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm`}
-      >
-        <div>
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className={`rounded-full px-3 py-1 text-xs font-medium ${categoryStyles[story.category] ?? "bg-[#e1e2e6] text-[#4b4b47]"}`}>
-                {story.category}
-              </span>
+    <main className="pb-24">
+      <BrandBar />
+      <section className="mx-auto max-w-md px-4 py-5">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4b4b47]" href="/">
+          <ArrowLeft size={18} /> Back to feed
+        </Link>
+
+        <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm">
+          {/* Avatar + username */}
+          <div className="flex items-center gap-4 mb-4">
+            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl bg-[#f8c0c8] text-2xl font-medium text-[#4b4b47] select-none">
+              {name.slice(0, 1).toUpperCase()}
             </div>
-            <button
-              aria-label="Report story"
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#e1e2e6] text-[#4b4b47]"
-              onClick={() => setReportOpen(true)}
-              type="button"
-            >
-              <Flag size={18} />
+            <div className="flex-1 min-w-0">
+              {isOwn && editingUsername ? (
+                <div className="flex gap-2 items-center">
+                  <input value={newUsername} onChange={e => setNewUsername(e.target.value)} maxLength={30}
+                    className="flex-1 rounded-xl border border-[#d8d3ce] px-3 py-1 text-sm font-medium text-[#4b4b47] outline-none focus:border-[#f8c0c8]" />
+                  <button onClick={handleSaveUsername} disabled={saving} className="shrink-0 rounded-xl bg-[#f8c0c8] px-3 py-1 text-xs font-medium text-[#4b4b47]">{saving ? "..." : "save"}</button>
+                  <button onClick={() => setEditingUsername(false)} className="text-xs text-[#787775]">cancel</button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-medium text-[#4b4b47] truncate">@{name}</h1>
+                  {isOwn && <button onClick={() => setEditingUsername(true)} className="shrink-0 text-xs text-[#787775] underline">edit</button>}
+                </div>
+              )}
+              {saveMsg && <p className="text-xs text-green-600 mt-1">{saveMsg}</p>}
+            </div>
+          </div>
+
+          {/* Bio */}
+          {isOwn ? (
+            editingBio ? (
+              <div className="mb-4">
+                <textarea value={bio} onChange={e => setBio(e.target.value)} rows={2} maxLength={160}
+                  className="w-full rounded-xl border border-[#d8d3ce] px-3 py-2 text-sm font-medium text-[#4b4b47] outline-none focus:border-[#f8c0c8] resize-none"
+                  placeholder="say something..." />
+                <div className="flex gap-2 mt-1">
+                  <button onClick={handleSaveBio} disabled={saving} className="rounded-xl bg-[#f8c0c8] px-3 py-1 text-xs font-medium text-[#4b4b47]">{saving ? "..." : "save bio"}</button>
+                  <button onClick={() => setEditingBio(false)} className="text-xs text-[#787775]">cancel</button>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-4">
+                <p className="text-sm font-medium text-[#787775]">{bio || <span className="italic opacity-50">no bio yet</span>}</p>
+                <button onClick={() => setEditingBio(true)} className="mt-1 text-xs text-[#787775] underline">{bio ? "edit bio" : "add bio"}</button>
+              </div>
+            )
+          ) : null}
+
+          {/* Stats — stories only */}
+          <div className="rounded-2xl bg-[#e1e2e6] p-4">
+            <p className="text-3xl font-medium text-[#4b4b47]">{loading ? "—" : stories.length}</p>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Stories</p>
+          </div>
+        </div>
+
+        {/* Stories */}
+        <section className="mt-6">
+          <div className="mb-3 flex items-center gap-2">
+            <GitBranch size={19} />
+            <h2 className="text-xl font-medium text-[#4b4b47]">{isOwn ? "your stories" : "drama history"}</h2>
+          </div>
+          {loading ? (
+            <p className="py-8 text-center text-sm text-[#787775]">loading...</p>
+          ) : stories.length === 0 ? (
+            <p className="py-8 text-center text-sm text-[#787775]">no stories yet</p>
+          ) : (
+            <div className="grid gap-3">
+              {stories.map(story => (
+                <div key={story.id} className="rounded-3xl bg-[#f8f8f6] p-4 shadow-lg">
+                  <Link href={`/story/${story.id}`} className="block">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#787775]">{story.category}</p>
+                    <h3 className="mt-1 text-xl font-medium leading-tight text-[#4b4b47]">{story.title}</h3>
+                    {story.cliffhanger && <p className="mt-2 rounded-2xl bg-[#f8c0c8] p-3 text-sm font-medium text-[#4b4b47]">{story.cliffhanger}</p>}
+                    <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-[#4b4b47]">{story.body}</p>
+                    <p className="mt-2 text-xs font-medium text-[#787775]">
+                      {story.follower_count ?? 0} {(story.follower_count ?? 0) === 1 ? "follower" : "followers"}
+                    </p>
+                  </Link>
+                  {isOwn && (
+                    <div className="mt-3 flex gap-3 border-t border-[#e1e2e6] pt-3">
+                      <button onClick={() => handleHide(story.id)} className="flex items-center gap-1 text-xs font-medium text-[#787775] hover:text-[#4b4b47]">
+                        <EyeOff size={13} /> hide
+                      </button>
+                      <button onClick={() => handleDelete(story.id)} className="flex items-center gap-1 text-xs font-medium text-red-400 hover:text-red-600">
+                        <Trash2 size={13} /> delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Own profile actions */}
+        {isOwn && (
+          <section className="mt-8 grid gap-3">
+            <a href="https://instagram.com/lefeiii" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-sm font-medium text-[#4b4b47]">
+              <Instagram size={18} /> connect with the founder @lefeiii
+            </a>
+            <button onClick={handleDeleteAccount}
+              className="w-full rounded-3xl border border-red-200 bg-red-50 p-4 text-left text-sm font-medium text-red-500">
+              delete my account
             </button>
-          </div>
-
-          <Link href={`/story/${story.id}`}>
-            <h2 className="text-3xl font-medium leading-tight text-[#4b4b47] sm:text-4xl">{story.title}</h2>
-          </Link>
-          <div className="mt-3 flex min-w-0 items-center gap-2 text-sm font-medium text-[#787775]">
-            <Link className="min-w-0 truncate" href={`/profile/${story.anonymous_name}`}>
-              @{story.anonymous_name}
-            </Link>
-          </div>
-          <div className="mt-4 space-y-2 text-sm font-medium leading-6 text-[#787775]">
-            {storyContext ? <p>{storyContext}</p> : null}
-            {hasActivePoll ? (
-              <Link className="inline-flex items-center gap-2 text-[#4b4b47]" href={`/story/${story.id}#poll`}>
-                <Sparkles size={15} />
-                Readers are choosing the next move
-              </Link>
-            ) : null}
-          </div>
-          {story.previous_story_reference ? (
-            <p className="mt-3 border-l-2 border-[#f8c0c8] pl-3 text-xs font-medium leading-5 text-[#787775]">
-              Previous: {story.previous_story_reference}
-            </p>
-          ) : null}
-          <p className="mt-5 whitespace-pre-line text-[1.05rem] font-medium leading-7 text-[#4b4b47]">{story.body}</p>
-          {story.cliffhanger ? (
-            <p className="mt-4 rounded-3xl bg-[#f8c0c8] p-4 text-xl font-medium leading-snug text-[#4b4b47]">
-              {story.cliffhanger}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="mt-7">
-          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-            {reactionLabels.map((label) => (
-              <button
-                className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium shadow-sm active:scale-95 ${
-                  userReaction === label
-                    ? "border-[#f8c0c8] bg-[#f8c0c8] text-[#4b4b47]"
-                    : "border-[#d8d3ce] bg-[#f8f8f6] text-[#4b4b47]"
-                }`}
-                key={label}
-                onClick={() => react(label)}
-                type="button"
-              >
-                {label} <span className={userReaction === label ? "text-[#4b4b47]" : "text-[#787775]"}>{counts[label]}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-4 flex items-center justify-between gap-3 text-[#4b4b47]">
-            <div className="flex items-center gap-2">
-              <button
-                className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
-              onClick={() => {
-                setCommentOpen((v) => {
-                  const next = !v;
-                  if (next) {
-                    setTimeout(() => {
-                      commentRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                    }, 50);
-                  }
-                  return next;
-                });
-              }}
-              type="button"
-              >
-                <MessageCircle size={18} />
-                {story.comments_count ?? 0}
-              </button>
-              <span className="flex items-center gap-1 rounded-full bg-[#e1e2e6] px-3 py-2 text-sm font-medium text-[#4b4b47]">
-                <Bell size={15} />{story.follower_count ?? 0}
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                aria-label="Save story"
-                className={`grid h-11 w-11 place-items-center rounded-full ${saved ? "bg-[#f8c0c8] text-[#f8f8f6]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
-                onClick={() => setSaved((value) => !value)}
-                type="button"
-              >
-                <Bookmark fill={saved ? "currentColor" : "none"} size={19} />
-              </button>
-              <button
-                aria-label="Share story"
-                className="grid h-11 w-11 place-items-center rounded-full bg-[#e1e2e6] text-[#4b4b47]"
-                type="button"
-              >
-                <Send size={19} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {commentOpen && (
-          <div ref={commentRef} className="mt-3">
-            <InlineCommentForm onDone={() => setCommentOpen(false)} storyId={story.id} />
-          </div>
+          </section>
         )}
-      </article>
-
-      <ReportModal
-        onClose={() => setReportOpen(false)}
-        open={reportOpen}
-        storyId={story.id}
-        storyTitle={story.title}
-      />
-    </>
+      </section>
+      <AppNav />
+    </main>
   );
 }

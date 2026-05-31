@@ -29,6 +29,7 @@ export default function CreatePage() {
   const [pollOptions, setPollOptions] = useState(["", ""]);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [arcPartCount, setArcPartCount] = useState(1);
 
   useEffect(() => {
     const client = supabase;
@@ -42,6 +43,22 @@ export default function CreatePage() {
         });
     });
   }, [router]);
+
+  // When user fills in previous story reference, count existing arc parts (debounced)
+  useEffect(() => {
+    if (!isUpdate || !previousReference.trim()) { setArcPartCount(1); return; }
+    const timer = setTimeout(() => {
+      const client = supabase;
+      if (!client) return;
+      const arcId = previousReference.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      client
+        .from("stories")
+        .select("id", { count: "exact", head: true })
+        .eq("story_arc_id", arcId)
+        .then(({ count }) => setArcPartCount((count ?? 0) + 1));
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [isUpdate, previousReference]);
 
   const cleanedPollOptions = pollOptions.map((o) => o.trim()).filter(Boolean);
   const hasPoll = pollQuestion.trim().length > 0 && cleanedPollOptions.length >= 2;
@@ -61,8 +78,8 @@ export default function CreatePage() {
       previous_story_reference: isUpdate ? previousReference : null,
       story_arc_id: storyArcId,
       arc_title: previousReference || title,
-      part_number: isUpdate ? 2 : 1,
-      update_label: isUpdate ? "Update" : "Part 1",
+      part_number: isUpdate ? arcPartCount : 1,
+      update_label: isUpdate ? `Part ${arcPartCount}` : "Part 1",
       cliffhanger: cliffhanger || null,
       is_resolved: false,
       status: isUpdate ? "Update pending" : "Unresolved",
@@ -162,13 +179,21 @@ export default function CreatePage() {
           </label>
 
           {isUpdate ? (
-            <label className="mt-4 block text-sm font-medium text-[#4b4b47]">
-              Previous story title/link
-              <input
-                className="mt-2 min-h-12 w-full rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] px-4 text-base font-medium outline-none ring-[#f8c0c8] focus:ring-4"
-                onChange={(e) => setPreviousReference(e.target.value)} value={previousReference}
-              />
-            </label>
+            <div className="mt-4 grid gap-3">
+              <label className="block text-sm font-medium text-[#4b4b47]">
+                Previous story title (used to link the arc)
+                <input
+                  className="mt-2 min-h-12 w-full rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] px-4 text-base font-medium outline-none ring-[#f8c0c8] focus:ring-4"
+                  onChange={(e) => setPreviousReference(e.target.value)} value={previousReference}
+                  placeholder="Paste the exact title of your previous part"
+                />
+              </label>
+              {previousReference.trim() && (
+                <div className="rounded-2xl bg-[#e1e2e6] px-4 py-3 text-sm font-medium text-[#4b4b47]">
+                  This will be posted as <span className="font-semibold">Part {arcPartCount}</span> of the arc
+                </div>
+              )}
+            </div>
           ) : null}
 
           <div className="mt-5 rounded-3xl bg-[#e1e2e6] p-4 text-[#4b4b47]">

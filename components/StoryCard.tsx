@@ -7,6 +7,7 @@ import { reactionLabels, samplePolls } from "@/lib/sample-data";
 import type { ReactionKey, Story } from "@/lib/types";
 import { FollowButton } from "@/components/FollowButton";
 import { ReportModal } from "@/components/ReportModal";
+import { supabase } from "@/lib/supabase";
 
 const categoryStyles: Record<Story["category"], string> = {
   "my crush era": "bg-[#f8c0c8] text-[#4b4b47]",
@@ -40,16 +41,23 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
     .join(" · ");
 
   function react(label: ReactionKey) {
-    setCounts((current) => ({
-      ...current,
-      [label]: current[label] + 1
-    }));
+    const next = { ...counts, [label]: (counts[label] ?? 0) + 1 };
+    setCounts(next);
+    // Persist reaction to Supabase — fire and forget
+    const client = supabase;
+    if (client && !story.id.startsWith("sample-")) {
+      client
+        .from("stories")
+        .update({ reactions: next })
+        .eq("id", story.id)
+        .then(() => {});
+    }
   }
 
   return (
     <>
       <article
-        className={`story-snap flex ${immersive ? "min-h-[calc(100svh-5rem)]" : "min-h-0"} w-full shrink-0 flex-col justify-between rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm`}
+        className={`flex ${immersive ? "min-h-[calc(100svh-5rem)]" : ""} w-full flex-col justify-between rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm`}
       >
         <div>
           <div className="mb-4 flex items-center justify-between gap-3">

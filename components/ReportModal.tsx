@@ -3,97 +3,120 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import type { ReportReason } from "@/lib/types";
 
-const reasons: ReportReason[] = [
-  "Bullying",
-  "Doxxing",
-  "Harassment",
-  "Hate",
-  "Sexual content involving minors",
-  "Other"
+const REASONS = [
+  "Real name or personal info",
+  "Threatening or violent content",
+  "Harassment or bullying",
+  "Explicit or inappropriate content",
+  "Spam or fake story",
+  "Other",
 ];
 
-type ReportModalProps = {
-  storyId: string;
-  storyTitle: string;
+type Props = {
   open: boolean;
   onClose: () => void;
+  storyId?: string;
+  commentId?: string;
+  storyTitle?: string;
 };
 
-export function ReportModal({ storyId, storyTitle, open, onClose }: ReportModalProps) {
-  const [reason, setReason] = useState<ReportReason>("Bullying");
-  const [details, setDetails] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "sent">("idle");
+export function ReportModal({ open, onClose, storyId, commentId, storyTitle }: Props) {
+  const [reason, setReason] = useState("");
+  const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
 
-  if (!open) {
-    return null;
-  }
+  if (!open) return null;
 
-  async function submitReport() {
-    setStatus("submitting");
-    if (supabase && !storyId.startsWith("sample-")) {
-      await supabase.from("reports").insert({
-        story_id: storyId,
-        reason,
-        details
-      });
+  async function submit() {
+    if (!reason) return;
+    setStatus("saving");
+    const client = supabase;
+    if (!client) { setStatus("error"); return; }
+
+    const { data: { user } } = await client.auth.getUser();
+    if (!user) {
+      // RLS requires reporter_id = auth.uid() — can't report anonymously
+      setStatus("error");
+      return;
     }
-    setStatus("sent");
-    window.setTimeout(onClose, 900);
+    const { error } = await client.from("reports").insert({
+      reporter_id: user.id,
+      story_id: storyId ?? null,
+      comment_id: commentId ?? null,
+      reason,
+    });
+
+    if (error) { setStatus("error"); return; }
+    setStatus("done");
+    setTimeout(() => {
+      setStatus("idle");
+      setReason("");
+      onClose();
+    }, 1500);
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#4b4b47]/45 p-3 sm:items-center">
-      <div className="max-h-[calc(100svh-2rem)] w-full max-w-md overflow-y-auto rounded-[2rem] bg-[#f8f8f6] p-5 shadow-lg">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.24em] text-[#787775]">Report</p>
-            <h2 className="mt-1 text-xl font-medium text-[#4b4b47]">{storyTitle}</h2>
-          </div>
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pb-8 sm:items-center"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="w-full max-w-md rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-6 shadow-xl">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-medium text-[#4b4b47]">Report this</h2>
           <button
-            aria-label="Close report modal"
-            className="grid h-10 w-10 place-items-center rounded-full bg-[#e1e2e6] text-[#4b4b47]"
+            className="grid h-9 w-9 place-items-center rounded-full bg-[#e1e2e6] text-[#4b4b47]"
             onClick={onClose}
             type="button"
           >
-            <X size={20} />
+            <X size={16} />
           </button>
         </div>
 
-        <div className="grid gap-2">
-          {reasons.map((item) => (
-            <label
-              className="flex items-center gap-3 rounded-2xl border border-[#d8d3ce] bg-[#e1e2e6] px-3 py-3 text-sm font-medium text-[#4b4b47]"
-              key={item}
+        {storyTitle && (
+          <p className="mb-4 rounded-2xl bg-[#e1e2e6] px-4 py-2 text-sm font-medium text-[#787775] line-clamp-1">
+            "{storyTitle}"
+          </p>
+        )}
+
+        {status === "done" ? (
+          <div className="py-6 text-center">
+            <p className="text-2xl">✓</p>
+            <p className="mt-2 text-sm font-medium text-[#4b4b47]">Report submitted. Thank you for keeping Locket safe.</p>
+          </div>
+        ) : (
+          <>
+            <p className="mb-3 text-sm font-medium text-[#787775]">Why are you reporting this?</p>
+            <div className="grid gap-2">
+              {REASONS.map((r) => (
+                <button
+                  key={r}
+                  className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${
+                    reason === r
+                      ? "bg-[#f8c0c8] text-[#4b4b47]"
+                      : "bg-[#e1e2e6] text-[#4b4b47]"
+                  }`}
+                  onClick={() => setReason(r)}
+                  type="button"
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+
+            {status === "error" && (
+              <p className="mt-3 text-center text-sm text-red-400">Something went wrong. Try again.</p>
+            )}
+
+            <button
+              className="mt-4 w-full rounded-2xl bg-[#f8c0c8] py-3 text-sm font-medium text-[#4b4b47] disabled:opacity-50"
+              disabled={!reason || status === "saving"}
+              onClick={submit}
+              type="button"
             >
-              <input
-                checked={reason === item}
-                className="h-4 w-4 accent-[#787775]"
-                name="reason"
-                onChange={() => setReason(item)}
-                type="radio"
-              />
-              {item}
-            </label>
-          ))}
-        </div>
-
-        <textarea
-          className="mt-4 min-h-24 w-full resize-none rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] p-3 text-sm outline-none ring-[#f8c0c8] focus:ring-4"
-          onChange={(event) => setDetails(event.target.value)}
-          placeholder="Add details for the safety team"
-          value={details}
-        />
-
-        <button
-          className="mt-4 w-full rounded-2xl bg-[#f8c0c8] px-4 py-3 text-sm font-medium text-[#4b4b47] disabled:opacity-60"
-          disabled={status === "submitting" || status === "sent"}
-          onClick={submitReport}
-          type="button"
-        >
-          {status === "sent" ? "Report sent" : "Submit report"}
-        </button>
+              {status === "saving" ? "Submitting…" : "Submit report"}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

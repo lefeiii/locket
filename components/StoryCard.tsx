@@ -64,7 +64,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
         setArcParts((data ?? []).filter(p => p.id !== story.id));
         setArcLoaded(true);
       });
-  }, [story.story_arc_id, story.id, arcLoaded]);
+  }, [story.story_arc_id, story.id, story.is_update, arcLoaded]);
 
   // Fetch comments when panel opens
   useEffect(() => {
@@ -83,9 +83,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
       });
   }, [commentOpen, commentsLoaded, story.id]);
   const hasActivePoll = story.has_active_poll ?? false;
-  const storyContext = [story.update_label, story.status, story.cliffhanger && !story.is_resolved ? "unresolved" : null]
-    .filter(Boolean)
-    .join(" · ");
+  const storyContext = story.update_label ?? null;
 
   function react(label: ReactionKey) {
     setReactionState((prev) => {
@@ -143,7 +141,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
             </Link>
           </div>
           <div className="mt-4 space-y-2 text-sm font-medium leading-6 text-[#787775]">
-            {storyContext ? <p>{storyContext}</p> : null}
+            {storyContext ? <p className="text-[#787775]">{storyContext}</p> : null}
             {hasActivePoll ? (
               <Link className="inline-flex items-center gap-2 text-[#4b4b47]" href={`/story/${story.id}#poll`}>
                 <Sparkles size={15} />
@@ -158,6 +156,9 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
           ) : null}
           {arcParts.length > 0 && (
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              <span className="shrink-0 rounded-full border border-[#f8c0c8] bg-[#f8c0c8] px-3 py-1.5 text-xs font-medium text-[#4b4b47]">
+                {story.update_label ?? `Part ${story.part_number ?? "?"}`} ← you are here
+              </span>
               {arcParts.map((part) => (
                 <Link
                   key={part.id}

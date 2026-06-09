@@ -5,18 +5,19 @@ import { FeedFilters } from "@/components/FeedFilters";
 import { StorySearch } from "@/components/StorySearch";
 import { FollowingFeed } from "@/components/FollowingFeed";
 import { StoryCard } from "@/components/StoryCard";
-import { emotionalScore, sampleStories } from "@/lib/sample-data";
+import { sampleStories } from "@/lib/sample-data";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
 
 async function getStories(): Promise<Story[]> {
   if (!supabase) {
-    return [...sampleStories].sort((a, b) => emotionalScore(b) - emotionalScore(a));
+    return [...sampleStories];
   }
 
   const { data, error } = await supabase
     .from("stories")
     .select("*")
+    .eq("is_hidden", false)
     .order("created_at", { ascending: false })
     .limit(20);
 
@@ -28,14 +29,11 @@ async function getStories(): Promise<Story[]> {
     return [];
   }
 
-  return (data as Story[]).sort((a, b) => emotionalScore(b) - emotionalScore(a));
+  return data as Story[];
 }
 
 function filterStories(stories: Story[], activeFilter: string) {
   switch (activeFilter) {
-    case "Following":
-      // Real follow logic requires client-side auth; show all stories as fallback
-      return stories;
     case "Updates":
       return stories.filter((story) => story.is_update);
     default:
@@ -62,7 +60,7 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
           </h1>
           <p className="mt-4 text-sm font-medium leading-6 text-[#4b4b47]">
             Follow recurring anonymous characters, binge messy arcs, and get pulled back when the next update drops.
-            The feed boosts unresolved cliffhangers, active chains, and high-emotion reactions.
+            Fresh drama at the top — always.
           </p>
           <div className="mt-5 grid grid-cols-2 gap-3">
             <a

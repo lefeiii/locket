@@ -121,9 +121,10 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
 type InlineCommentFormProps = {
   storyId: string;
   onDone: () => void;
+  onCommentAdded?: () => void;
 };
 
-export function InlineCommentForm({ storyId, onDone }: InlineCommentFormProps) {
+export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCommentFormProps) {
   const [username, setUsername] = useState<string>("");
   const [body, setBody] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -161,6 +162,7 @@ export function InlineCommentForm({ storyId, onDone }: InlineCommentFormProps) {
       });
       if (error) { setStatus("error"); return; }
       setStatus("saved");
+      onCommentAdded?.();
       setTimeout(onDone, 1200);
     } else {
       setStatus("error");

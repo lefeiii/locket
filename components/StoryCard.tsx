@@ -42,6 +42,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
   }));
   const { counts, userReaction } = reactionState;
   const [reportOpen, setReportOpen] = useState(false);
+  const [localCommentCount, setLocalCommentCount] = useState(story.comments_count ?? 0);
   const [commentOpen, setCommentOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoaded, setCommentsLoaded] = useState(false);
@@ -214,7 +215,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
                 type="button"
               >
                 <MessageCircle size={18} />
-                {story.comments_count ?? 0}
+                {localCommentCount}
               </button>
               <FollowButton compact storyId={story.id} />
             </div>
@@ -236,12 +237,12 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
                     <p className="mt-1 text-sm font-medium leading-6 text-[#4b4b47]">{c.body}</p>
                   </div>
                 ))}
-                {(story.comments_count ?? 0) > 3 && (
+                {localCommentCount > 3 && (
                   <Link
                     href={`/story/${story.id}`}
                     className="text-center text-xs font-medium text-[#787775] underline underline-offset-2"
                   >
-                    see all {story.comments_count} comments →
+                    see all {localCommentCount} comments →
                   </Link>
                 )}
               </>
@@ -251,6 +252,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
                 setCommentOpen(false);
                 setCommentsLoaded(false);
               }}
+              onCommentAdded={() => setLocalCommentCount((c) => c + 1)}
               storyId={story.id}
             />
           </div>

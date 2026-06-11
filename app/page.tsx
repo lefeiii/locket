@@ -9,27 +9,30 @@ import { sampleStories } from "@/lib/sample-data";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
 
+const PINNED_STORY_ID = "a8113f77-d500-468f-b360-e32beb0aba2e";
+
 async function getStories(): Promise<Story[]> {
   if (!supabase) {
     return [...sampleStories];
   }
 
-  const { data, error } = await supabase
-    .from("stories")
-    .select("*")
-    .eq("is_hidden", false)
-    .order("created_at", { ascending: false })
-    .limit(20);
+  const [pinnedRes, feedRes] = await Promise.all([
+    supabase.from("stories").select("*").eq("id", PINNED_STORY_ID).maybeSingle(),
+    supabase
+      .from("stories")
+      .select("*")
+      .eq("is_hidden", false)
+      .neq("id", PINNED_STORY_ID)
+      .order("created_at", { ascending: false })
+      .limit(19),
+  ]);
 
-  if (error) {
-    // On DB error return empty — don't show fake sample data to real users
-    return [];
+  if (feedRes.error) return [];
+  const feed = (feedRes.data ?? []) as Story[];
+  if (pinnedRes.data && !pinnedRes.data.is_hidden) {
+    return [pinnedRes.data as Story, ...feed];
   }
-  if (!data?.length) {
-    return [];
-  }
-
-  return data as Story[];
+  return feed;
 }
 
 function filterStories(stories: Story[], activeFilter: string) {

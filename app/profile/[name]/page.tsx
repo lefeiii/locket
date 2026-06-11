@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, EyeOff, GitBranch, Instagram, Trash2 } from "lucide-react";
+import { ArrowLeft, EyeOff, GitBranch, Instagram, LogOut, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -59,10 +59,12 @@ export default function ProfilePage() {
               const storyMap: Record<string, string> = {};
               (data ?? []).forEach((s: {id: string; title: string}) => { storyMap[s.id] = s.title; });
               setRecentComments(
-                (commentData ?? []).map((c: {id: string; story_id: string; anonymous_name: string; body: string; created_at: string}) => ({
-                  ...c,
-                  story_title: storyMap[c.story_id] ?? "Unknown story",
-                }))
+                (commentData ?? [])
+                  .filter((c: {anonymous_name: string}) => c.anonymous_name !== name)
+                  .map((c: {id: string; story_id: string; anonymous_name: string; body: string; created_at: string}) => ({
+                    ...c,
+                    story_title: storyMap[c.story_id] ?? "Unknown story",
+                  }))
               );
             });
         }
@@ -74,7 +76,7 @@ export default function ProfilePage() {
     if (!client || !currentUserId) return;
     if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setSaveMsg("letters, numbers, . _ - only (2-30 chars)"); return; }
     setSaving(true);
-    const { data: taken } = await client.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).single();
+    const { data: taken } = await client.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).maybeSingle();
     if (taken) { setSaveMsg("username already taken"); setSaving(false); return; }
     const { error } = await client.from("users").update({ username: newUsername }).eq("id", currentUserId);
     if (error) {
@@ -100,7 +102,6 @@ export default function ProfilePage() {
 
   async function handleHide(storyId: string) {
     const client = supabase;
-    if (!client) return;
     if (!client || !confirm("Hide this story from your profile?")) return;
     await client.from("stories").update({ is_hidden: true }).eq("id", storyId);
     setStories(prev => prev.filter(s => s.id !== storyId));
@@ -108,10 +109,16 @@ export default function ProfilePage() {
 
   async function handleDelete(storyId: string) {
     const client = supabase;
-    if (!client) return;
     if (!client || !confirm("Delete this story permanently? This cannot be undone.")) return;
     await client.from("stories").delete().eq("id", storyId);
     setStories(prev => prev.filter(s => s.id !== storyId));
+  }
+
+  async function handleLogout() {
+    const client = supabase;
+    if (!client) return;
+    await client.auth.signOut();
+    router.push("/");
   }
 
   async function handleDeleteAccount() {
@@ -246,6 +253,10 @@ export default function ProfilePage() {
               className="flex items-center gap-3 rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-sm font-medium text-[#4b4b47]">
               <Instagram size={18} /> connect with the founder @lefeiii
             </a>
+            <button onClick={handleLogout}
+              className="flex items-center gap-3 w-full rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-left text-sm font-medium text-[#4b4b47]">
+              <LogOut size={18} /> log out
+            </button>
             <button onClick={handleDeleteAccount}
               className="w-full rounded-3xl border border-red-200 bg-red-50 p-4 text-left text-sm font-medium text-red-500">
               delete my account

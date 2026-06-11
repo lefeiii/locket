@@ -75,20 +75,40 @@ export default function ProfilePage() {
     const client = supabase;
     if (!client || !currentUserId) return;
     if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setSaveMsg("letters, numbers, . _ - only (2-30 chars)"); return; }
+    if (newUsername === name) { setEditingUsername(false); return; } // no-op if unchanged
     setSaving(true);
+
+    // Check availability
     const { data: taken } = await client.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).maybeSingle();
     if (taken) { setSaveMsg("username already taken"); setSaving(false); return; }
+
+    // Update username in users table
     const { error } = await client.from("users").update({ username: newUsername }).eq("id", currentUserId);
-    if (error) {
-      setSaveMsg("could not update username");
-    } else {
-      // Also update anonymous_name on all their stories so they stay in sync
-      await client.from("stories").update({ anonymous_name: newUsername }).eq("anonymous_name", name);
-      setSaveMsg("username updated!");
-      setEditingUsername(false);
-      router.push(`/profile/${encodeURIComponent(newUsername)}`);
-    }
+    if (error) { setSaveMsg("could not update username"); setSaving(false); return; }
+
+    // Update anonymous_name on all stories — wait for completion before redirecting
+    const { error: storiesError } = await client
+      .from("stories")
+      .update({ anonymous_name: newUsername })
+      .eq("anonymous_name", name);
+    if (storiesError) { setSaveMsg("username updated but some stories may not have updated"); setSaving(false); return; }
+
+    // Update anonymous_name on all comments too
+    await client.from("comments").update({ anonymous_name: newUsername }).eq("anonymous_name", name);
+
+    // Update local state so the page reflects new name immediately
+    setCurrentUsername(newUsername);
+    setStories(prev => prev.map(s => ({ ...s, anonymous_name: newUsername })));
+    setSaveMsg("username updated!");
+    setEditingUsername(false);
     setSaving(false);
+
+    // Small delay so user sees the success message before URL changes
+    const redirectTimer = setTimeout(() => {
+      router.push(`/profile/${encodeURIComponent(newUsername)}`);
+    }, 800);
+    // Store timer so it can be cleared if component unmounts
+    return () => clearTimeout(redirectTimer);
   }
 
   async function handleSaveBio() {
@@ -150,7 +170,7 @@ export default function ProfilePage() {
                   <input value={newUsername} onChange={e => setNewUsername(e.target.value)} maxLength={30}
                     className="flex-1 rounded-xl border border-[#d8d3ce] px-3 py-1 text-sm font-medium text-[#4b4b47] outline-none focus:border-[#f8c0c8]" />
                   <button onClick={handleSaveUsername} disabled={saving} className="shrink-0 rounded-xl bg-[#f8c0c8] px-3 py-1 text-xs font-medium text-[#4b4b47]">{saving ? "..." : "save"}</button>
-                  <button onClick={() => setEditingUsername(false)} className="text-xs text-[#787775]">cancel</button>
+                  <button onClick={() => { setEditingUsername(false); setNewUsername(name); }} className="text-xs text-[#787775]">cancel</button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">

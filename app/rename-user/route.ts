@@ -28,9 +28,12 @@ export async function POST(req: NextRequest) {
     if (authError || !user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
     // Use service role to bypass RLS for bulk updates
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+    }
     const serviceClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
     // Check new username isn't already taken
@@ -63,12 +66,17 @@ export async function POST(req: NextRequest) {
     if (userError) return NextResponse.json({ error: userError.message }, { status: 500 });
 
     // Update all stories
-    await serviceClient
+    const { error: storiesError } = await serviceClient
       .from("stories")
       .update({ anonymous_name: newUsername })
       .eq("anonymous_name", oldUsername);
+    if (storiesError) {
+      // Attempt to roll back username change
+      await serviceClient.from("users").update({ username: oldUsername }).eq("id", user.id);
+      return NextResponse.json({ error: "Could not update stories — username change rolled back" }, { status: 500 });
+    }
 
-    // Update all comments
+    // Update all comments (non-critical — don't roll back if this fails)
     await serviceClient
       .from("comments")
       .update({ anonymous_name: newUsername })

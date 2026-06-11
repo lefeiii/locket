@@ -25,7 +25,8 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [recentComments, setRecentComments] = useState<{id: string; story_id: string; story_title: string; anonymous_name: string; body: string; created_at: string}[]>([]);
 
-  const isOwn = currentUsername === name;
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const isOwn = isOwnProfile;
 
   useEffect(() => {
     const client = supabase;
@@ -35,7 +36,7 @@ export default function ProfilePage() {
       setCurrentUserId(data.user.id);
       client.from("users").select("username, bio").eq("id", data.user.id).single()
         .then(({ data: profile }) => {
-          if (profile) { setCurrentUsername(profile.username); if (profile.username === name) setBio(profile.bio ?? ""); }
+          if (profile) { setCurrentUsername(profile.username); if (profile.username === name) { setBio(profile.bio ?? ""); setIsOwnProfile(true); } }
         });
     });
 
@@ -60,7 +61,7 @@ export default function ProfilePage() {
               (data ?? []).forEach((s: {id: string; title: string}) => { storyMap[s.id] = s.title; });
               setRecentComments(
                 (commentData ?? [])
-                  .filter((c: {anonymous_name: string}) => c.anonymous_name !== name)
+                  .filter((c: {anonymous_name: string}) => c.anonymous_name !== (currentUsername ?? name))
                   .map((c: {id: string; story_id: string; anonymous_name: string; body: string; created_at: string}) => ({
                     ...c,
                     story_title: storyMap[c.story_id] ?? "Unknown story",
@@ -75,40 +76,45 @@ export default function ProfilePage() {
     const client = supabase;
     if (!client || !currentUserId) return;
     if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setSaveMsg("letters, numbers, . _ - only (2-30 chars)"); return; }
-    if (newUsername === name) { setEditingUsername(false); return; } // no-op if unchanged
+    if (newUsername === (currentUsername ?? name)) { setEditingUsername(false); return; }
     setSaving(true);
 
-    // Check availability
+    // Check availability first
     const { data: taken } = await client.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).maybeSingle();
     if (taken) { setSaveMsg("username already taken"); setSaving(false); return; }
 
-    // Update username in users table
-    const { error } = await client.from("users").update({ username: newUsername }).eq("id", currentUserId);
-    if (error) { setSaveMsg("could not update username"); setSaving(false); return; }
+    // Get session token for service role API call
+    const { data: { session } } = await client.auth.getSession();
+    if (!session) { setSaveMsg("not logged in"); setSaving(false); return; }
 
-    // Update anonymous_name on all stories — wait for completion before redirecting
-    const { error: storiesError } = await client
-      .from("stories")
-      .update({ anonymous_name: newUsername })
-      .eq("anonymous_name", name);
-    if (storiesError) { setSaveMsg("username updated but some stories may not have updated"); setSaving(false); return; }
+    // Use server-side API route so RLS can't block the stories/comments update
+    const res = await fetch("/api/rename-user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ oldUsername: currentUsername ?? name, newUsername }),
+    });
 
-    // Update anonymous_name on all comments too
-    await client.from("comments").update({ anonymous_name: newUsername }).eq("anonymous_name", name);
+    const json = await res.json();
+    if (!res.ok) {
+      setSaveMsg(json.error ?? "could not update username");
+      setSaving(false);
+      return;
+    }
 
-    // Update local state so the page reflects new name immediately
+    // Update local state immediately — NO redirect, stay on page
     setCurrentUsername(newUsername);
+    setIsOwnProfile(true);
     setStories(prev => prev.map(s => ({ ...s, anonymous_name: newUsername })));
-    setSaveMsg("username updated!");
+    setSaveMsg("username updated! ✓");
     setEditingUsername(false);
     setSaving(false);
 
-    // Small delay so user sees the success message before URL changes
-    const redirectTimer = setTimeout(() => {
-      router.push(`/profile/${encodeURIComponent(newUsername)}`);
-    }, 800);
-    // Store timer so it can be cleared if component unmounts
-    return () => clearTimeout(redirectTimer);
+    // Silently update the URL without triggering a full navigation/re-fetch
+    window.history.replaceState(null, "", `/profile/${encodeURIComponent(newUsername)}`);
+    setTimeout(() => setSaveMsg(""), 3000);
   }
 
   async function handleSaveBio() {
@@ -162,7 +168,7 @@ export default function ProfilePage() {
           {/* Avatar + username */}
           <div className="flex items-center gap-4 mb-4">
             <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl bg-[#f8c0c8] text-2xl font-medium text-[#4b4b47] select-none">
-              {name.slice(0, 1).toUpperCase()}
+              {(currentUsername ?? name).slice(0, 1).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               {isOwn && editingUsername ? (
@@ -170,11 +176,11 @@ export default function ProfilePage() {
                   <input value={newUsername} onChange={e => setNewUsername(e.target.value)} maxLength={30}
                     className="flex-1 rounded-xl border border-[#d8d3ce] px-3 py-1 text-sm font-medium text-[#4b4b47] outline-none focus:border-[#f8c0c8]" />
                   <button onClick={handleSaveUsername} disabled={saving} className="shrink-0 rounded-xl bg-[#f8c0c8] px-3 py-1 text-xs font-medium text-[#4b4b47]">{saving ? "..." : "save"}</button>
-                  <button onClick={() => { setEditingUsername(false); setNewUsername(name); }} className="text-xs text-[#787775]">cancel</button>
+                  <button onClick={() => { setEditingUsername(false); setNewUsername(currentUsername ?? name); }} className="text-xs text-[#787775]">cancel</button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-medium text-[#4b4b47] truncate">@{name}</h1>
+                  <h1 className="text-2xl font-medium text-[#4b4b47] truncate">@{currentUsername ?? name}</h1>
                   {isOwn && <button onClick={() => setEditingUsername(true)} className="shrink-0 text-xs text-[#787775] underline">edit</button>}
                 </div>
               )}

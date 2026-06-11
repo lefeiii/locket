@@ -20,6 +20,8 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("");
   const [editingUsername, setEditingUsername] = useState(false);
   const [newUsername, setNewUsername] = useState(name);
+  // Sync newUsername input when currentUsername loads from DB
+  useEffect(() => { if (currentUsername) setNewUsername(currentUsername); }, [currentUsername]);
   const [editingBio, setEditingBio] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [saving, setSaving] = useState(false);
@@ -88,16 +90,34 @@ export default function ProfilePage() {
     if (!session) { setSaveMsg("not logged in"); setSaving(false); return; }
 
     // Use server-side API route so RLS can't block the stories/comments update
-    const res = await fetch("/api/rename-user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({ oldUsername: currentUsername ?? name, newUsername }),
-    });
+    let res: Response;
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      res = await fetch("/api/rename-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ oldUsername: currentUsername ?? name, newUsername }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+    } catch {
+      setSaveMsg("request timed out — please try again");
+      setSaving(false);
+      return;
+    }
 
-    const json = await res.json();
+    let json: { error?: string; success?: boolean };
+    try {
+      json = await res.json();
+    } catch {
+      setSaveMsg("unexpected server response — please try again");
+      setSaving(false);
+      return;
+    }
     if (!res.ok) {
       setSaveMsg(json.error ?? "could not update username");
       setSaving(false);

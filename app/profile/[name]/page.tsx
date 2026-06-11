@@ -20,15 +20,20 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("");
   const [editingUsername, setEditingUsername] = useState(false);
   const [newUsername, setNewUsername] = useState(name);
-  // Sync newUsername input when currentUsername loads from DB
-  useEffect(() => { if (currentUsername) setNewUsername(currentUsername); }, [currentUsername]);
   const [editingBio, setEditingBio] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
+  const [saveMsgIsError, setSaveMsgIsError] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  function setError(msg: string) { setSaveMsg(msg); setSaveMsgIsError(true); }
+  function setSuccess(msg: string) { setSaveMsg(msg); setSaveMsgIsError(false); }
   const [recentComments, setRecentComments] = useState<{id: string; story_id: string; story_title: string; anonymous_name: string; body: string; created_at: string}[]>([]);
 
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const isOwn = isOwnProfile;
+
+  // Sync newUsername input when currentUsername loads from DB
+  useEffect(() => { if (currentUsername) setNewUsername(currentUsername); }, [currentUsername]);
 
   useEffect(() => {
     const client = supabase;
@@ -77,17 +82,17 @@ export default function ProfilePage() {
   async function handleSaveUsername() {
     const client = supabase;
     if (!client || !currentUserId) return;
-    if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setSaveMsg("letters, numbers, . _ - only (2-30 chars)"); return; }
+    if (!/^[a-zA-Z0-9._-]{2,30}$/.test(newUsername)) { setError("letters, numbers, . _ - only (2-30 chars)"); return; }
     if (newUsername === (currentUsername ?? name)) { setEditingUsername(false); return; }
     setSaving(true);
 
     // Check availability first
     const { data: taken } = await client.from("users").select("id").eq("username", newUsername).neq("id", currentUserId).maybeSingle();
-    if (taken) { setSaveMsg("username already taken"); setSaving(false); return; }
+    if (taken) { setError("username already taken"); setSaving(false); return; }
 
     // Get session token for service role API call
     const { data: { session } } = await client.auth.getSession();
-    if (!session) { setSaveMsg("not logged in"); setSaving(false); return; }
+    if (!session) { setError("not logged in"); setSaving(false); return; }
 
     // Use server-side API route so RLS can't block the stories/comments update
     let res: Response;
@@ -105,7 +110,7 @@ export default function ProfilePage() {
       });
       clearTimeout(timeout);
     } catch {
-      setSaveMsg("request timed out — please try again");
+      setError("request timed out — please try again");
       setSaving(false);
       return;
     }
@@ -114,12 +119,12 @@ export default function ProfilePage() {
     try {
       json = await res.json();
     } catch {
-      setSaveMsg("unexpected server response — please try again");
+      setError("unexpected server response — please try again");
       setSaving(false);
       return;
     }
     if (!res.ok) {
-      setSaveMsg(json.error ?? "could not update username");
+      setError(json.error ?? "could not update username");
       setSaving(false);
       return;
     }
@@ -128,7 +133,7 @@ export default function ProfilePage() {
     setCurrentUsername(newUsername);
     setIsOwnProfile(true);
     setStories(prev => prev.map(s => ({ ...s, anonymous_name: newUsername })));
-    setSaveMsg("username updated! ✓");
+    setSuccess("username updated! ✓");
     setEditingUsername(false);
     setSaving(false);
 
@@ -142,7 +147,7 @@ export default function ProfilePage() {
     if (!client || !currentUserId) return;
     setSaving(true);
     const { error } = await client.from("users").update({ bio }).eq("id", currentUserId);
-    setSaveMsg(error ? "could not update bio" : "bio saved!");
+    if (error) { setError("could not update bio"); } else { setSuccess("bio saved!"); }
     setEditingBio(false); setSaving(false);
   }
 
@@ -204,7 +209,7 @@ export default function ProfilePage() {
                   {isOwn && <button onClick={() => setEditingUsername(true)} className="shrink-0 text-xs text-[#787775] underline">edit</button>}
                 </div>
               )}
-              {saveMsg && <p className="text-xs text-green-600 mt-1">{saveMsg}</p>}
+              {saveMsg && <p className={`text-xs mt-1 ${saveMsgIsError ? "text-red-400" : "text-green-600"}`}>{saveMsg}</p>}
             </div>
           </div>
 

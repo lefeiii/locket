@@ -3,6 +3,11 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: NextRequest) {
   try {
+    // Guard all required env vars upfront
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return NextResponse.json({ error: "Server misconfigured (missing Supabase URL/key)" }, { status: 500 });
+    }
+
     const { oldUsername, newUsername } = await req.json();
 
     if (!oldUsername || !newUsername) {

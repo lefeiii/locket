@@ -9,10 +9,11 @@ export function AppNav() {
   const [profileHref, setProfileHref] = useState("/login");
 
   useEffect(() => {
-    if (!supabase) return;
-    supabase.auth.getUser().then(({ data }) => {
+    const client = supabase;
+    if (!client) return;
+    client.auth.getUser().then(({ data }) => {
       if (!data.user) { setProfileHref("/login"); return; }
-      supabase!.from("users").select("username").eq("id", data.user.id).single()
+      client.from("users").select("username").eq("id", data.user.id).maybeSingle()
         .then(({ data: profile }) => {
           setProfileHref(profile?.username ? `/profile/${encodeURIComponent(profile.username)}` : "/login");
         });
@@ -61,7 +62,7 @@ export function BrandBar() {
           </span>
           <span>
             <span className="block text-lg font-medium leading-none text-[#4b4b47]">Locket</span>
-            <span className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-[#787775]">Anonymous stories</span>
+            <span className="block text-[0.65rem] font-medium tracking-[0.08em] text-[#787775] italic truncate max-w-[180px]">Some things aren't meant to be spoken out loud</span>
           </span>
         </Link>
         <div className="flex items-center gap-2">

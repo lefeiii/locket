@@ -62,7 +62,7 @@ export function BrandBar() {
           </span>
           <span>
             <span className="block text-lg font-medium leading-none text-[#4b4b47]">Locket</span>
-            <span className="block text-[0.65rem] font-medium tracking-[0.08em] text-[#787775] italic truncate max-w-[180px]">Some things aren't meant to be spoken out loud</span>
+            <span className="block text-[0.68rem] font-medium tracking-[0.15em] text-[#787775] italic">an absolute trainwreck</span>
           </span>
         </Link>
         <div className="flex items-center gap-2">

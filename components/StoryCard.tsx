@@ -27,9 +27,11 @@ const categoryStyles: Record<Story["category"], string> = {
 type StoryCardProps = {
   story: Story;
   immersive?: boolean;
+  isGuest?: boolean;
+  isPinned?: boolean;
 };
 
-export function StoryCard({ story, immersive = false }: StoryCardProps) {
+export function StoryCard({ story, immersive = false, isGuest = false, isPinned = false }: StoryCardProps) {
   const [reactionState, setReactionState] = useState<{
     counts: Story["reactions"];
     userReaction: ReactionKey | null;
@@ -87,6 +89,7 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
   const storyContext = story.update_label ?? null;
 
   function react(label: ReactionKey) {
+    if (isGuest) { window.location.href = "/login"; return; }
     setReactionState((prev) => {
       const alreadyReacted = prev.userReaction === label;
       const next = { ...prev.counts };
@@ -177,6 +180,15 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
               {story.cliffhanger}
             </p>
           ) : null}
+          {isGuest && isPinned && (
+            <Link
+              href="/login"
+              className="mt-4 flex items-center justify-between rounded-3xl bg-[#4b4b47] px-5 py-4 text-[#f8f8f6]"
+            >
+              <span className="text-sm font-medium">see OP&apos;s update →</span>
+              <span className="text-xs text-[#d8d3ce]">log in to keep reading</span>
+            </Link>
+          )}
         </div>
 
         <div className="mt-7">
@@ -184,7 +196,9 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
             {reactionLabels.map((label) => (
               <button
                 className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium shadow-sm active:scale-95 ${
-                  userReaction === label
+                  isGuest
+                    ? "border-[#d8d3ce] bg-[#f8f8f6] text-[#787775] opacity-60"
+                    : userReaction === label
                     ? "border-[#f8c0c8] bg-[#f8c0c8] text-[#4b4b47]"
                     : "border-[#d8d3ce] bg-[#f8f8f6] text-[#4b4b47]"
                 }`}
@@ -192,33 +206,42 @@ export function StoryCard({ story, immersive = false }: StoryCardProps) {
                 onClick={() => react(label)}
                 type="button"
               >
-                {label} <span className={userReaction === label ? "text-[#4b4b47]" : "text-[#787775]"}>{counts[label]}</span>
+                {label} <span className="text-[#787775]">{counts[label]}</span>
               </button>
             ))}
           </div>
 
           <div className="mt-4 flex items-center gap-3 text-[#4b4b47]">
-            <div className="flex items-center gap-2">
-              <button
-                className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
-                onClick={() => {
-                  setCommentOpen((v) => {
-                    const next = !v;
-                    if (next) {
-                      setTimeout(() => {
-                        commentRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                      }, 50);
-                    }
-                    return next;
-                  });
-                }}
-                type="button"
+            {isGuest ? (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 rounded-full bg-[#f8c0c8] px-4 py-2 text-sm font-medium text-[#4b4b47]"
               >
-                <MessageCircle size={18} />
-                {localCommentCount}
-              </button>
-              <FollowButton compact storyId={story.id} />
-            </div>
+                log in to react &amp; comment 👀
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
+                  onClick={() => {
+                    setCommentOpen((v) => {
+                      const next = !v;
+                      if (next) {
+                        setTimeout(() => {
+                          commentRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                        }, 50);
+                      }
+                      return next;
+                    });
+                  }}
+                  type="button"
+                >
+                  <MessageCircle size={18} />
+                  {localCommentCount}
+                </button>
+                <FollowButton compact storyId={story.id} />
+              </div>
+            )}
           </div>
         </div>
 

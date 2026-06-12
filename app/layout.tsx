@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="pb-24">
   {children}
   <footer className="text-center py-6 text-sm text-gray-400">
     <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>

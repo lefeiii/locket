@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Server misconfigured (missing Supabase URL/key)" }, { status: 500 });
     }
 
-    const { oldUsername, newUsername } = await req.json();
+    const body = await req.json();
+    const { oldUsername, newUsername } = body;
+    console.log("[rename-user] request:", { oldUsername, newUsername: newUsername?.slice(0, 3) + "***" });
 
     if (!oldUsername || !newUsername) {
       return NextResponse.json({ error: "Missing username fields" }, { status: 400 });
@@ -30,6 +32,7 @@ export async function POST(req: NextRequest) {
     if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
     const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
+    console.log("[rename-user] auth:", user?.id ? "ok" : "failed", authError?.message ?? "");
     if (authError || !user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
     // Use service role to bypass RLS for bulk updates
@@ -88,7 +91,9 @@ export async function POST(req: NextRequest) {
       .eq("anonymous_name", oldUsername);
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[rename-user]", message);
+    return NextResponse.json({ error: `Server error: ${message}` }, { status: 500 });
   }
 }

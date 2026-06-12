@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { signUp } from "@/lib/auth";
+import { Onboarding } from "@/components/Onboarding";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const usernameValid = /^[a-zA-Z0-9._-]{2,30}$/.test(username);
 
@@ -24,13 +26,17 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signUp(email, password, username);
-      router.push("/story/a8113f77-d500-468f-b360-e32beb0aba2e");
+      setShowOnboarding(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Signup failed");
     } finally { setLoading(false); }
   }
 
   return (
+    <>
+    {showOnboarding && (
+      <Onboarding onDone={() => router.push("/story/a8113f77-d500-468f-b360-e32beb0aba2e")} />
+    )}
     <main className="min-h-screen flex items-center justify-center bg-[#f5f3f0] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
@@ -88,5 +94,6 @@ export default function SignupPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

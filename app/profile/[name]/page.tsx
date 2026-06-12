@@ -154,15 +154,25 @@ export default function ProfilePage() {
   async function handleHide(storyId: string) {
     const client = supabase;
     if (!client || !confirm("Hide this story from your profile?")) return;
-    await client.from("stories").update({ is_hidden: true }).eq("id", storyId);
+    const { error } = await client.from("stories").update({ is_hidden: true }).eq("id", storyId);
+    if (error) {
+      setError("could not hide story — try again");
+      return;
+    }
     setStories(prev => prev.filter(s => s.id !== storyId));
+    setRecentComments(prev => prev.filter(c => c.story_id !== storyId));
   }
 
   async function handleDelete(storyId: string) {
     const client = supabase;
     if (!client || !confirm("Delete this story permanently? This cannot be undone.")) return;
-    await client.from("stories").delete().eq("id", storyId);
+    const { error } = await client.from("stories").delete().eq("id", storyId);
+    if (error) {
+      setError("could not delete story — try again");
+      return;
+    }
     setStories(prev => prev.filter(s => s.id !== storyId));
+    setRecentComments(prev => prev.filter(c => c.story_id !== storyId));
   }
 
   async function handleLogout() {

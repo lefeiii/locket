@@ -24,7 +24,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signUp(email, password, username);
-      router.push("/");
+      router.push("/story/a8113f77-d500-468f-b360-e32beb0aba2e");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Signup failed");
     } finally { setLoading(false); }
@@ -35,7 +35,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-medium text-[#4b4b47]">locket</h1>
-          <p className="mt-1 text-sm font-medium text-[#787775] uppercase tracking-widest">anonymous stories</p>
+          <p className="mt-1 text-sm font-medium text-[#787775] italic tracking-wide">an absolute trainwreck</p>
         </div>
         <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-6 shadow-sm">
           <h2 className="text-xl font-medium text-[#4b4b47] mb-1">create your account</h2>
@@ -50,7 +50,9 @@ export default function SignupPage() {
                 placeholder="DramaBunny"
                 maxLength={30}
               />
-              <p className="mt-1 text-xs text-[#787775]">letters, numbers, . _ - only · 2–30 chars</p>
+              <p className={`mt-1 text-xs ${username.length > 0 && !usernameValid ? "text-red-400" : "text-[#787775]"}`}>
+                letters, numbers, . _ - only · 2–30 chars
+              </p>
             </div>
             <div>
               <label className="text-xs font-medium uppercase tracking-widest text-[#787775] block mb-1">email</label>
@@ -73,7 +75,7 @@ export default function SignupPage() {
             </div>
             {error && <p className="text-xs font-medium text-red-500 text-center">{error}</p>}
             <button
-              type="submit" disabled={loading}
+              type="submit" disabled={loading || (username.length > 0 && !usernameValid)}
               className="w-full rounded-2xl bg-[#f8c0c8] py-3 text-sm font-medium text-[#4b4b47] disabled:opacity-60"
             >
               {loading ? "creating account..." : "create account"}

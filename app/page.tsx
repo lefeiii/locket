@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowDown, PenLine } from "lucide-react";
 import { AppNav, BrandBar } from "@/components/AppNav";
 import { FeedFilters } from "@/components/FeedFilters";
 import { StorySearch } from "@/components/StorySearch";
@@ -54,35 +52,6 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
   return (
     <main>
       <BrandBar />
-
-      <section className="mx-auto max-w-lg px-4 pb-5 pt-5">
-        <div className="rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-6 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#787775]">Locket</p>
-          <h1 className="mt-3 text-4xl font-medium leading-tight text-[#4b4b47]">
-            Read the drama. Post the update. Stay anonymous.
-          </h1>
-          <p className="mt-4 text-sm font-medium leading-6 text-[#4b4b47]">
-            Follow recurring anonymous characters, binge messy arcs, and get pulled back when the next update drops.
-            Fresh drama at the top — always.
-          </p>
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <a
-              className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#787775] px-4 text-sm font-medium text-[#f8f8f6]"
-              href="#feed"
-            >
-              <ArrowDown size={18} />
-              Start Reading
-            </a>
-            <Link
-              className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#f8c0c8] px-4 text-sm font-medium text-[#4b4b47]"
-              href="/create"
-            >
-              <PenLine size={18} />
-              Post Your Story
-            </Link>
-          </div>
-        </div>
-      </section>
 
       <FeedFilters active={activeFilter} />
       <StorySearch />

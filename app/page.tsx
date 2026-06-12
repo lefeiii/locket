@@ -2,6 +2,7 @@ import { AppNav, BrandBar } from "@/components/AppNav";
 import { FeedFilters } from "@/components/FeedFilters";
 import { StorySearch } from "@/components/StorySearch";
 import { FollowingFeed } from "@/components/FollowingFeed";
+import { GuestGate } from "@/components/GuestGate";
 import { StoryCard } from "@/components/StoryCard";
 import { sampleStories } from "@/lib/sample-data";
 import { supabase } from "@/lib/supabase";
@@ -46,34 +47,23 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
   const params = await searchParams;
   const feedFilters = ["For You", "Following", "Updates"];
   const activeFilter = feedFilters.includes(params?.filter ?? "") ? params?.filter ?? "For You" : "For You";
+
+  // Always fetch all stories server-side — guest detection handled client-side in GuestGate
   const stories = await getStories();
+  const pinnedStory = stories.find(s => s.id === PINNED_STORY_ID) ?? null;
   const visibleStories = filterStories(stories, activeFilter);
 
   return (
     <main>
       <BrandBar />
 
-      <FeedFilters active={activeFilter} />
-      <StorySearch />
-
-      <section
-        className="mx-auto flex max-w-lg flex-col gap-5 px-4 pb-28"
-        id="feed"
-      >
-        {activeFilter === "Following" ? (
-          <FollowingFeed allStories={stories} />
-        ) : visibleStories.length === 0 ? (
-          <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center shadow-sm">
-            <p className="text-2xl">📭</p>
-            <p className="mt-3 text-base font-medium text-[#4b4b47]">Nothing here yet.</p>
-            <p className="mt-1 text-sm text-[#787775]">Check back soon — the drama is always developing.</p>
-          </div>
-        ) : (
-          visibleStories.map((story) => (
-            <StoryCard key={story.id} story={story} />
-          ))
-        )}
-      </section>
+      <GuestGate
+        activeFilter={activeFilter}
+        allStories={stories}
+        pinnedStory={pinnedStory}
+        pinnedStoryId={PINNED_STORY_ID}
+        visibleStories={visibleStories}
+      />
 
       <AppNav />
     </main>

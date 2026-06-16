@@ -88,6 +88,10 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
   const hasActivePoll = story.has_active_poll ?? false;
   const storyContext = story.update_label ?? null;
 
+ // ── PATCH: replace the react() function in StoryCard.tsx ─────────────────────
+// Find the existing react() function and replace it with this version.
+// This adds a notification to the story owner when someone reacts.
+
   function react(label: ReactionKey) {
     if (isGuest) { window.location.href = "/login"; return; }
     setReactionState((prev) => {
@@ -101,15 +105,32 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
         }
         next[label] = (next[label] ?? 0) + 1;
       }
-      // Persist to Supabase — fire and forget
+
       const client = supabase;
       if (client && !story.id.startsWith("sample-")) {
-        client
-          .from("stories")
-          .update({ reactions: next })
-          .eq("id", story.id)
-          .then(() => {});
+        // Persist reaction count
+        client.from("stories").update({ reactions: next }).eq("id", story.id).then(() => {});
+
+        // Only notify when adding a reaction (not removing)
+        if (!alreadyReacted) {
+          // Get current user's username then notify story owner
+          client.auth.getUser().then(({ data }) => {
+            const uid = data?.user?.id;
+            if (!uid) return;
+            client.from("users").select("username").eq("id", uid).single().then(({ data: profile }) => {
+              const actorName = profile?.username;
+              if (!actorName || actorName === story.anonymous_name) return; // don't notify yourself
+              client.from("notifications").insert({
+                recipient_name: story.anonymous_name,
+                actor_name: actorName,
+                story_id: story.id,
+                message: `@${actorName} reacted "${label}" to your story`,
+              }).then(() => {});
+            });
+          });
+        }
       }
+
       return { counts: next, userReaction: alreadyReacted ? null : label };
     });
   }

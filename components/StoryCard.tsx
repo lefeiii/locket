@@ -52,6 +52,19 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
   const [arcLoaded, setArcLoaded] = useState(false);
   const commentRef = useRef<HTMLDivElement>(null);
 
+  // Fetch real comment count on mount
+  useEffect(() => {
+    const client = supabase;
+    if (!client || story.id.startsWith("sample-")) return;
+    client
+      .from("comments")
+      .select("id", { count: "exact", head: true })
+      .eq("story_id", story.id)
+      .then(({ count }) => {
+        if (count !== null) setLocalCommentCount(count);
+      });
+  }, [story.id]);
+
   // Fetch other parts in this arc when story is an update
   useEffect(() => {
     if (!story.story_arc_id || !story.is_update || arcLoaded) return;
@@ -85,54 +98,47 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
         setCommentsLoaded(true);
       });
   }, [commentOpen, commentsLoaded, story.id]);
+
   const hasActivePoll = story.has_active_poll ?? false;
   const storyContext = story.update_label ?? null;
 
- // ── PATCH: replace the react() function in StoryCard.tsx ─────────────────────
-// Find the existing react() function and replace it with this version.
-// This adds a notification to the story owner when someone reacts.
-
   function react(label: ReactionKey) {
     if (isGuest) { window.location.href = "/login"; return; }
-    setReactionState((prev) => {
-      const alreadyReacted = prev.userReaction === label;
-      const next = { ...prev.counts };
-      if (alreadyReacted) {
-        next[label] = Math.max(0, (next[label] ?? 0) - 1);
-      } else {
-        if (prev.userReaction) {
-          next[prev.userReaction] = Math.max(0, (next[prev.userReaction] ?? 0) - 1);
-        }
-        next[label] = (next[label] ?? 0) + 1;
+
+    const alreadyReacted = reactionState.userReaction === label;
+    const next = { ...reactionState.counts };
+    if (alreadyReacted) {
+      next[label] = Math.max(0, (next[label] ?? 0) - 1);
+    } else {
+      if (reactionState.userReaction) {
+        next[reactionState.userReaction] = Math.max(0, (next[reactionState.userReaction] ?? 0) - 1);
       }
+      next[label] = (next[label] ?? 0) + 1;
+    }
 
-      const client = supabase;
-      if (client && !story.id.startsWith("sample-")) {
-        // Persist reaction count
-        client.from("stories").update({ reactions: next }).eq("id", story.id).then(() => {});
+    setReactionState({ counts: next, userReaction: alreadyReacted ? null : label });
 
-        // Only notify when adding a reaction (not removing)
-        if (!alreadyReacted) {
-          // Get current user's username then notify story owner
-          client.auth.getUser().then(({ data }) => {
-            const uid = data?.user?.id;
-            if (!uid) return;
-            client.from("users").select("username").eq("id", uid).single().then(({ data: profile }) => {
-              const actorName = profile?.username;
-              if (!actorName || actorName === story.anonymous_name) return; // don't notify yourself
-              client.from("notifications").insert({
-                recipient_name: story.anonymous_name,
-                actor_name: actorName,
-                story_id: story.id,
-                message: `@${actorName} reacted "${label}" to your story`,
-              }).then(() => {});
-            });
+    const client = supabase;
+    if (client && !story.id.startsWith("sample-")) {
+      client.from("stories").update({ reactions: next }).eq("id", story.id).then(() => {});
+
+      if (!alreadyReacted) {
+        client.auth.getUser().then(({ data }) => {
+          const uid = data?.user?.id;
+          if (!uid) return;
+          client.from("users").select("username").eq("id", uid).single().then(({ data: profile }) => {
+            const actorName = profile?.username;
+            if (!actorName || actorName === story.anonymous_name) return;
+            client.from("notifications").insert({
+              recipient_name: story.anonymous_name,
+              actor_name: actorName,
+              story_id: story.id,
+              message: `@${actorName} reacted "${label}" to your story`,
+            }).then(() => {});
           });
-        }
+        });
       }
-
-      return { counts: next, userReaction: alreadyReacted ? null : label };
-    });
+    }
   }
 
   return (
@@ -268,7 +274,6 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
 
         {commentOpen && (
           <div ref={commentRef} className="mt-3 grid gap-2">
-            {/* Existing comments — latest 3 */}
             {!commentsLoaded ? (
               <p className="px-1 text-xs text-[#787775]">loading comments…</p>
             ) : comments.length === 0 ? (

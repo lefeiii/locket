@@ -11,6 +11,37 @@ type CommentFormProps = {
   onCancelReply?: () => void;
 };
 
+async function insertNotification(
+  recipientName: string,
+  actorName: string,
+  storyId: string,
+  message: string
+) {
+  const client = supabase;
+  if (!client || recipientName === actorName) return;
+  await client.from("notifications").insert({
+    recipient_name: recipientName,
+    actor_name: actorName,
+    story_id: storyId,
+    message,
+  });
+}
+
+async function getStoryOwner(storyId: string): Promise<string | null> {
+  const client = supabase;
+  if (!client) return null;
+  const { data } = await client
+    .from("stories")
+    .select("anonymous_name")
+    .eq("id", storyId)
+    .single();
+  return data?.anonymous_name ?? null;
+}
+
+function truncate(text: string, max = 60) {
+  return text.length > max ? text.slice(0, max) + "…" : text;
+}
+
 export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: CommentFormProps) {
   const [username, setUsername] = useState<string>("");
   const [authLoaded, setAuthLoaded] = useState(false);
@@ -18,7 +49,6 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const router = useRouter();
 
-  // Load the real logged-in username on mount
   useEffect(() => {
     const client = supabase;
     if (!client) { setAuthLoaded(true); return; }
@@ -39,27 +69,44 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
 
   async function submitComment() {
     if (!body.trim() || !username) return;
-
     setStatus("saving");
 
     const client = supabase;
     if (client && !storyId.startsWith("sample-")) {
+      const trimmedBody = body.trim();
       const { error } = await client.from("comments").insert({
         story_id: storyId,
         anonymous_name: username,
-        body: body.trim(),
+        body: trimmedBody,
         reply_to_id: replyToId ?? null,
         reply_to_name: replyToName ?? null,
       });
 
-      if (error) {
-        setStatus("error");
-        return;
+      if (error) { setStatus("error"); return; }
+
+      // Notify story owner
+      const owner = await getStoryOwner(storyId);
+      if (owner) {
+        await insertNotification(
+          owner,
+          username,
+          storyId,
+          `@${username} commented on your story: "${truncate(trimmedBody)}"`
+        );
+      }
+
+      // Notify the person being replied to (only if different from story owner)
+      if (replyToName && replyToName !== username && replyToName !== (owner ?? "")) {
+        await insertNotification(
+          replyToName,
+          username,
+          storyId,
+          `@${username} replied to your comment: "${truncate(trimmedBody)}"`
+        );
       }
 
       setBody("");
       setStatus("saved");
-      // Re-fetch the server component so the new comment shows immediately
       router.refresh();
       setTimeout(() => setStatus("idle"), 3000);
     } else {
@@ -69,7 +116,6 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
 
   return (
     <div className="mt-4 grid gap-2">
-      {/* Show who is commenting — read-only, no anonymous name input */}
       <div className="rounded-2xl bg-[#e1e2e6] px-4 py-3 text-sm font-medium text-[#4b4b47]">
         {username ? (
           <>commenting as <span className="font-semibold">@{username}</span></>
@@ -109,9 +155,7 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
         <p className="text-center text-sm font-medium text-[#4b4b47]">Comment added ✓</p>
       )}
       {status === "error" && (
-        <p className="text-center text-sm font-medium text-red-400">
-          Something went wrong. Try again.
-        </p>
+        <p className="text-center text-sm font-medium text-red-400">Something went wrong. Try again.</p>
       )}
     </div>
   );
@@ -131,7 +175,6 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCom
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    // Always focus the textarea so keyboard pops up immediately
     const focusTimer = setTimeout(() => textareaRef.current?.focus(), 100);
     const client = supabase;
     if (!client) return () => clearTimeout(focusTimer);
@@ -155,12 +198,25 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCom
     setStatus("saving");
     const client = supabase;
     if (client && !storyId.startsWith("sample-")) {
+      const trimmedBody = body.trim();
       const { error } = await client.from("comments").insert({
         story_id: storyId,
         anonymous_name: username,
-        body: body.trim(),
+        body: trimmedBody,
       });
       if (error) { setStatus("error"); return; }
+
+      // Notify story owner
+      const owner = await getStoryOwner(storyId);
+      if (owner) {
+        await insertNotification(
+          owner,
+          username,
+          storyId,
+          `@${username} commented on your story: "${truncate(trimmedBody)}"`
+        );
+      }
+
       setStatus("saved");
       onCommentAdded?.();
       setTimeout(onDone, 1200);

@@ -42,6 +42,7 @@ export default function SignupPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-medium text-[#4b4b47]">locket</h1>
           <p className="mt-1 text-sm font-medium text-[#787775] italic tracking-wide">an absolute trainwreck</p>
+          <p className="mt-2 text-xs font-medium tracking-widest uppercase text-[#787775]">anonymous venting & confessions</p>
         </div>
         <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-6 shadow-sm">
           <h2 className="text-xl font-medium text-[#4b4b47] mb-1">create your account</h2>

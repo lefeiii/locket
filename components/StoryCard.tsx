@@ -65,9 +65,9 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
       });
   }, [story.id]);
 
-  // Fetch other parts in this arc when story is an update
+  // Fetch all parts in this arc whenever story_arc_id exists — not just for updates
   useEffect(() => {
-    if (!story.story_arc_id || !story.is_update || arcLoaded) return;
+    if (!story.story_arc_id || arcLoaded) return;
     const client = supabase;
     if (!client || story.id.startsWith("sample-")) { setArcLoaded(true); return; }
     client
@@ -80,7 +80,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
         setArcParts((data ?? []).filter(p => p.id !== story.id));
         setArcLoaded(true);
       });
-  }, [story.story_arc_id, story.id, story.is_update, arcLoaded]);
+  }, [story.story_arc_id, story.id, arcLoaded]);
 
   // Fetch comments when panel opens
   useEffect(() => {
@@ -101,6 +101,12 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
 
   const hasActivePoll = story.has_active_poll ?? false;
   const storyContext = story.update_label ?? null;
+
+  // Find the next part in the arc (higher part_number than current)
+  const currentPartNumber = story.part_number ?? 1;
+  const nextPart = arcParts
+    .filter(p => (p.part_number ?? 0) > currentPartNumber)
+    .sort((a, b) => (a.part_number ?? 0) - (b.part_number ?? 0))[0] ?? null;
 
   function react(label: ReactionKey) {
     if (isGuest) { window.location.href = "/login"; return; }
@@ -207,7 +213,9 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
               {story.cliffhanger}
             </p>
           ) : null}
-          {isGuest && isPinned && (
+
+          {/* Guest pinned prompt takes priority over next part button */}
+          {isGuest && isPinned ? (
             <Link
               href="/login"
               className="mt-4 flex items-center justify-between rounded-3xl bg-[#4b4b47] px-5 py-4 text-[#f8f8f6]"
@@ -215,7 +223,17 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
               <span className="text-sm font-medium">see OP&apos;s update →</span>
               <span className="text-xs text-[#d8d3ce]">log in to keep reading</span>
             </Link>
-          )}
+          ) : nextPart ? (
+            <Link
+              href={`/story/${nextPart.id}`}
+              className="mt-4 flex items-center justify-between rounded-3xl bg-[#4b4b47] px-5 py-4 text-[#f8f8f6]"
+            >
+              <span className="text-sm font-medium">
+                {nextPart.update_label ?? `Part ${nextPart.part_number ?? "?"}`} is out →
+              </span>
+              <span className="text-xs text-[#d8d3ce]">keep reading</span>
+            </Link>
+          ) : null}
         </div>
 
         <div className="mt-7">

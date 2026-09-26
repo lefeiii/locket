@@ -30,6 +30,8 @@ export type Story = {
   body: string;
   is_update: boolean;
   is_hidden?: boolean;
+  is_private?: boolean;
+  is_diary_only?: boolean;
   previous_story_reference: string | null;
   story_arc_id?: string | null;
   arc_title?: string | null;

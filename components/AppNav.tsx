@@ -1,5 +1,5 @@
 "use client";
-import { Bell, BookOpenText, CirclePlus, Gift, UserRound } from "lucide-react";
+import { Bell, BookOpenText, CirclePlus, UserRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -8,7 +8,8 @@ import { supabase } from "@/lib/supabase";
 type NavItem = {
   href: string;
   label: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon?: React.ComponentType<{ size?: number }>;
+  emoji?: string;
   badge?: number;
 };
 
@@ -25,16 +26,12 @@ export function AppNav() {
         .then(({ data: profile }) => {
           if (!profile?.username) return;
           setProfileHref(`/profile/${encodeURIComponent(profile.username)}`);
-
-          // Fetch unread notification count
           client
             .from("notifications")
             .select("id", { count: "exact", head: true })
             .eq("recipient_name", profile.username)
             .is("read_at", null)
-            .then(({ count }) => {
-              setUnreadCount(count ?? 0);
-            });
+            .then(({ count }) => setUnreadCount(count ?? 0));
         });
     });
   }, []);
@@ -42,7 +39,7 @@ export function AppNav() {
   const items: NavItem[] = [
     { href: "/", label: "Feed", icon: BookOpenText },
     { href: "/create", label: "Post", icon: CirclePlus },
-    { href: "/wrapped", label: "Wrapped", icon: Gift },
+    { href: "/diary", label: "Diary", emoji: "📓" },
     { href: "/notifications", label: "Activity", icon: Bell, badge: unreadCount },
     { href: profileHref, label: "Profile", icon: UserRound },
   ];
@@ -50,14 +47,18 @@ export function AppNav() {
   return (
     <nav className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-full border border-[#d8d3ce] bg-[#f8f8f6] p-2 shadow-lg">
       <div className="grid grid-cols-5 gap-1">
-        {items.map(({ href, label, icon: Icon, badge }) => (
+        {items.map(({ href, label, icon: Icon, emoji, badge }) => (
           <Link
             className="relative flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-[10px] font-medium text-[#4b4b47] transition hover:bg-[#e1e2e6]"
             href={href}
             key={label}
           >
             <div className="relative">
-              <Icon size={18} />
+              {emoji ? (
+                <span className="text-lg leading-none">{emoji}</span>
+              ) : Icon ? (
+                <Icon size={18} />
+              ) : null}
               {badge != null && badge > 0 && (
                 <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full bg-[#f8c0c8] text-[9px] font-bold text-[#4b4b47]">
                   {badge > 9 ? "9+" : badge}

@@ -8,7 +8,7 @@ import { AppNav, BrandBar } from "@/components/AppNav";
 import { categories, emptyReactions } from "@/lib/sample-data";
 import { findSafetyIssues, safetyWarning } from "@/lib/safety";
 import { supabase } from "@/lib/supabase";
-import type { StoryCategory } from "@/lib/types";
+import type { Story, StoryCategory } from "@/lib/types";
 
 const cliffhangerIdeas = [
   "Then things got worse.",
@@ -23,63 +23,79 @@ export default function CreatePage() {
   const [category, setCategory] = useState<StoryCategory>("my crush era");
   const [body, setBody] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
-  const [previousReference, setPreviousReference] = useState("");
+  const [previousStoryId, setPreviousStoryId] = useState("");
+  const [previousStories, setPreviousStories] = useState<Story[]>([]);
+  const [storiesLoading, setStoriesLoading] = useState(true);
+  const [storiesError, setStoriesError] = useState("");
+  const [storiesRetry, setStoriesRetry] = useState(0);
   const [cliffhanger, setCliffhanger] = useState("");
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState(["", ""]);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [arcPartCount, setArcPartCount] = useState(1);
 
   useEffect(() => {
     const client = supabase;
     if (!client) return;
-    client.auth.getUser().then(({ data }) => {
-      if (!data.user) { router.push("/login"); return; }
-      client.from("users").select("username").eq("id", data.user.id).single()
-        .then(({ data: profile }) => {
-          if (profile?.username) setUsername(profile.username);
-          else router.push("/login");
-        });
-    });
-  }, [router]);
+    let cancelled = false;
+    async function loadStories() {
+      try {
+        const { data, error } = await client!.auth.getUser();
+        if (error || !data.user) { router.push("/login"); return; }
+        const userId = data.user.id;
+        const { data: profile, error: profileError } = await client!.from("users")
+          .select("username").eq("id", userId).single();
+        if (profileError || !profile?.username) throw new Error("Could not load your account.");
+        if (cancelled) return;
+        setUsername(profile.username);
+        // Fetch every page, including older stories beyond Supabase's row limit.
+        const ownStories: Story[] = [];
+        for (let offset = 0; ; offset += 200) {
+          const { data: rows, error: storiesLoadError } = await client!.from("stories")
+            .select("*").eq("anonymous_name", profile.username).eq("is_hidden", false)
+            .order("created_at", { ascending: false }).order("id", { ascending: false })
+            .range(offset, offset + 199);
+          if (storiesLoadError) throw new Error("Could not load your previous stories. Please try again.");
+          if (cancelled) return;
+          ownStories.push(...((rows ?? []) as Story[]).filter(story =>
+            (!story.user_id || story.user_id === userId) && !story.is_private && !story.is_diary_only));
+          if ((rows ?? []).length < 200) break;
+        }
+        if (!cancelled) {
+          setPreviousStories(ownStories);
+          setStoriesError("");
+        }
+      } catch (error) {
+        if (!cancelled) setStoriesError(error instanceof Error ? error.message : "Could not load your stories.");
+      } finally {
+        if (!cancelled) setStoriesLoading(false);
+      }
+    }
+    void loadStories();
+    return () => { cancelled = true; };
+  }, [router, storiesRetry]);
 
-  // When user fills in previous story reference, count existing arc parts (debounced)
-  useEffect(() => {
-    if (!isUpdate || !previousReference.trim()) { setArcPartCount(1); return; }
-    const timer = setTimeout(() => {
-      const client = supabase;
-      if (!client) return;
-      const arcId = previousReference.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-      client
-        .from("stories")
-        .select("id", { count: "exact", head: true })
-        .eq("story_arc_id", arcId)
-        .then(({ count }) => setArcPartCount((count ?? 0) + 1));
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [isUpdate, previousReference]);
+  const selectedStory = previousStories.find(story => story.id === previousStoryId);
 
   const cleanedPollOptions = pollOptions.map((o) => o.trim()).filter(Boolean);
   const hasPoll = pollQuestion.trim().length > 0 && cleanedPollOptions.length >= 2;
-  const safetyIssues = useMemo(() => findSafetyIssues(`${title} ${body} ${previousReference}`), [title, body, previousReference]);
+  const safetyIssues = useMemo(() => findSafetyIssues(`${title} ${body}`), [title, body]);
 
   async function submitStory(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (safetyIssues.length > 0 || !username) return;
+    if (isUpdate && (!selectedStory || storiesLoading || storiesError)) {
+      setErrorMsg("Choose one of your previous stories before posting an update.");
+      setStatus("error");
+      return;
+    }
     setStatus("saving");
-    const storyArcId = (previousReference || title).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     const payload = {
       anonymous_name: username,
       title,
       category,
       body,
       is_update: isUpdate,
-      previous_story_reference: isUpdate ? previousReference : null,
-      story_arc_id: storyArcId,
-      arc_title: previousReference || title,
-      part_number: isUpdate ? arcPartCount : 1,
-      update_label: isUpdate ? `Part ${arcPartCount}` : "Part 1",
       cliffhanger: cliffhanger || null,
       is_resolved: false,
       status: isUpdate ? "Update pending" : "Unresolved",
@@ -110,7 +126,7 @@ export default function CreatePage() {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify({ payload, pollQuestion: pollQuestion.trim(), pollOptions: cleanedPollOptions, hasPoll }),
+      body: JSON.stringify({ payload, previousStoryId: isUpdate ? previousStoryId : null, pollQuestion: pollQuestion.trim(), pollOptions: cleanedPollOptions, hasPoll }),
     });
 
     const json = await res.json();
@@ -121,7 +137,7 @@ export default function CreatePage() {
     }
 
     setStatus("saved");
-    setTitle(""); setBody(""); setPreviousReference(""); setCliffhanger(""); setPollQuestion(""); setPollOptions(["", ""]); setIsUpdate(false);
+    setTitle(""); setBody(""); setPreviousStoryId(""); setCliffhanger(""); setPollQuestion(""); setPollOptions(["", ""]); setIsUpdate(false);
     setTimeout(() => router.push(`/story/${json.id}`), 1000);
   }
 
@@ -181,16 +197,34 @@ export default function CreatePage() {
           {isUpdate ? (
             <div className="mt-4 grid gap-3">
               <label className="block text-sm font-medium text-[#4b4b47]">
-                Previous story title (used to link the arc)
-                <input
+                Which story are you updating?
+                <select
                   className="mt-2 min-h-12 w-full rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] px-4 text-base font-medium outline-none ring-[#f8c0c8] focus:ring-4"
-                  onChange={(e) => setPreviousReference(e.target.value)} value={previousReference}
-                  placeholder="Paste the exact title of your previous part"
-                />
+                  onChange={(e) => setPreviousStoryId(e.target.value)} value={previousStoryId}
+                  disabled={storiesLoading || Boolean(storiesError) || previousStories.length === 0}
+                  required
+                >
+                  <option value="">{storiesLoading ? "Loading your stories…" : "Choose a previous story"}</option>
+                  {previousStories.map(story => (
+                    <option key={story.id} value={story.id}>
+                      {story.title} — Part {story.part_number ?? 1} — {new Date(story.created_at).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
               </label>
-              {previousReference.trim() && (
+              {storiesError ? (
+                <div role="alert" className="text-sm text-red-400">
+                  {storiesError}
+                  <button type="button" className="ml-2 underline" onClick={() => {
+                    setStoriesLoading(true); setStoriesError(""); setStoriesRetry(value => value + 1);
+                  }}>Try again</button>
+                </div>
+              ) : !storiesLoading && previousStories.length === 0 ? (
+                <p className="text-sm text-[#787775]">You have no previous public stories yet. Uncheck “This is an update” to start a new story.</p>
+              ) : null}
+              {selectedStory && (
                 <div className="rounded-2xl bg-[#e1e2e6] px-4 py-3 text-sm font-medium text-[#4b4b47]">
-                  This will be posted as <span className="font-semibold">Part {arcPartCount}</span> of the arc
+                  Your update will join <span className="font-semibold">{selectedStory.arc_title || selectedStory.title}</span> and receive the next part number automatically.
                 </div>
               )}
             </div>
@@ -238,7 +272,7 @@ export default function CreatePage() {
 
           <button
             className="mt-5 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#f8c0c8] px-4 py-4 text-sm font-medium text-[#4b4b47] disabled:opacity-60"
-            disabled={status === "saving" || safetyIssues.length > 0} type="submit"
+            disabled={status === "saving" || safetyIssues.length > 0 || (isUpdate && (storiesLoading || Boolean(storiesError) || !selectedStory))} type="submit"
           >
             <Send size={18} />
             {status === "saving" ? "Posting..." : "Submit story"}

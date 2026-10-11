@@ -11,6 +11,8 @@ import { StoryOwnerActions } from "@/components/StoryOwnerActions";
 import { supabase } from "@/lib/supabase";
 import type { Comment, Story } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 async function getStory(id: string): Promise<Story | null> {
   if (!supabase) {
     return sampleStories.find((s) => s.id === id) ?? sampleStories[0];
@@ -60,6 +62,7 @@ async function getStoryArcFromDB(story: Story): Promise<Story[]> {
     .from("stories")
     .select("*")
     .eq("story_arc_id", story.story_arc_id)
+    .eq("anonymous_name", story.anonymous_name)
     .eq("is_hidden", false)
     .order("part_number", { ascending: true });
 
@@ -95,6 +98,7 @@ async function getRelatedStories(story: Story): Promise<Story[]> {
       .from("stories")
       .select("id")
       .eq("story_arc_id", story.story_arc_id)
+      .eq("anonymous_name", story.anonymous_name)
       .neq("id", story.id);
     (arcData ?? []).forEach((s: { id: string }) => arcSiblingIds.push(s.id));
   }

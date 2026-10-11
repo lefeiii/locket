@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
+import { resolveStoryLink, StoryLinkError } from "@/lib/story-linking";
 import { findSafetyIssues } from "@/lib/safety";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { payload, pollQuestion, pollOptions, hasPoll } = body;
+    const { payload, previousStoryId, pollQuestion, pollOptions, hasPoll } = body;
 
     // ── 0. Validate required fields ─────────────────────────────────────────
-    if (!payload?.title?.trim() || !payload?.body?.trim() || !payload?.anonymous_name?.trim()) {
+    if (typeof payload?.title !== "string" || !payload.title.trim() ||
+        typeof payload?.body !== "string" || !payload.body.trim()) {
       return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
     }
 
     // ── 1. Server-side safety check ──────────────────────────────────────────
-    const textToCheck = `${payload.title} ${payload.body} ${payload.previous_story_reference ?? ""}`;
+    const textToCheck = `${payload.title} ${payload.body}`;
     const issues = findSafetyIssues(textToCheck);
     if (issues.length > 0) {
       return NextResponse.json(
@@ -58,10 +61,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const { data: profile, error: profileError } = await serviceClient.from("users")
+      .select("username").eq("id", user.id).single();
+    if (profileError || !profile?.username) {
+      return NextResponse.json({ error: "Could not load your account. Please try again." }, { status: 500 });
+    }
+    const storyId = randomUUID();
+    const link = await resolveStoryLink(serviceClient, user.id, profile.username,
+      storyId, payload.title.trim(), payload.is_update === true, previousStoryId);
+    const storyPayload = {
+      ...payload,
+      ...link,
+      id: storyId,
+      user_id: user.id,
+      anonymous_name: profile.username,
+      is_update: payload.is_update === true,
+    };
+
     // ── 4. Insert story ──────────────────────────────────────────────────────
     const { data: story, error: insertError } = await serviceClient
       .from("stories")
-      .insert(payload)
+      .insert(storyPayload)
       .select("id")
       .single();
 
@@ -83,7 +103,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ id: story.id });
-  } catch {
+  } catch (error) {
+    if (error instanceof StoryLinkError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

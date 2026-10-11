@@ -69,24 +69,25 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
   useEffect(() => {
     if (!story.story_arc_id || arcLoaded) return;
     const client = supabase;
-    if (!client || story.id.startsWith("sample-")) { setArcLoaded(true); return; }
+    if (!client || story.id.startsWith("sample-")) return;
     client
       .from("stories")
       .select("id, title, part_number, update_label")
       .eq("story_arc_id", story.story_arc_id)
+      .eq("anonymous_name", story.anonymous_name)
       .eq("is_hidden", false)
       .order("part_number", { ascending: true })
       .then(({ data }) => {
         setArcParts((data ?? []).filter(p => p.id !== story.id));
         setArcLoaded(true);
       });
-  }, [story.story_arc_id, story.id, arcLoaded]);
+  }, [story.story_arc_id, story.id, story.anonymous_name, arcLoaded]);
 
   // Fetch comments when panel opens
   useEffect(() => {
     if (!commentOpen || commentsLoaded) return;
     const client = supabase;
-    if (!client || story.id.startsWith("sample-")) { setCommentsLoaded(true); return; }
+    if (!client || story.id.startsWith("sample-")) return;
     client
       .from("comments")
       .select("*")
@@ -109,7 +110,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
     .sort((a, b) => (a.part_number ?? 0) - (b.part_number ?? 0))[0] ?? null;
 
   function react(label: ReactionKey) {
-    if (isGuest) { window.location.href = "/login"; return; }
+    if (isGuest) { window.location.assign("/login"); return; }
 
     const alreadyReacted = reactionState.userReaction === label;
     const next = { ...reactionState.counts };

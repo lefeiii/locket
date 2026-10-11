@@ -1,29 +1,27 @@
 import { AppNav, BrandBar } from "@/components/AppNav";
-import { FeedFilters } from "@/components/FeedFilters";
-import { StorySearch } from "@/components/StorySearch";
-import { FollowingFeed } from "@/components/FollowingFeed";
 import { GuestGate } from "@/components/GuestGate";
-import { StoryCard } from "@/components/StoryCard";
 import { sampleStories } from "@/lib/sample-data";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
 
 const PINNED_STORY_ID = "a8113f77-d500-468f-b360-e32beb0aba2e";
 
-async function getStories(): Promise<Story[]> {
+export const dynamic = "force-dynamic";
+
+async function getStories(updatesOnly: boolean, pageSize = 10): Promise<Story[]> {
   if (!supabase) {
-    return [...sampleStories];
+    return [...sampleStories].filter(s => !updatesOnly || s.is_update)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at) || b.id.localeCompare(a.id)).slice(0, pageSize);
   }
+
+  let query = supabase.from("stories").select("*").eq("is_hidden", false)
+    .neq("id", PINNED_STORY_ID).order("created_at", { ascending: false })
+    .order("id", { ascending: false }).limit(pageSize);
+  if (updatesOnly) query = query.eq("is_update", true);
 
   const [pinnedRes, feedRes] = await Promise.all([
     supabase.from("stories").select("*").eq("id", PINNED_STORY_ID).maybeSingle(),
-    supabase
-      .from("stories")
-      .select("*")
-      .eq("is_hidden", false)
-      .neq("id", PINNED_STORY_ID)
-      .order("created_at", { ascending: false })
-      .limit(19),
+    query,
   ]);
 
   if (feedRes.error) return [];
@@ -48,8 +46,8 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
   const feedFilters = ["For You", "Following", "Updates"];
   const activeFilter = feedFilters.includes(params?.filter ?? "") ? params?.filter ?? "For You" : "For You";
 
-  // Always fetch all stories server-side — guest detection handled client-side in GuestGate
-  const stories = await getStories();
+  // Fetch the first page server-side; GuestGate handles guest access client-side.
+  const stories = await getStories(activeFilter === "Updates", activeFilter === "Following" ? 19 : 10);
   const pinnedStory = stories.find(s => s.id === PINNED_STORY_ID) ?? null;
   const visibleStories = filterStories(stories, activeFilter);
 
@@ -69,3 +67,4 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
     </main>
   );
 }
+

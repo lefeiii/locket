@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { commentsAllowed, getResponseMode, responseModes, type ResponseMode } from "@/lib/response-mode";
 import { supabase } from "@/lib/supabase";
 
 type CommentFormProps = {
   storyId: string;
+  responseMode?: ResponseMode;
   replyToId?: string;
   replyToName?: string;
   onCancelReply?: () => void;
@@ -42,16 +44,18 @@ function truncate(text: string, max = 60) {
   return text.length > max ? text.slice(0, max) + "…" : text;
 }
 
-export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: CommentFormProps) {
+export function CommentForm({ storyId, replyToId, replyToName, onCancelReply, responseMode }: CommentFormProps) {
+  const mode = getResponseMode(responseMode);
   const [username, setUsername] = useState<string>("");
-  const [authLoaded, setAuthLoaded] = useState(false);
+  const [authLoaded, setAuthLoaded] = useState(!supabase);
   const [body, setBody] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const router = useRouter();
 
   useEffect(() => {
     const client = supabase;
-    if (!client) { setAuthLoaded(true); return; }
+    if (!client) return;
     client.auth.getUser().then(({ data }) => {
       const uid = data?.user?.id;
       if (!uid) { setAuthLoaded(true); return; }
@@ -68,7 +72,7 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
   }, []);
 
   async function submitComment() {
-    if (!body.trim() || !username) return;
+    if (!body.trim() || !username || !commentsAllowed(mode)) return;
     setStatus("saving");
 
     const client = supabase;
@@ -82,7 +86,10 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
         reply_to_name: replyToName ?? null,
       });
 
-      if (error) { setStatus("error"); return; }
+      if (error) {
+        setErrorMessage("Could not add your comment. The author may have closed replies. Please refresh and try again.");
+        setStatus("error"); return;
+      }
 
       // Notify story owner
       const owner = await getStoryOwner(storyId);
@@ -114,8 +121,11 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
     }
   }
 
+  if (!commentsAllowed(mode)) return null;
+
   return (
     <div className="mt-4 grid gap-2">
+      {responseModes[mode].reminder && <p className="text-xs leading-5 text-[#787775]">{responseModes[mode].reminder}</p>}
       <div className="rounded-2xl bg-[#e1e2e6] px-4 py-3 text-sm font-medium text-[#4b4b47]">
         {username ? (
           <>commenting as <span className="font-semibold">@{username}</span></>
@@ -137,7 +147,7 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
       <textarea
         className="min-h-24 resize-none rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-sm font-medium text-[#4b4b47] outline-none ring-[#f8c0c8] focus:ring-4"
         onChange={(e) => setBody(e.target.value)}
-        placeholder={replyToName ? `Reply to @${replyToName}…` : "Add a comment… 💬"}
+        placeholder={replyToName ? `Reply to @${replyToName}…` : responseModes[mode].placeholder}
         value={body}
         autoComplete="off"
       />
@@ -155,7 +165,7 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
         <p className="text-center text-sm font-medium text-[#4b4b47]">Comment added ✓</p>
       )}
       {status === "error" && (
-        <p className="text-center text-sm font-medium text-red-400">Something went wrong. Try again.</p>
+        <p className="text-center text-sm font-medium text-red-400">{errorMessage || "Something went wrong. Try again."}</p>
       )}
     </div>
   );
@@ -164,13 +174,16 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply }: 
 // ── Inline version for use inside StoryCard on the feed ──────────────────────
 type InlineCommentFormProps = {
   storyId: string;
+  responseMode?: ResponseMode;
   onDone: () => void;
   onCommentAdded?: () => void;
 };
 
-export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCommentFormProps) {
+export function InlineCommentForm({ storyId, onDone, onCommentAdded, responseMode }: InlineCommentFormProps) {
+  const mode = getResponseMode(responseMode);
   const [username, setUsername] = useState<string>("");
   const [body, setBody] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -194,7 +207,7 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCom
   }, []);
 
   async function submit() {
-    if (!body.trim() || !username) return;
+    if (!body.trim() || !username || !commentsAllowed(mode)) return;
     setStatus("saving");
     const client = supabase;
     if (client && !storyId.startsWith("sample-")) {
@@ -204,7 +217,10 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCom
         anonymous_name: username,
         body: trimmedBody,
       });
-      if (error) { setStatus("error"); return; }
+      if (error) {
+        setErrorMessage("Could not add your comment. The author may have closed replies. Please refresh and try again.");
+        setStatus("error"); return;
+      }
 
       // Notify story owner
       const owner = await getStoryOwner(storyId);
@@ -224,6 +240,8 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCom
       setStatus("error");
     }
   }
+
+  if (!commentsAllowed(mode)) return null;
 
   if (status === "saved") {
     return (
@@ -247,11 +265,12 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCom
           cancel
         </button>
       </div>
+      {responseModes[mode].reminder && <p className="text-xs leading-5 text-[#787775]">{responseModes[mode].reminder}</p>}
       <textarea
         ref={textareaRef}
         className="min-h-20 resize-none rounded-2xl border border-[#d8d3ce] bg-white p-3 text-sm font-medium text-[#4b4b47] outline-none ring-[#f8c0c8] focus:ring-4"
         onChange={(e) => setBody(e.target.value)}
-        placeholder="Add a comment…"
+        placeholder={responseModes[mode].placeholder}
         value={body}
         autoComplete="off"
       />
@@ -270,7 +289,7 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded }: InlineCom
         </button>
       )}
       {status === "error" && (
-        <p className="text-center text-sm text-red-400">Something went wrong. Try again.</p>
+        <p className="text-center text-sm text-red-400">{errorMessage || "Something went wrong. Try again."}</p>
       )}
     </div>
   );

@@ -17,9 +17,10 @@ export type ReactionKey =
   | "This is insane"
   | "Crying for you"
   | "That would ruin me"
-  | "Team OP";
+  | "Team OP"
+  | "Here for you";
 
-export type ReactionCounts = Record<ReactionKey, number>;
+export type ReactionCounts = Record<Exclude<ReactionKey, "Here for you">, number> & { "Here for you"?: number };
 
 export type Story = {
   id: string;
@@ -29,6 +30,7 @@ export type Story = {
   category: StoryCategory;
   body: string;
   is_update: boolean;
+  response_mode?: import("./response-mode").ResponseMode;
   is_hidden?: boolean;
   is_private?: boolean;
   is_diary_only?: boolean;

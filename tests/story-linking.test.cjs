@@ -12,7 +12,13 @@ function loadModule(filename, dependencies = {}, globals = {}) {
   }).outputText;
   vm.runInNewContext(code, {
     exports: loaded.exports, module: loaded, process, ...globals,
-    require: name => name in dependencies ? dependencies[name] : require(name),
+    require: name => {
+      if (name in dependencies) return dependencies[name];
+      if (name === "@/components/ResponseModeSelect") return { ResponseModeSelect: "response-select" };
+      if (name === "@/lib/response-mode") return loadModule("lib/response-mode.ts");
+      if (name === "@/lib/sample-data") return loadModule("lib/sample-data.ts");
+      return require(name);
+    },
   });
   return loaded.exports;
 }
@@ -157,7 +163,7 @@ test("posting route overrides forged client ownership and numbering", async () =
     json: async () => ({
       previousStoryId: rootId,
       payload: {
-        title: "Different title", body: "An update", is_update: true,
+        title: "Different title", body: "An update", is_update: true, response_mode: "comfort",
         user_id: "forged", anonymous_name: "Other", story_arc_id: "forged-arc",
         part_number: 99, update_label: "Part 99",
       },
@@ -169,6 +175,7 @@ test("posting route overrides forged client ownership and numbering", async () =
   assert.equal(rows[1].story_arc_id, root().story_arc_id);
   assert.equal(rows[1].part_number, 2);
   assert.equal(rows[1].update_label, "Part 2");
+  assert.equal(rows[1].response_mode, "comfort");
 });
 
 test("dropdown loads every page of the author's public stories and submits the selected ID", async () => {
@@ -255,4 +262,16 @@ test("an empty legacy arc ID is linked to the original story ID", async () => {
   const result = await linking.resolveStoryLink(database([parent]), uid, "Author", newId, "Update", true, rootId);
   assert.equal(parent.story_arc_id, rootId);
   assert.equal(result.part_number, 2);
+});
+
+
+test("posting route rejects invalid response modes before inserting", async () => {
+  const route = loadModule("app/api/submit-story/route.ts", {
+    "next/server": { NextResponse: { json: (body, options) => ({ body, status: options?.status ?? 200 }) } },
+    "@supabase/supabase-js": { createClient: () => { throw new Error("Must not reach insertion"); } },
+    "@/lib/story-linking": linking,
+    "@/lib/safety": { findSafetyIssues: () => [] },
+  });
+  const response = await route.POST({ json: async () => ({ payload: { title: "Hello", body: "A story", response_mode: "invalid" } }) });
+  assert.equal(response.status, 400);
 });

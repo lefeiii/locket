@@ -5,6 +5,8 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppNav, BrandBar } from "@/components/AppNav";
+import { ResponseModeSelect } from "@/components/ResponseModeSelect";
+import type { ResponseMode } from "@/lib/response-mode";
 import { categories, emptyReactions } from "@/lib/sample-data";
 import { findSafetyIssues, safetyWarning } from "@/lib/safety";
 import { supabase } from "@/lib/supabase";
@@ -22,6 +24,7 @@ export default function CreatePage() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<StoryCategory>("my crush era");
   const [body, setBody] = useState("");
+  const [responseMode, setResponseMode] = useState<ResponseMode>("anything");
   const [isUpdate, setIsUpdate] = useState(false);
   const [previousStoryId, setPreviousStoryId] = useState("");
   const [previousStories, setPreviousStories] = useState<Story[]>([]);
@@ -96,6 +99,7 @@ export default function CreatePage() {
       category,
       body,
       is_update: isUpdate,
+      response_mode: responseMode,
       cliffhanger: cliffhanger || null,
       is_resolved: false,
       status: isUpdate ? "Update pending" : "Unresolved",
@@ -137,7 +141,7 @@ export default function CreatePage() {
     }
 
     setStatus("saved");
-    setTitle(""); setBody(""); setPreviousStoryId(""); setCliffhanger(""); setPollQuestion(""); setPollOptions(["", ""]); setIsUpdate(false);
+    setTitle(""); setBody(""); setPreviousStoryId(""); setCliffhanger(""); setPollQuestion(""); setPollOptions(["", ""]); setIsUpdate(false); setResponseMode("anything");
     setTimeout(() => router.push(`/story/${json.id}`), 1000);
   }
 
@@ -180,6 +184,8 @@ export default function CreatePage() {
               {categories.map((item) => <option key={item}>{item}</option>)}
             </select>
           </label>
+
+          <ResponseModeSelect value={responseMode} onChange={setResponseMode} />
 
           <label className="mt-5 block text-sm font-medium text-[#4b4b47]">
             Story

@@ -4,6 +4,8 @@ import { EyeOff, Pencil, Trash2, X, Check, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { ResponseModeSelect } from "@/components/ResponseModeSelect";
+import { getResponseMode, type ResponseMode } from "@/lib/response-mode";
 import type { StoryCategory } from "@/lib/types";
 
 const categories: StoryCategory[] = [
@@ -27,6 +29,7 @@ type Props = {
   initialBody: string;
   initialCategory: StoryCategory;
   initialIsHidden: boolean;
+  initialResponseMode?: ResponseMode;
 };
 
 export function StoryOwnerActions({
@@ -36,8 +39,11 @@ export function StoryOwnerActions({
   initialBody,
   initialCategory,
   initialIsHidden,
+  initialResponseMode,
 }: Props) {
   const router = useRouter();
+  const [responseMode, setResponseMode] = useState(getResponseMode(initialResponseMode));
+  const [savedResponseMode, setSavedResponseMode] = useState(getResponseMode(initialResponseMode));
   const [isOwner, setIsOwner] = useState(false);
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(initialTitle);
@@ -77,13 +83,14 @@ export function StoryOwnerActions({
     if (!client) { setSaving(false); return; }
     const { error } = await client
       .from("stories")
-      .update({ title: title.trim(), body: body.trim(), category })
+      .update({ title: title.trim(), body: body.trim(), category, response_mode: responseMode })
       .eq("id", storyId);
     setSaving(false);
     if (error) { setMsg("Could not save changes."); return; }
     setSavedTitle(title.trim());
     setSavedBody(body.trim());
     setSavedCategory(category);
+    setSavedResponseMode(responseMode);
     setMsg("Saved!");
     setEditing(false);
     router.refresh();
@@ -147,6 +154,7 @@ export function StoryOwnerActions({
               {categories.map((c) => <option key={c}>{c}</option>)}
             </select>
           </label>
+          <ResponseModeSelect value={responseMode} onChange={setResponseMode} />
           <label className="block text-sm font-medium text-[#4b4b47]">
             Story
             <textarea
@@ -168,7 +176,7 @@ export function StoryOwnerActions({
             </button>
             <button
               className="flex items-center justify-center gap-2 rounded-2xl bg-[#e1e2e6] px-4 py-3 text-sm font-medium text-[#4b4b47]"
-              onClick={() => { setEditing(false); setTitle(savedTitle); setBody(savedBody); setCategory(savedCategory); }}
+              onClick={() => { setEditing(false); setTitle(savedTitle); setBody(savedBody); setCategory(savedCategory); setResponseMode(savedResponseMode); }}
               type="button"
             >
               <X size={16} />

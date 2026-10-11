@@ -2,6 +2,7 @@
 
 import { Flag, MessageCircle, CornerDownRight } from "lucide-react";
 import { useState } from "react";
+import { commentsAllowed, getResponseMode, type ResponseMode } from "@/lib/response-mode";
 import { CommentForm } from "@/components/CommentForm";
 import { ReportModal } from "@/components/ReportModal";
 
@@ -18,11 +19,17 @@ type Comment = {
 type Props = {
   comments: Comment[];
   storyId: string;
+  responseMode?: ResponseMode;
 };
 
-export function CommentSection({ comments, storyId }: Props) {
+export function CommentSection({ comments, storyId, responseMode }: Props) {
   const [replyingTo, setReplyingTo] = useState<{ id: string; name: string } | null>(null);
   const [reportingComment, setReportingComment] = useState<string | null>(null);
+
+  const mode = getResponseMode(responseMode);
+  if (!commentsAllowed(mode)) {
+    return null;
+  }
 
   // Separate top-level comments from replies
   const topLevel = comments.filter((c) => !c.reply_to_id);
@@ -97,6 +104,7 @@ export function CommentSection({ comments, storyId }: Props) {
                 <div className="ml-6 mt-2">
                   <CommentForm
                     storyId={storyId}
+                    responseMode={mode}
                     replyToId={comment.id}
                     replyToName={comment.anonymous_name}
                     onCancelReply={() => setReplyingTo(null)}
@@ -138,7 +146,7 @@ export function CommentSection({ comments, storyId }: Props) {
 
       {/* Main comment form — only shows when not replying */}
       {!replyingTo && (
-        <CommentForm storyId={storyId} />
+        <CommentForm storyId={storyId} responseMode={mode} />
       )}
     </section>
 

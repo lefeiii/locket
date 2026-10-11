@@ -9,6 +9,7 @@ import { StorytimeExport } from "@/components/StorytimeExport";
 import { samplePolls, sampleStories } from "@/lib/sample-data";
 import { StoryOwnerActions } from "@/components/StoryOwnerActions";
 import { supabase } from "@/lib/supabase";
+import { commentsAllowed } from "@/lib/response-mode";
 import type { Comment, Story } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -137,7 +138,7 @@ export default async function StoryDetailPage({
     );
   }
 
-  const comments = await getComments(story.id);
+  const comments = commentsAllowed(story.response_mode) ? await getComments(story.id) : [];
   const arc = await getStoryArcFromDB(story);
   const poll = samplePolls.find(
     (item) => item.story_id === story.id && item.is_active
@@ -196,6 +197,7 @@ export default async function StoryDetailPage({
           initialBody={story.body}
           initialCategory={story.category}
           initialIsHidden={story.is_hidden ?? false}
+          initialResponseMode={story.response_mode}
         />
 
         {poll ? (
@@ -235,7 +237,7 @@ export default async function StoryDetailPage({
         )}
 
         {/* Comments with replies */}
-        <CommentSection comments={comments} storyId={story.id} />
+        <CommentSection comments={comments} storyId={story.id} responseMode={story.response_mode} />
 
         <section className="mt-6">
           <StorytimeExport story={story} />

@@ -3,6 +3,7 @@
 import { Flag, MessageCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { allowedReactions, commentsAllowed, getResponseMode, responseModes } from "@/lib/response-mode";
 import { reactionLabels } from "@/lib/sample-data";
 import type { Comment, ReactionKey, Story } from "@/lib/types";
 import { ReportModal } from "@/components/ReportModal";
@@ -43,6 +44,11 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
     userReaction: null,
   }));
   const { counts, userReaction } = reactionState;
+  const responseMode = getResponseMode(story.response_mode);
+  const canComment = commentsAllowed(responseMode);
+  const visibleReactions = allowedReactions(responseMode);
+  const [reactionError, setReactionError] = useState("");
+  const [reacting, setReacting] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [localCommentCount, setLocalCommentCount] = useState(story.comments_count ?? 0);
   const [commentOpen, setCommentOpen] = useState(false);
@@ -85,7 +91,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
 
   // Fetch comments when panel opens
   useEffect(() => {
-    if (!commentOpen || commentsLoaded) return;
+    if (!canComment || !commentOpen || commentsLoaded) return;
     const client = supabase;
     if (!client || story.id.startsWith("sample-")) return;
     client
@@ -98,7 +104,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
         setComments(([...(data ?? [])] as Comment[]).reverse());
         setCommentsLoaded(true);
       });
-  }, [commentOpen, commentsLoaded, story.id]);
+  }, [canComment, commentOpen, commentsLoaded, story.id]);
 
   const hasActivePoll = story.has_active_poll ?? false;
   const storyContext = story.update_label ?? null;
@@ -109,7 +115,9 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
     .filter(p => (p.part_number ?? 0) > currentPartNumber)
     .sort((a, b) => (a.part_number ?? 0) - (b.part_number ?? 0))[0] ?? null;
 
-  function react(label: ReactionKey) {
+  async function react(label: ReactionKey) {
+    if (reacting || !visibleReactions.includes(label)) return;
+    setReactionError("");
     if (isGuest) { window.location.assign("/login"); return; }
 
     const alreadyReacted = reactionState.userReaction === label;
@@ -117,7 +125,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
     if (alreadyReacted) {
       next[label] = Math.max(0, (next[label] ?? 0) - 1);
     } else {
-      if (reactionState.userReaction) {
+      if (reactionState.userReaction && visibleReactions.includes(reactionState.userReaction)) {
         next[reactionState.userReaction] = Math.max(0, (next[reactionState.userReaction] ?? 0) - 1);
       }
       next[label] = (next[label] ?? 0) + 1;
@@ -127,7 +135,17 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
 
     const client = supabase;
     if (client && !story.id.startsWith("sample-")) {
-      client.from("stories").update({ reactions: next }).eq("id", story.id).then(() => {});
+      setReacting(true);
+      try {
+        const { error } = await client.from("stories").update({ reactions: next }).eq("id", story.id);
+        if (error) throw error;
+      } catch {
+        setReactionState(reactionState);
+        setReactionError("Could not save your reaction. The author may have changed their response preference.");
+        return;
+      } finally {
+        setReacting(false);
+      }
 
       if (!alreadyReacted) {
         client.auth.getUser().then(({ data }) => {
@@ -179,7 +197,10 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
             </Link>
           </div>
           <div className="mt-4 space-y-2 text-sm font-medium leading-6 text-[#787775]">
-            {storyContext ? <p className="text-[#787775]">{storyContext}</p> : null}
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[#787775]">
+              {storyContext && <><span>{storyContext}</span><span aria-hidden="true">·</span></>}
+              <span className="text-[#94616c]">{responseModes[responseMode].label}</span>
+            </p>
             {hasActivePoll ? (
               <Link className="inline-flex items-center gap-2 text-[#4b4b47]" href={`/story/${story.id}#poll`}>
                 <Sparkles size={15} />
@@ -238,8 +259,8 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
         </div>
 
         <div className="mt-7">
-          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-            {reactionLabels.map((label) => (
+          {visibleReactions.length > 0 && <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            {visibleReactions.map((label) => (
               <button
                 className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium shadow-sm active:scale-95 ${
                   isGuest
@@ -249,13 +270,17 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
                     : "border-[#d8d3ce] bg-[#f8f8f6] text-[#4b4b47]"
                 }`}
                 key={label}
-                onClick={() => react(label)}
+                onClick={() => void react(label)}
+                disabled={reacting}
+                aria-pressed={userReaction === label}
                 type="button"
               >
-                {label} <span className="text-[#787775]">{counts[label]}</span>
+                {label} <span className="text-[#787775]">{counts[label] ?? 0}</span>
               </button>
             ))}
-          </div>
+          </div>}
+          {reactionError && <p role="alert" className="mt-2 text-xs text-[#787775]">{reactionError}</p>}
+          {!canComment && <p className="text-sm text-[#787775]">{responseModes.listen.reminder}</p>}
 
           <div className="mt-4 flex items-center gap-3 text-[#4b4b47]">
             {isGuest ? (
@@ -263,11 +288,12 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
                 href="/login"
                 className="flex items-center gap-2 rounded-full bg-[#f8c0c8] px-4 py-2 text-sm font-medium text-[#4b4b47]"
               >
-                log in to react &amp; comment 👀
+                {canComment ? "Log in to react and comment" : "Log in to follow this story"}
               </Link>
             ) : (
               <div className="flex items-center gap-2">
-                <button
+                {canComment && <button
+                  aria-label="Show comments"
                   className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${commentOpen ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#4b4b47]"}`}
                   onClick={() => {
                     setCommentOpen((v) => {
@@ -284,14 +310,14 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
                 >
                   <MessageCircle size={18} />
                   {localCommentCount}
-                </button>
+                </button>}
                 <FollowButton compact storyId={story.id} />
               </div>
             )}
           </div>
         </div>
 
-        {commentOpen && (
+        {canComment && commentOpen && (
           <div ref={commentRef} className="mt-3 grid gap-2">
             {!commentsLoaded ? (
               <p className="px-1 text-xs text-[#787775]">loading comments…</p>
@@ -322,6 +348,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
               }}
               onCommentAdded={() => setLocalCommentCount((c) => c + 1)}
               storyId={story.id}
+              responseMode={responseMode}
             />
           </div>
         )}

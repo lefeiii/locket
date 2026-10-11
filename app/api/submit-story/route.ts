@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { getResponseMode, isResponseMode } from "@/lib/response-mode";
 import { randomUUID } from "node:crypto";
 import { resolveStoryLink, StoryLinkError } from "@/lib/story-linking";
 import { findSafetyIssues } from "@/lib/safety";
@@ -13,6 +14,10 @@ export async function POST(req: NextRequest) {
     if (typeof payload?.title !== "string" || !payload.title.trim() ||
         typeof payload?.body !== "string" || !payload.body.trim()) {
       return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+    }
+
+    if (payload.response_mode != null && !isResponseMode(payload.response_mode)) {
+      return NextResponse.json({ error: "Choose a valid response preference." }, { status: 400 });
     }
 
     // ── 1. Server-side safety check ──────────────────────────────────────────
@@ -76,6 +81,7 @@ export async function POST(req: NextRequest) {
       user_id: user.id,
       anonymous_name: profile.username,
       is_update: payload.is_update === true,
+      response_mode: getResponseMode(payload.response_mode),
     };
 
     // ── 4. Insert story ──────────────────────────────────────────────────────

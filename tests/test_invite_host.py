@@ -6,6 +6,7 @@ invite=importlib.util.module_from_spec(spec);spec.loader.exec_module(invite)
 class DB:
  def __init__(self):self.states=[]
  def state(self,night,state):self.states.append(state)
+ def prepare(self,*args):pass
 class SMTP:
  fail=False
  def __init__(self,*args,**kwargs):pass
@@ -16,6 +17,13 @@ class SMTP:
   if self.fail:raise TimeoutError()
   return {}
 class Invitations(unittest.TestCase):
+ def setUp(self):
+  from datetime import datetime
+  from zoneinfo import ZoneInfo
+  class Clock(datetime):
+   @classmethod
+   def now(cls,zone):return datetime(2026,10,12,18,1,tzinfo=ZoneInfo('America/Toronto')).astimezone(zone)
+  self.clock=patch.object(invite,'datetime',Clock);self.clock.start();self.addCleanup(self.clock.stop)
  def candidate(self):return {'night':'2026-10-12','username':'volunteer','email':'test@example.test','first':False}
  def test_subject_and_reply(self):
   m=invite.make_email(self.candidate());self.assertEqual(m['Subject'],"You're invited to host everyone’s awake night at Locket!");self.assertEqual(m['Reply-To'],invite.SENDER)

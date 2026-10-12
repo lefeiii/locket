@@ -23,6 +23,7 @@ export function FeedFilters({ active }: { active: string }) {
           ))}
         </div>
       </div>
+      <Link href="/awake" className="mt-3 inline-flex rounded-full border border-[#c8b7a7] px-4 py-2 text-sm">Everyone’s Awake · Join tonight’s conversation →</Link>
     </div>
   );
 }

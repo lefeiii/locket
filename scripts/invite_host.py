@@ -4,6 +4,7 @@ import json
 import os
 import smtplib
 import ssl
+import secrets
 from datetime import datetime
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
@@ -35,7 +36,10 @@ I’m starting something called Everyone’s Awake: a nightly thread where we ca
 
 You get to choose the question everyone answers. It could be something lighthearted, something you’ve been wondering about, or something you wish people talked about more.
 
-If you’re interested, just reply with your idea by 8:00 p.m. Toronto time today. I’ll review it and take care of setting up the thread. No pressure at all—if today doesn’t work, we’ll use a question of our own.
+If you’re interested, send your question through your private invitation link by 8:00 p.m. Toronto time today:
+{candidate.get("host_link", "https://ourlockets.com/awake")}
+
+I’ll review it before it goes live. Your Locket username will appear alongside your question. No pressure at all—if today doesn’t work, we’ll use a question of our own.
 
 Thank you for being here,
 Lefei
@@ -60,6 +64,10 @@ class Database:
             body = response.read()
             return json.loads(body) if body else None
 
+    def prepare(self, night, digest, expires):
+        self.request('/rest/v1/host_invitations?night=eq.' + night,
+                     {'token_digest': digest, 'expires_at': expires}, 'PATCH')
+
     def state(self, night, value):
         patch = {'state': value}
         if value == 'sent':
@@ -73,6 +81,13 @@ def deliver(candidate, password, db, smtp_factory=smtplib.SMTP_SSL):
             hashlib.sha256(candidate['email'].strip().lower().encode()).hexdigest() != FIRST_EMAIL_HASH):
         db.state(night, 'failed')
         raise RuntimeError('First host identity did not match. No email sent.')
+    token = secrets.token_hex(32)
+    expires = datetime.now(ZoneInfo('America/Toronto')).replace(hour=20, minute=0, second=0, microsecond=0)
+    if expires <= datetime.now(ZoneInfo('America/Toronto')):
+        db.state(night, 'failed')
+        raise RuntimeError('Invitation deadline has passed. No email sent.')
+    db.prepare(night, hashlib.sha256(token.encode()).hexdigest(), expires.isoformat())
+    candidate = dict(candidate, host_link='https://ourlockets.com/awake/host#' + token)
     message = make_email(candidate)
     sending = False
     try:

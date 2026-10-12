@@ -2,8 +2,8 @@ name: Everyone’s Awake host invitations
 on:
   workflow_dispatch:
   schedule:
-    # Both UTC offsets cover Toronto daylight saving time; the script selects 2pm.
-    - cron: '17 18,19 * * *'
+    # Both UTC offsets cover Toronto daylight saving time; the script selects 6pm.
+    - cron: '0 22,23 * * *'
 permissions:
   contents: read
 concurrency:

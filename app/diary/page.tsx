@@ -85,9 +85,9 @@ export default function DiaryPage() {
   }
 
   return (
-    <main className="min-h-screen pb-28" style={{ background: "#fef9f5" }}>
+    <main className="min-h-screen pb-28">
       {/* Diary header */}
-      <header className="sticky top-0 z-30 px-4 py-3" style={{ background: "#fef9f5", borderBottom: "1px solid #f7c8c9" }}>
+      <header className="sticky top-0 z-30 px-4 py-3" style={{ background: "#353e4a", borderBottom: "1px solid transparent" }}>
         <div className="mx-auto flex max-w-md items-center justify-between">
           <div className="flex items-center gap-3">
             <Image
@@ -98,14 +98,14 @@ export default function DiaryPage() {
               className="rounded-xl"
             />
             <div>
-              <h1 className="text-lg font-medium leading-none" style={{ color: "#69484a", fontFamily: "Georgia, serif" }}>Oh Dear Diary</h1>
-              <p className="text-[0.65rem] tracking-widest uppercase" style={{ color: "#69484a" }}>your secret chamber</p>
+              <h1 className="text-lg font-medium leading-none" style={{ color: "#f8f5f0", fontFamily: "Georgia, serif" }}>Oh Dear Diary</h1>
+              <p className="text-[0.65rem] tracking-widest uppercase" style={{ color: "#f8f5f0" }}>your secret chamber</p>
             </div>
           </div>
           <Link
             href="/diary/new"
             className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium shadow-sm"
-            style={{ background: "#fbd2d3", color: "#69484a" }}
+            style={{ background: "#efd2c8", color: "#393735" }}
           >
             <PenLine size={14} />
             write
@@ -114,27 +114,27 @@ export default function DiaryPage() {
       </header>
 
       <section className="locket-page-panel mx-auto max-w-md px-4 py-5">
-        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#69484a]" href="/">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#393735]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>
         <DisguiseSettings />
         {loading ? (
           <div className="space-y-3 mt-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-28 animate-pulse rounded-3xl" style={{ background: "#fef9f5" }} />
+              <div key={i} className="h-28 animate-pulse rounded-3xl" style={{ background: "#f8f5f0" }} />
             ))}
           </div>
         ) : !username ? null : entries.length === 0 ? (
           <div className="mt-12 text-center px-6">
             <p className="text-5xl mb-4">🔒</p>
-            <p className="text-lg font-medium mb-2" style={{ color: "#69484a", fontFamily: "Georgia, serif" }}>your diary is empty</p>
-            <p className="text-sm leading-6 mb-6" style={{ color: "#69484a" }}>
+            <p className="text-lg font-medium mb-2" style={{ color: "#393735", fontFamily: "Georgia, serif" }}>your diary is empty</p>
+            <p className="text-sm leading-6 mb-6" style={{ color: "#393735" }}>
               write your first entry, or flip any of your public stories private to keep them just for you.
             </p>
             <Link
               href="/diary/new"
               className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium shadow-sm"
-              style={{ background: "#fbd2d3", color: "#69484a" }}
+              style={{ background: "#efd2c8", color: "#393735" }}
             >
               <PenLine size={15} />
               write something
@@ -146,29 +146,29 @@ export default function DiaryPage() {
               <div
                 key={entry.id}
                 className="rounded-3xl p-5 shadow-sm"
-                style={{ background: "#fef9f5", border: "1px solid #f7c8c9" }}
+                style={{ background: "#f8f5f0", border: "1px solid #ded0c6" }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       {entry.is_diary_only ? (
-                        <span className="text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#fef9f5", color: "#69484a" }}>diary only</span>
+                        <span className="text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#f8f5f0", color: "#393735" }}>diary only</span>
                       ) : (
-                        <span className="text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#fef9f5", color: "#69484a" }}>flipped private</span>
+                        <span className="text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: "#f8f5f0", color: "#393735" }}>flipped private</span>
                       )}
-                      <span className="text-[10px]" style={{ color: "#c0a0aa" }}>{timeAgo(entry.created_at)}</span>
+                      <span className="text-[10px]" style={{ color: "#625e59" }}>{timeAgo(entry.created_at)}</span>
                     </div>
                     <Link href={`/story/${entry.id}`}>
-                      <h3 className="text-lg font-medium leading-tight" style={{ color: "#69484a", fontFamily: "Georgia, serif" }}>{entry.title}</h3>
+                      <h3 className="text-lg font-medium leading-tight" style={{ color: "#393735", fontFamily: "Georgia, serif" }}>{entry.title}</h3>
                     </Link>
-                    <p className="mt-2 line-clamp-2 text-sm leading-6" style={{ color: "#9b7c88" }}>{entry.body}</p>
+                    <p className="mt-2 line-clamp-2 text-sm leading-6" style={{ color: "#625e59" }}>{entry.body}</p>
                   </div>
                 </div>
 
                 {/* Toggle public/private — only for non diary-only entries */}
                 {!entry.is_diary_only && (
-                  <div className="mt-4 flex items-center justify-between border-t pt-3" style={{ borderColor: "#f7c8c9" }}>
-                    <span className="text-xs font-medium" style={{ color: "#69484a" }}>
+                  <div className="mt-4 flex items-center justify-between border-t pt-3" style={{ borderColor: "#ded0c6" }}>
+                    <span className="text-xs font-medium" style={{ color: "#393735" }}>
                       {entry.is_private ? "private — only you can see this" : "public on feed"}
                     </span>
                     <button
@@ -176,8 +176,8 @@ export default function DiaryPage() {
                       disabled={togglingId === entry.id}
                       className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition"
                       style={{
-                        background: entry.is_private ? "#fef9f5" : "#e8f5e9",
-                        color: entry.is_private ? "#69484a" : "#5a8a6a",
+                        background: entry.is_private ? "#f8f5f0" : "#e8f5e9",
+                        color: entry.is_private ? "#393735" : "#5a8a6a",
                         opacity: togglingId === entry.id ? 0.5 : 1
                       }}
                     >

@@ -65,22 +65,22 @@ export default function NewDiaryEntryPage() {
   }
 
   return (
-    <main className="min-h-screen pb-28" style={{ background: "#fef9f5" }}>
-      <header className="sticky top-0 z-30 px-4 py-3" style={{ background: "#fef9f5", borderBottom: "1px solid #f7c8c9" }}>
+    <main className="min-h-screen pb-28">
+      <header className="sticky top-0 z-30 px-4 py-3" style={{ background: "#353e4a", borderBottom: "1px solid transparent" }}>
         <div className="mx-auto flex max-w-md items-center justify-between">
-          <Link href="/diary" className="flex items-center gap-2 text-sm font-medium" style={{ color: "#69484a" }}>
+          <Link href="/diary" className="flex items-center gap-2 text-sm font-medium" style={{ color: "#f8f5f0" }}>
             <ArrowLeft size={18} /> back to diary
           </Link>
-          <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#69484a" }}>
+          <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#f8f5f0" }}>
             <Lock size={13} /> private entry
           </div>
         </div>
       </header>
 
-      <section className="mx-auto max-w-md px-4 py-6">
+      <section className="locket-page-panel mx-auto max-w-md px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-medium" style={{ color: "#69484a", fontFamily: "Georgia, serif" }}>dear diary,</h1>
-          <p className="mt-1 text-sm" style={{ color: "#69484a" }}>only you can see this. write freely. 🔒</p>
+          <h1 className="text-3xl font-medium" style={{ color: "#393735", fontFamily: "Georgia, serif" }}>dear diary,</h1>
+          <p className="mt-1 text-sm" style={{ color: "#393735" }}>only you can see this. write freely. 🔒</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,9 +94,9 @@ export default function NewDiaryEntryPage() {
               required
               className="w-full rounded-2xl border px-4 py-3 text-base font-medium outline-none focus:ring-4"
               style={{
-                background: "#fef9f5",
-                borderColor: "#f7c8c9",
-                color: "#69484a",
+                background: "#f8f5f0",
+                borderColor: "#ded0c6",
+                color: "#393735",
                 fontFamily: "Georgia, serif",
               }}
             />
@@ -112,13 +112,13 @@ export default function NewDiaryEntryPage() {
               rows={14}
               className="w-full resize-none rounded-2xl border px-4 py-4 text-base leading-7 outline-none focus:ring-4"
               style={{
-                background: "#fef9f5",
-                borderColor: "#f7c8c9",
-                color: "#69484a",
+                background: "#f8f5f0",
+                borderColor: "#ded0c6",
+                color: "#393735",
                 fontFamily: "Georgia, serif",
               }}
             />
-            <p className="mt-1 text-right text-xs" style={{ color: "#c0a0aa" }}>{body.length}/3000</p>
+            <p className="mt-1 text-right text-xs" style={{ color: "#625e59" }}>{body.length}/3000</p>
           </div>
 
           {errorMsg && <p className="text-center text-sm text-red-400">{errorMsg}</p>}
@@ -127,12 +127,12 @@ export default function NewDiaryEntryPage() {
             type="submit"
             disabled={status === "saving" || !title.trim() || !body.trim()}
             className="w-full rounded-2xl py-3 text-sm font-medium shadow-sm disabled:opacity-60 transition"
-            style={{ background: "#fbd2d3", color: "#69484a" }}
+            style={{ background: "#efd2c8", color: "#393735" }}
           >
             {status === "saving" ? "saving..." : status === "saved" ? "saved 🤍" : "save to diary"}
           </button>
 
-          <p className="text-center text-xs" style={{ color: "#69484a" }}>
+          <p className="text-center text-xs" style={{ color: "#393735" }}>
             this entry is locked to your diary. you can flip it public anytime from your diary page.
           </p>
         </form>

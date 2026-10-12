@@ -22,8 +22,7 @@ html {
 body {
   min-height: 100vh;
   color: var(--shell-charcoal);
-  background: radial-gradient(ellipse at top left, #fff6e7 0%, #f5ecdf 65%);
-  background-attachment: fixed;
+  background: #faf4f5;
 }
 
 button,

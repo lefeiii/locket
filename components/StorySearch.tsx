@@ -1,6 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { FollowButton } from "@/components/FollowButton";
@@ -108,12 +109,16 @@ export function StorySearch() {
                     i < results.length - 1 ? "border-b border-[#c8b7a7]" : ""
                   }`}
                 >
-                  <div className="min-w-0">
+                  <Link
+                    href={`/story/${result.id}`}
+                    className="min-w-0 flex-1 rounded-lg py-1 transition hover:opacity-75"
+                    aria-label={`Read story: ${result.title}`}
+                  >
                     <p className="truncate text-sm font-medium text-[#4f3325]">{result.title}</p>
                     <p className="mt-0.5 text-xs text-[#6b4a3a]">
                       {result.category} · @{result.anonymous_name}
                     </p>
-                  </div>
+                  </Link>
                   <div className="shrink-0">
                     <FollowButton compact storyId={result.id} />
                   </div>

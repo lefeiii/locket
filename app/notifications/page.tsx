@@ -78,51 +78,51 @@ export default function NotificationsPage() {
     <>
       <BrandBar />
       <main className="mx-auto max-w-md px-3 py-6">
-        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4b4b47]" href="/">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#514137]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>
-        <h1 className="mb-5 text-2xl font-medium text-[#4b4b47]">Activity</h1>
+        <h1 className="mb-5 text-2xl font-medium text-[#514137]">Activity</h1>
 
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 animate-pulse rounded-2xl bg-[#e1e2e6]" />
+              <div key={i} className="h-16 animate-pulse rounded-2xl bg-[#eee2d3]" />
             ))}
           </div>
         ) : !username ? (
-          <div className="rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center">
-            <Bell className="mx-auto mb-3 text-[#d8d3ce]" size={32} />
-            <p className="text-sm font-medium text-[#787775]">
-              <Link href="/login" className="text-[#4b4b47] underline underline-offset-2">Log in</Link> to see your activity.
+          <div className="rounded-3xl border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center">
+            <Bell className="mx-auto mb-3 text-[#e5d5c2]" size={32} />
+            <p className="text-sm font-medium text-[#7d695a]">
+              <Link href="/login" className="text-[#514137] underline underline-offset-2">Log in</Link> to see your activity.
             </p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center">
-            <Bell className="mx-auto mb-3 text-[#d8d3ce]" size={32} />
-            <p className="text-sm font-medium text-[#787775]">Nothing yet — when someone comments on or reacts to your story, you'll see it here.</p>
+          <div className="rounded-3xl border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center">
+            <Bell className="mx-auto mb-3 text-[#e5d5c2]" size={32} />
+            <p className="text-sm font-medium text-[#7d695a]">Nothing yet — when someone comments on or reacts to your story, you'll see it here.</p>
           </div>
         ) : (
           <div className="space-y-2">
             {notifications.map((n) => (
               <div
                 key={n.id}
-                className="flex items-start gap-3 rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] px-4 py-3"
+                className="flex items-start gap-3 rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 py-3"
               >
-                <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#e1e2e6] text-xs font-semibold text-[#4b4b47]">
+                <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#eee2d3] text-xs font-semibold text-[#514137]">
                   {n.actor_name ? n.actor_name[0].toUpperCase() : "?"}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium leading-5 text-[#4b4b47]">{n.message}</p>
+                  <p className="text-sm font-medium leading-5 text-[#514137]">{n.message}</p>
                   {n.story_id && (
                     <Link
                       href={`/story/${n.story_id}`}
-                      className="mt-1 text-xs font-medium text-[#787775] underline underline-offset-2"
+                      className="mt-1 text-xs font-medium text-[#7d695a] underline underline-offset-2"
                     >
                       view story →
                     </Link>
                   )}
                 </div>
-                <span className="shrink-0 text-xs text-[#787775]">{timeAgo(n.created_at)}</span>
+                <span className="shrink-0 text-xs text-[#7d695a]">{timeAgo(n.created_at)}</span>
               </div>
             ))}
           </div>

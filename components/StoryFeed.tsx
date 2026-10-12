@@ -110,25 +110,25 @@ export function StoryFeed({ initialStories, pinnedStoryId, updatesOnly }: {
   }, [hasMore]);
 
   return (
-    <div ref={sectionRef} className="flex flex-col gap-5" aria-busy={loading}>
-      <p className="text-center text-xs text-[#787775]" aria-live="polite">
+    <div ref={sectionRef} className="flex flex-col gap-7" aria-busy={loading}>
+      <p className="text-center text-xs text-[#7d695a]" aria-live="polite">
         {loading ? "Loading older stories…" : pull >= PULL_THRESHOLD ? "Release to load older stories" :
           pull > 0 ? "Keep pulling to load older stories" : hasMore ? "Pull down at the top to discover older stories" : ""}
       </p>
       {stories.length === 0 ? (
-        <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center">
-          <p className="text-base font-medium text-[#4b4b47]">Nothing here yet.</p>
+        <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center">
+          <p className="text-base font-medium text-[#514137]">Nothing here yet.</p>
         </div>
       ) : stories.map(story => (
         <StoryCard key={story.id} story={story} isGuest={false} isPinned={story.id === pinnedStoryId} />
       ))}
-      {error && <p role="alert" className="text-center text-sm text-[#787775]">{error}</p>}
+      {error && <p role="alert" className="text-center text-sm text-[#7d695a]">{error}</p>}
       {hasMore ? (
         <button type="button" onClick={() => void loadOlder()} disabled={loading}
-          className="rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] px-4 py-3 text-sm font-medium text-[#4b4b47] disabled:opacity-50">
+          className="rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 py-3 text-sm font-medium text-[#514137] disabled:opacity-50">
           {loading ? "Loading…" : error ? "Try again" : "Load older stories"}
         </button>
-      ) : stories.length > 0 && <p className="text-center text-sm text-[#787775]">You’ve reached the oldest stories. Check back for new ones.</p>}
+      ) : stories.length > 0 && <p className="text-center text-sm text-[#7d695a]">You’ve reached the oldest stories. Check back for new ones.</p>}
     </div>
   );
 }

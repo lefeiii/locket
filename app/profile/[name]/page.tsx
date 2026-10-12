@@ -211,28 +211,28 @@ export default function ProfilePage() {
     <main className="pb-24">
       <BrandBar />
       <section className="mx-auto max-w-md px-4 py-5">
-        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4b4b47]" href="/">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#514137]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>
 
-        <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm">
+        <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-6 shadow-sm">
           {/* Avatar + username */}
           <div className="flex items-center gap-4 mb-4">
-            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl bg-[#f8c0c8] text-2xl font-medium text-[#4b4b47] select-none">
+            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl bg-[#e9b3ad] text-2xl font-medium text-[#514137] select-none">
               {profileUsername.slice(0, 1).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               {isOwn && editingUsername ? (
                 <div className="flex gap-2 items-center">
                   <input value={newUsername} onChange={e => setNewUsername(e.target.value)} maxLength={30}
-                    className="flex-1 rounded-xl border border-[#d8d3ce] px-3 py-1 text-sm font-medium text-[#4b4b47] outline-none focus:border-[#f8c0c8]" />
-                  <button onClick={handleSaveUsername} disabled={saving} className="shrink-0 rounded-xl bg-[#f8c0c8] px-3 py-1 text-xs font-medium text-[#4b4b47]">{saving ? "..." : "save"}</button>
-                  <button onClick={() => { setEditingUsername(false); setNewUsername(currentUsername ?? name); }} className="text-xs text-[#787775]">cancel</button>
+                    className="flex-1 rounded-xl border border-[#e5d5c2] px-3 py-1 text-sm font-medium text-[#514137] outline-none focus:border-[#e9b3ad]" />
+                  <button onClick={handleSaveUsername} disabled={saving} className="shrink-0 rounded-xl bg-[#e9b3ad] px-3 py-1 text-xs font-medium text-[#514137]">{saving ? "..." : "save"}</button>
+                  <button onClick={() => { setEditingUsername(false); setNewUsername(currentUsername ?? name); }} className="text-xs text-[#7d695a]">cancel</button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-medium text-[#4b4b47] truncate">@{profileUsername}</h1>
-                  {isOwn && <button onClick={() => setEditingUsername(true)} className="shrink-0 text-xs text-[#787775] underline">edit</button>}
+                  <h1 className="text-2xl font-medium text-[#514137] truncate">@{profileUsername}</h1>
+                  {isOwn && <button onClick={() => setEditingUsername(true)} className="shrink-0 text-xs text-[#7d695a] underline">edit</button>}
                 </div>
               )}
               {saveMsg && <p className={`text-xs mt-1 ${saveMsgIsError ? "text-red-400" : "text-green-600"}`}>{saveMsg}</p>}
@@ -244,25 +244,25 @@ export default function ProfilePage() {
             editingBio ? (
               <div className="mb-4">
                 <textarea value={bio} onChange={e => setBio(e.target.value)} rows={2} maxLength={160}
-                  className="w-full rounded-xl border border-[#d8d3ce] px-3 py-2 text-sm font-medium text-[#4b4b47] outline-none focus:border-[#f8c0c8] resize-none"
+                  className="w-full rounded-xl border border-[#e5d5c2] px-3 py-2 text-sm font-medium text-[#514137] outline-none focus:border-[#e9b3ad] resize-none"
                   placeholder="say something..." />
                 <div className="flex gap-2 mt-1">
-                  <button onClick={handleSaveBio} disabled={saving} className="rounded-xl bg-[#f8c0c8] px-3 py-1 text-xs font-medium text-[#4b4b47]">{saving ? "..." : "save bio"}</button>
-                  <button onClick={() => setEditingBio(false)} className="text-xs text-[#787775]">cancel</button>
+                  <button onClick={handleSaveBio} disabled={saving} className="rounded-xl bg-[#e9b3ad] px-3 py-1 text-xs font-medium text-[#514137]">{saving ? "..." : "save bio"}</button>
+                  <button onClick={() => setEditingBio(false)} className="text-xs text-[#7d695a]">cancel</button>
                 </div>
               </div>
             ) : (
               <div className="mb-4">
-                <p className="text-sm font-medium text-[#787775]">{bio || <span className="italic opacity-50">no bio yet</span>}</p>
-                <button onClick={() => setEditingBio(true)} className="mt-1 text-xs text-[#787775] underline">{bio ? "edit bio" : "add bio"}</button>
+                <p className="text-sm font-medium text-[#7d695a]">{bio || <span className="italic opacity-50">no bio yet</span>}</p>
+                <button onClick={() => setEditingBio(true)} className="mt-1 text-xs text-[#7d695a] underline">{bio ? "edit bio" : "add bio"}</button>
               </div>
             )
           ) : null}
 
           {/* Stats — stories only */}
-          <div className="rounded-2xl bg-[#e1e2e6] p-4">
-            <p className="text-3xl font-medium text-[#4b4b47]">{loading ? "—" : stories.length}</p>
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">Stories</p>
+          <div className="rounded-2xl bg-[#eee2d3] p-4">
+            <p className="text-3xl font-medium text-[#514137]">{loading ? "—" : stories.length}</p>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">Stories</p>
           </div>
         </div>
 
@@ -271,28 +271,28 @@ export default function ProfilePage() {
         <section className="mt-6">
           <div className="mb-3 flex items-center gap-2">
             <GitBranch size={19} />
-            <h2 className="text-xl font-medium text-[#4b4b47]">{isOwn ? "your stories" : "drama history"}</h2>
+            <h2 className="text-xl font-medium text-[#514137]">{isOwn ? "your stories" : "drama history"}</h2>
           </div>
           {loading ? (
-            <p className="py-8 text-center text-sm text-[#787775]">loading...</p>
+            <p className="py-8 text-center text-sm text-[#7d695a]">loading...</p>
           ) : stories.length === 0 ? (
-            <p className="py-8 text-center text-sm text-[#787775]">no stories yet</p>
+            <p className="py-8 text-center text-sm text-[#7d695a]">no stories yet</p>
           ) : (
-            <div className="grid gap-3">
+            <div className="grid gap-4">
               {stories.map(story => (
-                <div key={story.id} className="rounded-3xl bg-[#f8f8f6] p-4 shadow-lg">
+                <div key={story.id} className="rounded-3xl border border-[#e5d5c2] bg-[#fffaf2] p-5 shadow-sm">
                   <Link href={`/story/${story.id}`} className="block">
-                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#787775]">{story.category}</p>
-                    <h3 className="mt-1 text-xl font-medium leading-tight text-[#4b4b47]">{story.title}</h3>
-                    {story.cliffhanger && <p className="mt-2 rounded-2xl bg-[#f8c0c8] p-3 text-sm font-medium text-[#4b4b47]">{story.cliffhanger}</p>}
-                    <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-[#4b4b47]">{story.body}</p>
-                    <p className="mt-2 text-xs font-medium text-[#787775]">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">{story.category}</p>
+                    <h3 className="mt-1 text-xl font-medium leading-tight text-[#514137]">{story.title}</h3>
+                    {story.cliffhanger && <p className="mt-2 rounded-2xl bg-[#e9b3ad] p-3 text-sm font-medium text-[#514137]">{story.cliffhanger}</p>}
+                    <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-[#514137]">{story.body}</p>
+                    <p className="mt-2 text-xs font-medium text-[#7d695a]">
                       {story.follower_count ?? 0} {(story.follower_count ?? 0) === 1 ? "follower" : "followers"}
                     </p>
                   </Link>
                   {isOwn && (
-                    <div className="mt-3 flex gap-3 border-t border-[#e1e2e6] pt-3">
-                      <button onClick={() => handleHide(story.id)} className="flex items-center gap-1 text-xs font-medium text-[#787775] hover:text-[#4b4b47]">
+                    <div className="mt-3 flex gap-3 border-t border-[#eee2d3] pt-3">
+                      <button onClick={() => handleHide(story.id)} className="flex items-center gap-1 text-xs font-medium text-[#7d695a] hover:text-[#514137]">
                         <EyeOff size={13} /> hide
                       </button>
                       <button onClick={() => handleDelete(story.id)} className="flex items-center gap-1 text-xs font-medium text-red-400 hover:text-red-600">
@@ -310,14 +310,14 @@ export default function ProfilePage() {
         {isOwn && recentComments.length > 0 && (
           <section className="mt-6">
             <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-xl font-medium text-[#4b4b47]">💬 recent comments</h2>
+              <h2 className="text-xl font-medium text-[#514137]">💬 recent comments</h2>
             </div>
-            <div className="grid gap-3">
+            <div className="grid gap-4">
               {recentComments.map(comment => (
-                <Link key={comment.id} href={`/story/${comment.story_id}`} className="block rounded-3xl bg-[#f8f8f6] p-4 shadow-sm">
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#787775]">@{comment.anonymous_name} on</p>
-                  <p className="mt-0.5 text-sm font-medium text-[#4b4b47] truncate">{comment.story_title}</p>
-                  <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-[#787775]">{comment.body}</p>
+                <Link key={comment.id} href={`/story/${comment.story_id}`} className="block rounded-3xl bg-[#fffaf2] p-4 shadow-sm">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">@{comment.anonymous_name} on</p>
+                  <p className="mt-0.5 text-sm font-medium text-[#514137] truncate">{comment.story_title}</p>
+                  <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-[#7d695a]">{comment.body}</p>
                 </Link>
               ))}
             </div>
@@ -326,13 +326,13 @@ export default function ProfilePage() {
 
         {/* Own profile actions */}
         {isOwn && (
-          <section className="mt-8 grid gap-3">
+          <section className="mt-8 grid gap-4">
             <a href="https://instagram.com/lefeiii" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-sm font-medium text-[#4b4b47]">
+              className="flex items-center gap-3 rounded-3xl border border-[#e5d5c2] bg-[#fffaf2] p-4 text-sm font-medium text-[#514137]">
               <Instagram size={18} /> connect with the founder @lefeiii
             </a>
             <button onClick={handleLogout}
-              className="flex items-center gap-3 w-full rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 text-left text-sm font-medium text-[#4b4b47]">
+              className="flex items-center gap-3 w-full rounded-3xl border border-[#e5d5c2] bg-[#fffaf2] p-4 text-left text-sm font-medium text-[#514137]">
               <LogOut size={18} /> log out
             </button>
             <button onClick={handleDeleteAccount}

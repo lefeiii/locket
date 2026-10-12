@@ -72,7 +72,7 @@ export function FollowButton({ posterName, storyId, compact = false }: FollowBut
   if (!loading && !userId) {
     return (
       <a
-        className={`flex items-center justify-center gap-2 rounded-full text-xs font-medium bg-[#f8f8f6] text-[#4b4b47] shadow-sm ${
+        className={`flex items-center justify-center gap-2 rounded-full text-xs font-medium bg-[#fffaf2] text-[#514137] shadow-sm ${
           compact ? "min-h-10 px-3" : "min-h-12 px-4"
         }`}
         href="/login"
@@ -87,7 +87,7 @@ export function FollowButton({ posterName, storyId, compact = false }: FollowBut
     <button
       className={`flex items-center justify-center gap-2 rounded-full text-xs font-medium transition active:scale-95 ${
         compact ? "min-h-10 px-3" : "min-h-12 px-4"
-      } ${active ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#f8f8f6] text-[#4b4b47] shadow-sm"} ${
+      } ${active ? "bg-[#e9b3ad] text-[#514137]" : "bg-[#fffaf2] text-[#514137] shadow-sm"} ${
         (loading || processing) ? "opacity-50 pointer-events-none" : ""
       }`}
       onClick={toggle}

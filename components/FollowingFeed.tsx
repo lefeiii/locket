@@ -31,8 +31,8 @@ export function FollowingFeed({ allStories }: Props) {
   // Loading
   if (followedIds === null) {
     return (
-      <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center shadow-sm">
-        <p className="text-sm text-[#787775]">Loading your followed stories…</p>
+      <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center shadow-sm">
+        <p className="text-sm text-[#7d695a]">Loading your followed stories…</p>
       </div>
     );
   }
@@ -40,10 +40,10 @@ export function FollowingFeed({ allStories }: Props) {
   // Not logged in or no follows
   if (followedIds.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center shadow-sm">
+      <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center shadow-sm">
         <p className="text-2xl">🔔</p>
-        <p className="mt-3 text-base font-medium text-[#4b4b47]">No followed stories yet.</p>
-        <p className="mt-1 text-sm text-[#787775]">
+        <p className="mt-3 text-base font-medium text-[#514137]">No followed stories yet.</p>
+        <p className="mt-1 text-sm text-[#7d695a]">
           Hit Subscribe on any story to follow its updates here.
         </p>
       </div>
@@ -54,10 +54,10 @@ export function FollowingFeed({ allStories }: Props) {
 
   if (followed.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center shadow-sm">
+      <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center shadow-sm">
         <p className="text-2xl">🔔</p>
-        <p className="mt-3 text-base font-medium text-[#4b4b47]">No followed stories in the feed yet.</p>
-        <p className="mt-1 text-sm text-[#787775]">
+        <p className="mt-3 text-base font-medium text-[#514137]">No followed stories in the feed yet.</p>
+        <p className="mt-1 text-sm text-[#7d695a]">
           The stories you follow might not have new updates yet.
         </p>
       </div>

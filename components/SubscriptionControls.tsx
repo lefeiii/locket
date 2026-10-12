@@ -26,12 +26,12 @@ export function SubscriptionControls({ categories }: SubscriptionControlsProps) 
   }
 
   return (
-    <div className="mt-3 rounded-3xl bg-[#e1e2e6] p-3">
+    <div className="mt-3 rounded-3xl bg-[#eee2d3] p-3">
       <div className="flex gap-2">
         <label className="min-w-0 flex-1">
           <span className="sr-only">Choose a category to subscribe to</span>
           <select
-            className="min-h-11 w-full rounded-2xl border border-[#d8d3ce] bg-[#f8f8f6] px-4 text-sm font-medium text-[#4b4b47] outline-none ring-[#f8c0c8] focus:ring-4"
+            className="min-h-11 w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 text-sm font-medium text-[#514137] outline-none ring-[#e9b3ad] focus:ring-4"
             onChange={(event) => setSelected(event.target.value as StoryCategory)}
             value={selected}
           >
@@ -42,7 +42,7 @@ export function SubscriptionControls({ categories }: SubscriptionControlsProps) 
         </label>
         <button
           className={`flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-medium ${
-            active.includes(selected) ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#f8f8f6] text-[#4b4b47]"
+            active.includes(selected) ? "bg-[#e9b3ad] text-[#514137]" : "bg-[#fffaf2] text-[#514137]"
           }`}
           onClick={toggleSelected}
           type="button"
@@ -51,7 +51,7 @@ export function SubscriptionControls({ categories }: SubscriptionControlsProps) 
           {active.includes(selected) ? "Following" : "Follow"}
         </button>
       </div>
-      <p className="mt-2 text-xs font-medium leading-5 text-[#787775]">
+      <p className="mt-2 text-xs font-medium leading-5 text-[#7d695a]">
         {active.length ? `Following: ${active.join(", ")}` : "Pick a category when you want more of that lane."}
       </p>
     </div>

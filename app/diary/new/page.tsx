@@ -65,13 +65,13 @@ export default function NewDiaryEntryPage() {
   }
 
   return (
-    <main className="min-h-screen pb-28" style={{ background: "linear-gradient(160deg, #fdf6f0 0%, #fde8f0 100%)" }}>
-      <header className="sticky top-0 z-30 px-4 py-3" style={{ background: "linear-gradient(160deg, #fdf6f0 0%, #fde8f0 100%)", borderBottom: "1px solid #f5d5e0" }}>
+    <main className="min-h-screen pb-28" style={{ background: "linear-gradient(160deg, #fff8ed 0%, #f7e8dd 100%)" }}>
+      <header className="sticky top-0 z-30 px-4 py-3" style={{ background: "linear-gradient(160deg, #fff8ed 0%, #f7e8dd 100%)", borderBottom: "1px solid #ead4c5" }}>
         <div className="mx-auto flex max-w-md items-center justify-between">
           <Link href="/diary" className="flex items-center gap-2 text-sm font-medium" style={{ color: "#6b5c52" }}>
             <ArrowLeft size={18} /> back to diary
           </Link>
-          <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#b08898" }}>
+          <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#87665d" }}>
             <Lock size={13} /> private entry
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function NewDiaryEntryPage() {
       <section className="mx-auto max-w-md px-4 py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-medium" style={{ color: "#6b5c52", fontFamily: "Georgia, serif" }}>dear diary,</h1>
-          <p className="mt-1 text-sm" style={{ color: "#b08898" }}>only you can see this. write freely. 🔒</p>
+          <p className="mt-1 text-sm" style={{ color: "#87665d" }}>only you can see this. write freely. 🔒</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -95,7 +95,7 @@ export default function NewDiaryEntryPage() {
               className="w-full rounded-2xl border px-4 py-3 text-base font-medium outline-none focus:ring-4"
               style={{
                 background: "#fffaf7",
-                borderColor: "#f5d5e0",
+                borderColor: "#ead4c5",
                 color: "#6b5c52",
                 fontFamily: "Georgia, serif",
               }}
@@ -113,7 +113,7 @@ export default function NewDiaryEntryPage() {
               className="w-full resize-none rounded-2xl border px-4 py-4 text-base leading-7 outline-none focus:ring-4"
               style={{
                 background: "#fffaf7",
-                borderColor: "#f5d5e0",
+                borderColor: "#ead4c5",
                 color: "#6b5c52",
                 fontFamily: "Georgia, serif",
               }}
@@ -127,12 +127,12 @@ export default function NewDiaryEntryPage() {
             type="submit"
             disabled={status === "saving" || !title.trim() || !body.trim()}
             className="w-full rounded-2xl py-3 text-sm font-medium shadow-sm disabled:opacity-60 transition"
-            style={{ background: "#f8c0c8", color: "#6b5c52" }}
+            style={{ background: "#e9b3ad", color: "#6b5c52" }}
           >
             {status === "saving" ? "saving..." : status === "saved" ? "saved 🤍" : "save to diary"}
           </button>
 
-          <p className="text-center text-xs" style={{ color: "#b08898" }}>
+          <p className="text-center text-xs" style={{ color: "#87665d" }}>
             this entry is locked to your diary. you can flip it public anytime from your diary page.
           </p>
         </form>

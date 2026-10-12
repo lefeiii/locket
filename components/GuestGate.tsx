@@ -31,9 +31,9 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
   // While auth is loading, show nothing to avoid flash of wrong content
   if (isGuest === null) {
     return (
-      <section className="mx-auto flex max-w-lg flex-col gap-5 px-4 pt-4 pb-28">
-        <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center shadow-sm">
-          <p className="text-sm text-[#787775]">loading…</p>
+      <section className="mx-auto flex max-w-lg flex-col gap-7 px-4 pt-6 pb-28">
+        <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center shadow-sm">
+          <p className="text-sm text-[#7d695a]">loading…</p>
         </div>
       </section>
     );
@@ -42,7 +42,7 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
   // Guest view — only pinned story
   if (isGuest) {
     return (
-      <section className="mx-auto flex max-w-lg flex-col gap-5 px-4 pt-4 pb-28">
+      <section className="mx-auto flex max-w-lg flex-col gap-7 px-4 pt-6 pb-28">
         {pinnedStory ? (
           <StoryCard
             story={pinnedStory}
@@ -50,10 +50,10 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
             isPinned={true}
           />
         ) : (
-          <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-8 text-center shadow-sm">
+          <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center shadow-sm">
             <p className="text-2xl">👀</p>
-            <p className="mt-3 text-base font-medium text-[#4b4b47]">The drama is loading.</p>
-            <p className="mt-1 text-sm text-[#787775]">Check back soon.</p>
+            <p className="mt-3 text-base font-medium text-[#514137]">The drama is loading.</p>
+            <p className="mt-1 text-sm text-[#7d695a]">Check back soon.</p>
           </div>
         )}
       </section>
@@ -65,7 +65,7 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
     <>
       <FeedFilters active={activeFilter} />
       <StorySearch />
-      <section className="mx-auto flex max-w-lg flex-col gap-5 px-4 pt-4 pb-28">
+      <section className="mx-auto flex max-w-lg flex-col gap-7 px-4 pt-6 pb-28">
         {activeFilter === "Following" ? (
           <FollowingFeed allStories={allStories} />
         ) : (

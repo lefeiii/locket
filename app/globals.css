@@ -4,11 +4,11 @@
 
 :root {
   --font-sans: "Inter", "SF Pro Display", "Segoe UI", sans-serif;
-  --shell-charcoal: #4b4b47;
-  --shell-sage: #787775;
-  --shell-pink: #f8c0c8;
-  --shell-mist: #e1e2e6;
-  --shell-foam: #f8f8f6;
+  --shell-charcoal: #514137;
+  --shell-sage: #705c4c;
+  --shell-pink: #e9b3ad;
+  --shell-mist: #eee2d3;
+  --shell-foam: #fffaf2;
 }
 
 * {
@@ -22,7 +22,8 @@ html {
 body {
   min-height: 100vh;
   color: var(--shell-charcoal);
-  background: #ebebeb;
+  background: radial-gradient(ellipse at top left, #fff6e7 0%, #f5ecdf 65%);
+  background-attachment: fixed;
 }
 
 button,
@@ -45,3 +46,22 @@ select {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Quiet, visible focus feedback for keyboard navigation. */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid #a06d45;
+  outline-offset: 3px;
+}
+
+::selection {
+  background: #f1d5bf;
+  color: #514137;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Keep secondary text readable on beige and rose surfaces. */
+.text-\[\#7d695a\] { color: var(--shell-sage); }
+.bg-\[\#e9b3ad\] .text-\[\#7d695a\] { color: var(--shell-charcoal); }

@@ -7,19 +7,19 @@ const slides = [
     emoji: "👀",
     title: "read anonymous drama",
     body: "Real stories from real people. No names, no faces — just the tea. Every post is 100% anonymous.",
-    color: "bg-[#f8c0c8]",
+    color: "bg-[#e9b3ad]",
   },
   {
     emoji: "🔔",
     title: "follow the arcs",
     body: "Subscribe to stories you're invested in. When OP drops an update, you'll know. The drama never ends.",
-    color: "bg-[#e1e2e6]",
+    color: "bg-[#eee2d3]",
   },
   {
     emoji: "✍️",
     title: "post your own story",
     body: "Something happened? Drop it. Your username shows but your identity stays hidden. This is your safe space to spill.",
-    color: "bg-[#f8c0c8]",
+    color: "bg-[#e9b3ad]",
   },
 ];
 
@@ -34,12 +34,12 @@ export function Onboarding({ onDone }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 px-4 pb-8">
-      <div className="w-full max-w-md overflow-hidden rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] shadow-xl">
+      <div className="w-full max-w-md overflow-hidden rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] shadow-xl">
         {/* Slide */}
         <div key={current} className={`${slide.color} px-6 pb-8 pt-10 text-center transition-all duration-200`}>
           <p className="text-6xl">{slide.emoji}</p>
-          <h2 className="mt-4 text-2xl font-medium text-[#4b4b47]">{slide.title}</h2>
-          <p className="mt-3 text-sm font-medium leading-6 text-[#4b4b47] opacity-80">{slide.body}</p>
+          <h2 className="mt-4 text-2xl font-medium text-[#514137]">{slide.title}</h2>
+          <p className="mt-3 text-sm font-medium leading-6 text-[#514137] opacity-80">{slide.body}</p>
         </div>
 
         {/* Progress dots */}
@@ -48,7 +48,7 @@ export function Onboarding({ onDone }: Props) {
             <div
               key={i}
               className={`rounded-full transition-all ${
-                i === current ? "h-2 w-6 bg-[#4b4b47]" : "h-2 w-2 bg-[#d8d3ce]"
+                i === current ? "h-2 w-6 bg-[#514137]" : "h-2 w-2 bg-[#e5d5c2]"
               }`}
             />
           ))}
@@ -57,14 +57,14 @@ export function Onboarding({ onDone }: Props) {
         {/* Buttons */}
         <div className="grid grid-cols-2 gap-3 px-6 pb-6">
           <button
-            className="rounded-2xl border border-[#d8d3ce] py-3 text-sm font-medium text-[#787775]"
+            className="rounded-2xl border border-[#e5d5c2] py-3 text-sm font-medium text-[#7d695a]"
             onClick={onDone}
             type="button"
           >
             skip
           </button>
           <button
-            className="rounded-2xl bg-[#f8c0c8] py-3 text-sm font-medium text-[#4b4b47]"
+            className="rounded-2xl bg-[#e9b3ad] py-3 text-sm font-medium text-[#514137]"
             onClick={() => {
               if (isLast) {
                 onDone();

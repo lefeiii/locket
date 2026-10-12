@@ -63,35 +63,35 @@ export default function NotificationSettingsPage() {
     <main className="pb-24">
       <BrandBar />
       <section className="mx-auto max-w-md px-4 py-6">
-        <div className="rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#787775]">Update Alarm</p>
-          <h1 className="mt-2 text-3xl font-medium leading-tight text-[#4b4b47]">Choose what pulls you back in</h1>
-          <p className="mt-3 text-sm font-medium leading-6 text-[#787775]">
+        <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-5 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">Update Alarm</p>
+          <h1 className="mt-2 text-3xl font-medium leading-tight text-[#514137]">Choose what pulls you back in</h1>
+          <p className="mt-3 text-sm font-medium leading-6 text-[#7d695a]">
             Alarms are opt-in. Locket can follow the story without browser notifications if you prefer.
           </p>
 
           <button
-            className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#f8c0c8] px-4 text-sm font-medium text-[#4b4b47]"
+            className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#e9b3ad] px-4 text-sm font-medium text-[#514137]"
             onClick={enableBrowserPush}
             type="button"
           >
             <BellRing size={18} />
             Turn On Update Alarm
           </button>
-          {message ? <p className="mt-3 text-center text-xs font-medium leading-5 text-[#787775]">{message}</p> : null}
+          {message ? <p className="mt-3 text-center text-xs font-medium leading-5 text-[#7d695a]">{message}</p> : null}
         </div>
 
         <section className="mt-5 grid gap-3">
           {preferenceItems.map(([key, label]) => (
             <label
-              className="flex items-center justify-between gap-4 rounded-3xl border border-[#d8d3ce] bg-[#f8f8f6] p-4 shadow-sm"
+              className="flex items-center justify-between gap-4 rounded-3xl border border-[#e5d5c2] bg-[#fffaf2] p-4 shadow-sm"
               key={key}
             >
-              <span className="text-sm font-medium text-[#4b4b47]">{label}</span>
+              <span className="text-sm font-medium text-[#514137]">{label}</span>
               <button
                 aria-pressed={preferences[key]}
                 className={`grid h-8 w-8 place-items-center rounded-full ${
-                  preferences[key] ? "bg-[#f8c0c8] text-[#4b4b47]" : "bg-[#e1e2e6] text-[#787775]"
+                  preferences[key] ? "bg-[#e9b3ad] text-[#514137]" : "bg-[#eee2d3] text-[#7d695a]"
                 }`}
                 onClick={() => save({ ...preferences, [key]: !preferences[key] })}
                 type="button"
@@ -102,7 +102,7 @@ export default function NotificationSettingsPage() {
           ))}
         </section>
 
-        <Link className="mt-5 block text-center text-sm font-medium text-[#4b4b47]" href="/">
+        <Link className="mt-5 block text-center text-sm font-medium text-[#514137]" href="/">
           Back to feed
         </Link>
       </section>

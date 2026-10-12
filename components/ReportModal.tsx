@@ -60,11 +60,11 @@ export function ReportModal({ open, onClose, storyId, commentId, storyTitle }: P
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pb-8 sm:items-center"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="w-full max-w-md rounded-[2rem] border border-[#d8d3ce] bg-[#f8f8f6] p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-[#4b4b47]">Report this</h2>
+          <h2 className="text-lg font-medium text-[#514137]">Report this</h2>
           <button
-            className="grid h-9 w-9 place-items-center rounded-full bg-[#e1e2e6] text-[#4b4b47]"
+            className="grid h-9 w-9 place-items-center rounded-full bg-[#eee2d3] text-[#514137]"
             onClick={onClose}
             type="button"
           >
@@ -73,7 +73,7 @@ export function ReportModal({ open, onClose, storyId, commentId, storyTitle }: P
         </div>
 
         {storyTitle && (
-          <p className="mb-4 rounded-2xl bg-[#e1e2e6] px-4 py-2 text-sm font-medium text-[#787775] line-clamp-1">
+          <p className="mb-4 rounded-2xl bg-[#eee2d3] px-4 py-2 text-sm font-medium text-[#7d695a] line-clamp-1">
             "{storyTitle}"
           </p>
         )}
@@ -81,19 +81,19 @@ export function ReportModal({ open, onClose, storyId, commentId, storyTitle }: P
         {status === "done" ? (
           <div className="py-6 text-center">
             <p className="text-2xl">✓</p>
-            <p className="mt-2 text-sm font-medium text-[#4b4b47]">Report submitted. Thank you for keeping Locket safe.</p>
+            <p className="mt-2 text-sm font-medium text-[#514137]">Report submitted. Thank you for keeping Locket safe.</p>
           </div>
         ) : (
           <>
-            <p className="mb-3 text-sm font-medium text-[#787775]">Why are you reporting this?</p>
+            <p className="mb-3 text-sm font-medium text-[#7d695a]">Why are you reporting this?</p>
             <div className="grid gap-2">
               {REASONS.map((r) => (
                 <button
                   key={r}
                   className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${
                     reason === r
-                      ? "bg-[#f8c0c8] text-[#4b4b47]"
-                      : "bg-[#e1e2e6] text-[#4b4b47]"
+                      ? "bg-[#e9b3ad] text-[#514137]"
+                      : "bg-[#eee2d3] text-[#514137]"
                   }`}
                   onClick={() => setReason(r)}
                   type="button"
@@ -108,7 +108,7 @@ export function ReportModal({ open, onClose, storyId, commentId, storyTitle }: P
             )}
 
             <button
-              className="mt-4 w-full rounded-2xl bg-[#f8c0c8] py-3 text-sm font-medium text-[#4b4b47] disabled:opacity-50"
+              className="mt-4 w-full rounded-2xl bg-[#e9b3ad] py-3 text-sm font-medium text-[#514137] disabled:opacity-50"
               disabled={!reason || status === "saving"}
               onClick={submit}
               type="button"

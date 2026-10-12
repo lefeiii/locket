@@ -9,7 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "Inter", "ui-sans-serif", "system-ui"]
+        sans: ["Times New Roman", "Times", "serif"],
+        serif: ["Times New Roman", "Times", "serif"],
+        mono: ["Times New Roman", "Times", "serif"]
       },
       boxShadow: {
         sm: "0 2px 8px rgba(104, 73, 45, 0.04)",

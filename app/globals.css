@@ -12,7 +12,7 @@
   --palette-wood: #69484a;
   --palette-caramel: #a67c6b;
   --palette-rosewood: #fbd2d3;
-  --font-sans: "Inter", "SF Pro Display", "Segoe UI", sans-serif;
+  --font-sans: "Times New Roman", Times, serif;
   --shell-charcoal: #69484a;
   --shell-sage: #69484a;
   --shell-pink: #fbd2d3;
@@ -171,3 +171,9 @@ select {
 
 /* Pink diary illustration: cream, cover pink, rose edging, peach-gold details. */
 :root { --diary-cream: #fef9f5; --diary-pink: #fbd2d3; --diary-rose: #f3b1ae; --diary-gold: #f5c49c; }
+
+/* Use the same typeface throughout the app, including form controls. */
+body, body * { font-family: "Times New Roman", Times, serif !important; }
+
+/* Override embedded document typography without changing its contents. */
+body [data-custom-class], body [data-custom-class] * { font-family: "Times New Roman", Times, serif !important; }

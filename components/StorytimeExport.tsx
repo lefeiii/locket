@@ -18,7 +18,7 @@ export function StorytimeExport({ story }: StorytimeExportProps) {
 
   function downloadFirstSlide() {
     const text = `${story.title}\n\n${slides[0] ?? story.body}\n\n@${story.anonymous_name} · Locket`;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920"><rect width="100%" height="100%" fill="#f1e9e1"/><rect x="90" y="120" width="900" height="1680" rx="72" fill="#d8d6d2"/><text x="140" y="230" font-family="Arial" font-size="42" fill="#6b4a3a">${story.category}</text><foreignObject x="140" y="310" width="800" height="1100"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial;color:#4f3325;font-size:72px;line-height:1.12;font-weight:500;">${text.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</div></foreignObject><text x="140" y="1690" font-family="Arial" font-size="40" fill="#6b4a3a">locket · anonymous stories</text></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920"><rect width="100%" height="100%" fill="#f1e9e1"/><rect x="90" y="120" width="900" height="1680" rx="72" fill="#d8d6d2"/><text x="140" y="230" font-family="Times New Roman" font-size="42" fill="#6b4a3a">${story.category}</text><foreignObject x="140" y="310" width="800" height="1100"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Times New Roman;color:#4f3325;font-size:72px;line-height:1.12;font-weight:500;">${text.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</div></foreignObject><text x="140" y="1690" font-family="Times New Roman" font-size="40" fill="#6b4a3a">locket · anonymous stories</text></svg>`;
     const blob = new Blob([svg], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");

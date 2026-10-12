@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { DisguiseProvider } from "@/components/DisguiseMode";
 
 export const metadata: Metadata = {
   title: "Locket",
@@ -20,10 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="pb-24">
+  <DisguiseProvider>
   {children}
   <footer className="text-center py-6 text-sm text-gray-400">
     <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>
   </footer>
+  </DisguiseProvider>
 </body>
     </html>
   );

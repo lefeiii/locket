@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
 import { ArrowLeft, Lock, PenLine, Globe } from "lucide-react";
 import Image from "next/image";
+import { DisguiseSettings } from "@/components/DisguiseMode";
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -116,6 +117,7 @@ export default function DiaryPage() {
         <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4b4b47]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>
+        <DisguiseSettings />
         {loading ? (
           <div className="space-y-3 mt-4">
             {[1, 2, 3].map(i => (

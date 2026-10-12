@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { AppNav } from "@/components/AppNav";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
-import { Lock, PenLine, Globe } from "lucide-react";
+import { ArrowLeft, Lock, PenLine, Globe } from "lucide-react";
 import Image from "next/image";
 
 function timeAgo(dateStr: string) {
@@ -113,6 +113,9 @@ export default function DiaryPage() {
       </header>
 
       <section className="mx-auto max-w-md px-4 py-5">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4b4b47]" href="/">
+          <ArrowLeft size={18} /> Back to feed
+        </Link>
         {loading ? (
           <div className="space-y-3 mt-4">
             {[1, 2, 3].map(i => (

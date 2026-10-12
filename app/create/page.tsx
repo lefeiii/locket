@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Send, Sparkles } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -149,6 +149,9 @@ export default function CreatePage() {
     <main className="pb-24">
       <BrandBar />
       <section className="mx-auto max-w-lg px-4 py-6">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4b4b47]" href="/">
+          <ArrowLeft size={18} /> Back to feed
+        </Link>
         <div className="mb-5">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#787775]">Anonymous post</p>
           <h1 className="mt-2 text-3xl font-medium leading-tight text-[#4b4b47]">Drop the story</h1>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { BrandBar } from "@/components/AppNav";
 import Link from "next/link";
-import { Bell } from "lucide-react";
+import { ArrowLeft, Bell } from "lucide-react";
 
 type Notification = {
   id: string;
@@ -78,6 +78,9 @@ export default function NotificationsPage() {
     <>
       <BrandBar />
       <main className="mx-auto max-w-md px-3 py-6">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4b4b47]" href="/">
+          <ArrowLeft size={18} /> Back to feed
+        </Link>
         <h1 className="mb-5 text-2xl font-medium text-[#4b4b47]">Activity</h1>
 
         {loading ? (

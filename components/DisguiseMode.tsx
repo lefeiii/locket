@@ -39,9 +39,8 @@ export function DisguiseProvider({ children }: { children: React.ReactNode }) {
     const sync = (event: StorageEvent) => { if (event.key === DISGUISE_KEY || event.key === null) { try { setEnabled(Boolean(readDisguise())); } catch { setEnabled(true); } lock(); } };
     document.addEventListener("visibilitychange", hide);
     window.addEventListener("pagehide", lock);
-    window.addEventListener("blur", lock);
     window.addEventListener("storage", sync);
-    return () => { active = false; document.removeEventListener("visibilitychange", hide); window.removeEventListener("pagehide", lock); window.removeEventListener("blur", lock); window.removeEventListener("storage", sync); };
+    return () => { active = false; document.removeEventListener("visibilitychange", hide); window.removeEventListener("pagehide", lock); window.removeEventListener("storage", sync); };
   }, []);
   useEffect(() => {
     if (!ready) return;

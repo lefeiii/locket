@@ -36,7 +36,7 @@ test('locked routes conceal content; correct PIN opens it; leaving locks it; att
  const s=storage();const h=harness(s);s.setItem(h.lib.DISGUISE_KEY,JSON.stringify({salt:'salt',hash:await h.lib.hashPin('1234','salt'),ownerId:'owner',failures:0,retryAt:0}));
  assert(concealed(h.render()));await h.mount();assert(concealed(h.render()));
  async function attempt(pin){let tree=h.render();if(!pinInput(tree))findButton(tree,'Unlock').props.onClick();tree=h.render();pinInput(tree).props.onChange({target:{value:pin}});tree=h.render();await tree.find(n=>n.type==='form'&&pinInput(nodes(n))).props.onSubmit(event);}
- await attempt('9999');assert(JSON.stringify(h.render()).includes('Incorrect PIN.'));await attempt('1234');assert(JSON.stringify(h.render()).includes('SECRET CONTENT'));h.listeners.blur();assert(concealed(h.render()));
+ await attempt('9999');assert(JSON.stringify(h.render()).includes('Incorrect PIN.'));await attempt('1234');assert(JSON.stringify(h.render()).includes('SECRET CONTENT'));assert.equal(h.listeners.blur, undefined);assert(!concealed(h.render()));h.listeners.pagehide();assert(concealed(h.render()));
  for(let i=0;i<5;i++)await attempt('0000');await attempt('1234');assert(JSON.stringify(h.render()).includes('Too many attempts'));assert(concealed(h.render()));
 });
 

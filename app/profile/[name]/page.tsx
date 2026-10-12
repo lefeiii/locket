@@ -30,19 +30,31 @@ export default function ProfilePage() {
   const [recentComments, setRecentComments] = useState<{id: string; story_id: string; story_title: string; anonymous_name: string; body: string; created_at: string}[]>([]);
 
   const [isOwnProfile, setIsOwnProfile] = useState(false);
-  const isOwn = isOwnProfile;
+  const isOwn = isOwnProfile && currentUsername === name;
+  const profileUsername = isOwn ? currentUsername : name;
 
   // Sync newUsername input when currentUsername loads from DB
   useEffect(() => { if (currentUsername) setNewUsername(currentUsername); }, [currentUsername]);
 
   useEffect(() => {
+    let cancelled = false;
+    setIsOwnProfile(false);
+    setBio("");
+    setStories([]);
+    setRecentComments([]);
+    setEditingUsername(false);
+    setEditingBio(false);
+    setSaveMsg("");
+    setLoading(true);
     const client = supabase;
     if (!client) { setLoading(false); return; }
     client.auth.getUser().then(({ data }) => {
+      if (cancelled) return;
       if (!data.user) return;
       setCurrentUserId(data.user.id);
       client.from("users").select("username, bio").eq("id", data.user.id).single()
         .then(({ data: profile }) => {
+          if (cancelled) return;
           if (profile) { setCurrentUsername(profile.username); if (profile.username === name) { setBio(profile.bio ?? ""); setIsOwnProfile(true); } }
         });
     });
@@ -51,6 +63,7 @@ export default function ProfilePage() {
     client.from("stories").select("*").eq("anonymous_name", name).eq("is_hidden", false)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
+        if (cancelled) return;
         setStories(data ?? []);
         setLoading(false);
 
@@ -64,6 +77,7 @@ export default function ProfilePage() {
             .order("created_at", { ascending: false })
             .limit(10)
             .then(({ data: commentData }) => {
+              if (cancelled) return;
               const storyMap: Record<string, string> = {};
               (data ?? []).forEach((s: {id: string; title: string}) => { storyMap[s.id] = s.title; });
               setRecentComments(
@@ -77,6 +91,7 @@ export default function ProfilePage() {
             });
         }
       });
+    return () => { cancelled = true; };
   }, [name]);
 
   async function handleSaveUsername() {
@@ -203,7 +218,7 @@ export default function ProfilePage() {
           {/* Avatar + username */}
           <div className="flex items-center gap-4 mb-4">
             <div className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl bg-[#f8c0c8] text-2xl font-medium text-[#4b4b47] select-none">
-              {(currentUsername ?? name).slice(0, 1).toUpperCase()}
+              {profileUsername.slice(0, 1).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               {isOwn && editingUsername ? (
@@ -215,7 +230,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-medium text-[#4b4b47] truncate">@{currentUsername ?? name}</h1>
+                  <h1 className="text-2xl font-medium text-[#4b4b47] truncate">@{profileUsername}</h1>
                   {isOwn && <button onClick={() => setEditingUsername(true)} className="shrink-0 text-xs text-[#787775] underline">edit</button>}
                 </div>
               )}

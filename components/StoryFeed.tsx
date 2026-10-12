@@ -5,6 +5,7 @@ import { StoryCard } from "@/components/StoryCard";
 import { sampleStories } from "@/lib/sample-data";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
+import { isStoryUpdate } from "@/lib/story-updates";
 
 const PAGE_SIZE = 10;
 const PULL_THRESHOLD = 72;
@@ -38,19 +39,20 @@ export function StoryFeed({ initialStories, pinnedStoryId, updatesOnly }: {
           .order("id", { ascending: false })
           .or(`created_at.lt.${last.created_at},and(created_at.eq.${last.created_at},id.lt.${last.id})`)
           .limit(PAGE_SIZE);
-        if (updatesOnly) query = query.eq("is_update", true);
+        if (updatesOnly) query = query.eq("is_update", true).gt("part_number", 1)
+          .not("story_arc_id", "is", null).neq("story_arc_id", "");
         const result = await query;
         if (result.error) throw result.error;
         older = (result.data ?? []) as Story[];
       } else {
-        older = [...sampleStories].filter(s => s.id !== pinnedStoryId && (!updatesOnly || s.is_update))
+        older = [...sampleStories].filter(s => s.id !== pinnedStoryId && (!updatesOnly || isStoryUpdate(s)))
           .sort((a, b) => b.created_at.localeCompare(a.created_at) || b.id.localeCompare(a.id))
           .filter(s => s.created_at < last.created_at || (s.created_at === last.created_at && s.id < last.id))
           .slice(0, PAGE_SIZE);
       }
       setStories(current => {
         const seen = new Set(current.map(s => s.id));
-        return [...current, ...older.filter(s => !seen.has(s.id))];
+        return [...current, ...older.filter(s => !seen.has(s.id) && (!updatesOnly || isStoryUpdate(s)))];
       });
       setHasMore(older.length === PAGE_SIZE);
     } catch {

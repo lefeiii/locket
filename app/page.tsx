@@ -3,6 +3,7 @@ import { GuestGate } from "@/components/GuestGate";
 import { sampleStories } from "@/lib/sample-data";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
+import { isStoryUpdate } from "@/lib/story-updates";
 
 const PINNED_STORY_ID = "a8113f77-d500-468f-b360-e32beb0aba2e";
 
@@ -10,14 +11,15 @@ export const dynamic = "force-dynamic";
 
 async function getStories(updatesOnly: boolean, pageSize = 10): Promise<Story[]> {
   if (!supabase) {
-    return [...sampleStories].filter(s => !updatesOnly || s.is_update)
+    return [...sampleStories].filter(s => !updatesOnly || isStoryUpdate(s))
       .sort((a, b) => b.created_at.localeCompare(a.created_at) || b.id.localeCompare(a.id)).slice(0, pageSize);
   }
 
   let query = supabase.from("stories").select("*").eq("is_hidden", false)
     .neq("id", PINNED_STORY_ID).order("created_at", { ascending: false })
     .order("id", { ascending: false }).limit(pageSize);
-  if (updatesOnly) query = query.eq("is_update", true);
+  if (updatesOnly) query = query.eq("is_update", true).gt("part_number", 1)
+    .not("story_arc_id", "is", null).neq("story_arc_id", "");
 
   const [pinnedRes, feedRes] = await Promise.all([
     supabase.from("stories").select("*").eq("id", PINNED_STORY_ID).maybeSingle(),
@@ -35,7 +37,7 @@ async function getStories(updatesOnly: boolean, pageSize = 10): Promise<Story[]>
 function filterStories(stories: Story[], activeFilter: string) {
   switch (activeFilter) {
     case "Updates":
-      return stories.filter((story) => story.is_update);
+      return stories.filter(isStoryUpdate);
     default:
       return stories;
   }

@@ -2,29 +2,22 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Moon } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+
 
 type Night = { night: string; prompt: string; host_username: string };
-function torontoDate() {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Toronto", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-}
-export function AwakeFeedCard() {
-  const [thread, setThread] = useState<Night | null>(null);
-  const [today, setToday] = useState("");
+export function AwakeFeedCard({ initialThread = null, initialToday = "" }: { initialThread?: Night | null; initialToday?: string }) {
+  const [thread, setThread] = useState<Night | null>(initialThread);
+  const [today, setToday] = useState(initialToday);
   useEffect(() => {
-    const client = supabase;
-    if (!client) return;
     let alive = true, fetching = false;
     async function refresh() {
       if (fetching || document.visibilityState === "hidden") return;
       fetching = true;
-      const date = torontoDate();
       try {
-        const { data, error } = await client!.from("awake_nights")
-          .select("night,prompt,host_username").lte("night", date)
-          .lte("published_at", new Date().toISOString())
-          .order("night", { ascending: false }).limit(1).maybeSingle();
-        if (alive && !error) { setThread(data); setToday(date); }
+        const response = await fetch("/api/awake/latest", { cache: "no-store", signal: AbortSignal.timeout(10000) });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (alive) { setThread(data.thread); setToday(data.today); }
       } catch { /* Keep the current card during a temporary connection failure. */ }
       finally { fetching = false; }
     }

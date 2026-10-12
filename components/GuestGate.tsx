@@ -10,7 +10,10 @@ import { StoryCard } from "@/components/StoryCard";
 import { StoryFeed } from "@/components/StoryFeed";
 import type { Story } from "@/lib/types";
 
+import type { AwakeNight } from "@/lib/awake-public";
+
 type Props = {
+  awake?: { thread: AwakeNight | null; today: string };
   activeFilter: string;
   allStories: Story[];
   pinnedStory: Story | null;
@@ -18,7 +21,7 @@ type Props = {
   visibleStories: Story[];
 };
 
-export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId, visibleStories }: Props) {
+export function GuestGate({ awake, activeFilter, allStories, pinnedStory, pinnedStoryId, visibleStories }: Props) {
   const [isGuest, setIsGuest] = useState<boolean | null>(supabase ? null : true); // null = loading
 
   useEffect(() => {
@@ -33,6 +36,7 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
   if (isGuest === null) {
     return (
       <section className="mx-auto flex max-w-lg flex-col gap-7 px-4 pt-6 pb-28">
+        <AwakeFeedCard initialThread={awake?.thread} initialToday={awake?.today} />
         <div className="rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-8 text-center shadow-sm">
           <p className="text-sm text-[#6b4a3a]">loading…</p>
         </div>
@@ -44,7 +48,7 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
   if (isGuest) {
     return (
       <section className="mx-auto flex max-w-lg flex-col gap-7 px-4 pt-6 pb-28">
-        <AwakeFeedCard />
+        <AwakeFeedCard initialThread={awake?.thread} initialToday={awake?.today} />
         {pinnedStory ? (
           <StoryCard
             story={pinnedStory}
@@ -68,7 +72,7 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
       <FeedFilters active={activeFilter} />
       <StorySearch />
       <section className="mx-auto flex max-w-lg flex-col gap-7 px-4 pt-6 pb-28">
-        <AwakeFeedCard />
+        <AwakeFeedCard initialThread={awake?.thread} initialToday={awake?.today} />
         {activeFilter === "Following" ? (
           <FollowingFeed allStories={allStories} />
         ) : (

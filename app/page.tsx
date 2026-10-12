@@ -1,3 +1,4 @@
+import { getPublicAwakeNight } from "@/lib/awake-public";
 import { AppNav, BrandBar } from "@/components/AppNav";
 import { GuestGate } from "@/components/GuestGate";
 import { sampleStories } from "@/lib/sample-data";
@@ -50,6 +51,7 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
 
   // Fetch the first page server-side; GuestGate handles guest access client-side.
   const stories = await getStories(activeFilter === "Updates", activeFilter === "Following" ? 19 : 10);
+  const awake = await getPublicAwakeNight();
   const pinnedStory = stories.find(s => s.id === PINNED_STORY_ID) ?? null;
   const visibleStories = filterStories(stories, activeFilter);
 
@@ -58,6 +60,7 @@ export default async function Home({ searchParams }: { searchParams?: Promise<{ 
       <BrandBar />
 
       <GuestGate
+        awake={awake}
         activeFilter={activeFilter}
         allStories={stories}
         pinnedStory={pinnedStory}

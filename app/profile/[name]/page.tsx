@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { AppNav, BrandBar } from "@/components/AppNav";
 import { supabase } from "@/lib/supabase";
 import type { Story } from "@/lib/types";
+import { HostInviteSettings } from "@/components/HostInviteSettings";
 import { DisguiseSettings } from "@/components/DisguiseMode";
 
 export default function ProfilePage() {
@@ -267,7 +268,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Stories */}
-        {isOwn && <div className="mt-5"><DisguiseSettings /></div>}
+        {isOwn && <div className="mt-5"><DisguiseSettings /><HostInviteSettings /></div>}
         <section className="mt-6">
           <div className="mb-3 flex items-center gap-2">
             <GitBranch size={19} />

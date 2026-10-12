@@ -189,14 +189,14 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
           </div>
 
           <Link href={`/story/${story.id}`}>
-            <h2 className="text-[1.65rem] font-medium leading-snug text-[#4f3325] sm:text-3xl">{story.title}</h2>
+            <h2 className="font-serif text-2xl font-normal leading-snug text-[#4f3325] sm:text-[1.75rem]">{story.title}</h2>
           </Link>
-          <div className="mt-3 flex min-w-0 items-center gap-2 text-sm font-medium text-[#6b4a3a]">
+          <div className="mt-2 flex min-w-0 items-center gap-2 text-sm font-normal text-[#6b4a3a]">
             <Link className="min-w-0 truncate" href={`/profile/${story.anonymous_name}`}>
               @{story.anonymous_name}
             </Link>
           </div>
-          <div className="mt-4 space-y-2 text-sm font-medium leading-6 text-[#6b4a3a]">
+          <div className="mt-2 space-y-1 text-xs font-normal leading-5 text-[#6b4a3a]">
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[#6b4a3a]">
               {storyContext && <><span>{storyContext}</span><span aria-hidden="true">·</span></>}
               <span className="text-[#94616c]">{responseModes[responseMode].label}</span>
@@ -214,7 +214,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
             </p>
           ) : null}
           {arcParts.length > 0 && (
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <div className="mt-2 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
               <span className="shrink-0 rounded-full border border-[#c88d7d] bg-[#c88d7d] px-3 py-1.5 text-xs font-medium text-[#4f3325]">
                 {story.update_label ?? `Part ${story.part_number ?? "?"}`} ← you are here
               </span>
@@ -229,9 +229,9 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
               ))}
             </div>
           )}
-          <p className="mt-5 whitespace-pre-line text-[1.05rem] font-medium leading-7 text-[#4f3325]">{story.body}</p>
+          <p className="mt-4 whitespace-pre-line text-base font-normal leading-7 text-[#4f3325]">{story.body}</p>
           {story.cliffhanger ? (
-            <p className="mt-4 rounded-3xl bg-[#c88d7d] p-4 text-xl font-medium leading-snug text-[#4f3325]">
+            <p className="mt-4 rounded-3xl bg-[#c88d7d] p-4 text-lg font-normal leading-snug text-[#4f3325]">
               {story.cliffhanger}
             </p>
           ) : null}
@@ -240,20 +240,20 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
           {isGuest && isPinned ? (
             <Link
               href="/login"
-              className="mt-4 flex items-center justify-between rounded-3xl bg-[#4f3325] px-5 py-4 text-[#f1e9e1]"
+              className="mt-4 flex items-center justify-between rounded-3xl border border-[#c8b7a7] bg-[#c88d7d] px-5 py-3 text-[#4f3325]"
             >
               <span className="text-sm font-medium">see OP&apos;s update →</span>
-              <span className="text-xs text-[#c8b7a7]">log in to keep reading</span>
+              <span className="text-xs text-[#4f3325]">log in to keep reading</span>
             </Link>
           ) : nextPart ? (
             <Link
               href={`/story/${nextPart.id}`}
-              className="mt-4 flex items-center justify-between rounded-3xl bg-[#4f3325] px-5 py-4 text-[#f1e9e1]"
+              className="mt-4 flex items-center justify-between rounded-3xl border border-[#c8b7a7] bg-[#c88d7d] px-5 py-3 text-[#4f3325]"
             >
               <span className="text-sm font-medium">
                 {nextPart.update_label ?? `Part ${nextPart.part_number ?? "?"}`} is out →
               </span>
-              <span className="text-xs text-[#c8b7a7]">keep reading</span>
+              <span className="text-xs text-[#4f3325]">keep reading</span>
             </Link>
           ) : null}
         </div>

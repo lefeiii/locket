@@ -89,7 +89,7 @@ export function BrandBar() {
             />
           </span>
           <span>
-            <span className="block text-lg font-medium leading-none text-[#4f3325]">Locket</span>
+            <span className="block font-serif text-lg font-medium leading-none text-[#4f3325]">Locket</span>
             <span className="block text-[0.68rem] font-medium tracking-[0.15em] text-[#6b4a3a] italic">an absolute trainwreck</span>
           </span>
         </Link>

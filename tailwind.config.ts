@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Times New Roman", "Times", "serif"],
+        sans: ["var(--font-sans)", "ui-rounded", "system-ui", "sans-serif"],
         serif: ["Times New Roman", "Times", "serif"],
         mono: ["Times New Roman", "Times", "serif"]
       },

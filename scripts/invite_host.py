@@ -35,7 +35,7 @@ I’m starting something called Everyone’s Awake: a nightly thread where we ca
 
 You get to choose the question everyone answers. It could be something lighthearted, something you’ve been wondering about, or something you wish people talked about more.
 
-If you’re interested, just reply with your idea by 6:30 p.m. Toronto time today. I’ll review it and take care of setting up the thread. No pressure at all—if today doesn’t work, we’ll use a question of our own.
+If you’re interested, just reply with your idea by 8:00 p.m. Toronto time today. I’ll review it and take care of setting up the thread. No pressure at all—if today doesn’t work, we’ll use a question of our own.
 
 Thank you for being here,
 Lefei
@@ -96,7 +96,7 @@ def deliver(candidate, password, db, smtp_factory=smtplib.SMTP_SSL):
 
 def main():
     now = datetime.now(ZoneInfo('America/Toronto'))
-    if os.environ.get('GITHUB_EVENT_NAME') == 'schedule' and now.hour != 14:
+    if os.environ.get('GITHUB_EVENT_NAME') == 'schedule' and now.hour != 18:
         print('Outside the Toronto invitation window; no action.')
         return
     required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GMAIL_APP_PASSWORD']

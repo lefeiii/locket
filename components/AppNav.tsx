@@ -45,7 +45,7 @@ export function AppNav() {
   ];
 
   return (
-    <nav className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-full border border-[#c8b7a7] bg-[#f1e9e1] p-2 shadow-lg">
+    <nav className="locket-navigation fixed bottom-3 left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-full border border-[#c8b7a7] bg-[#f1e9e1] p-2 shadow-lg">
       <div className="grid grid-cols-5 gap-1">
         {items.map(({ href, label, icon: Icon, emoji, badge }) => (
           <Link
@@ -75,10 +75,10 @@ export function AppNav() {
 
 export function BrandBar() {
   return (
-    <header className="sticky top-0 z-30 border-b border-[#d8d6d2] bg-[#f1e9e1] px-4 py-3">
+    <header className="locket-brandbar sticky top-0 z-30 border-b border-[#d8d6d2] bg-[#f1e9e1] px-4 py-3">
       <div className="mx-auto flex max-w-md items-center justify-between">
         <Link className="flex items-center gap-2" href="/">
-          <span className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl bg-[#f1e9e1] shadow-lg">
+          <span className="locket-logo grid h-11 w-11 place-items-center overflow-hidden rounded-2xl bg-[#f1e9e1] shadow-lg">
             <Image
               alt="Locket logo"
               className="h-full w-full object-cover"
@@ -89,8 +89,8 @@ export function BrandBar() {
             />
           </span>
           <span>
-            <span className="block font-serif text-lg font-medium leading-none text-[#4f3325]">Locket</span>
-            <span className="block text-[0.68rem] font-medium tracking-[0.15em] text-[#6b4a3a] italic">an absolute trainwreck</span>
+            <span className="locket-brand-name block font-serif text-lg font-medium leading-none text-[#4f3325]">Locket</span>
+            <span className="locket-tagline block text-[0.68rem] font-medium tracking-[0.15em] text-[#6b4a3a] italic">an absolute trainwreck</span>
           </span>
         </Link>
         <div className="flex items-center gap-2">

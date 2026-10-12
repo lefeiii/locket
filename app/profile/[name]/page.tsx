@@ -210,7 +210,7 @@ export default function ProfilePage() {
   return (
     <main className="pb-24">
       <BrandBar />
-      <section className="mx-auto max-w-md px-4 py-5">
+      <section className="locket-page-panel mx-auto max-w-md px-4 py-5">
         <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4f3325]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>

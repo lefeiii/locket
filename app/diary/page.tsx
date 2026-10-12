@@ -113,7 +113,7 @@ export default function DiaryPage() {
         </div>
       </header>
 
-      <section className="mx-auto max-w-md px-4 py-5">
+      <section className="locket-page-panel mx-auto max-w-md px-4 py-5">
         <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#69484a]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>

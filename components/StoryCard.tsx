@@ -169,7 +169,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
   return (
     <>
       <article
-        className={`flex ${immersive ? "min-h-[calc(100svh-5rem)]" : ""} w-full flex-col justify-between rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-6 shadow-sm sm:p-7`}
+        className={`locket-story-card flex ${immersive ? "min-h-[calc(100svh-5rem)]" : ""} w-full flex-col justify-between rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-6 shadow-sm sm:p-7`}
       >
         <div>
           <div className="mb-4 flex items-center justify-between gap-3">
@@ -231,7 +231,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
           )}
           <p className="mt-4 whitespace-pre-line text-base font-normal leading-7 text-[#4f3325]">{story.body}</p>
           {story.cliffhanger ? (
-            <p className="mt-4 rounded-3xl bg-[#c88d7d] p-4 text-lg font-normal leading-snug text-[#4f3325]">
+            <p className="locket-cliffhanger mt-4 rounded-3xl bg-[#c88d7d] p-4 text-lg font-normal leading-snug text-[#4f3325]">
               {story.cliffhanger}
             </p>
           ) : null}
@@ -240,7 +240,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
           {isGuest && isPinned ? (
             <Link
               href="/login"
-              className="mt-4 flex items-center justify-between rounded-3xl border border-[#c8b7a7] bg-[#c88d7d] px-5 py-3 text-[#4f3325]"
+              className="locket-next-part mt-4 flex items-center justify-between rounded-3xl border border-[#c8b7a7] bg-[#c88d7d] px-5 py-3 text-[#4f3325]"
             >
               <span className="text-sm font-medium">see OP&apos;s update →</span>
               <span className="text-xs text-[#4f3325]">log in to keep reading</span>
@@ -248,7 +248,7 @@ export function StoryCard({ story, immersive = false, isGuest = false, isPinned 
           ) : nextPart ? (
             <Link
               href={`/story/${nextPart.id}`}
-              className="mt-4 flex items-center justify-between rounded-3xl border border-[#c8b7a7] bg-[#c88d7d] px-5 py-3 text-[#4f3325]"
+              className="locket-next-part mt-4 flex items-center justify-between rounded-3xl border border-[#c8b7a7] bg-[#c88d7d] px-5 py-3 text-[#4f3325]"
             >
               <span className="text-sm font-medium">
                 {nextPart.update_label ?? `Part ${nextPart.part_number ?? "?"}`} is out →

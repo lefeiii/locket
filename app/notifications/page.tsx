@@ -77,7 +77,7 @@ export default function NotificationsPage() {
   return (
     <>
       <BrandBar />
-      <main className="mx-auto max-w-md px-3 py-6">
+      <main className="locket-page-panel mx-auto max-w-md px-3 py-6">
         <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4f3325]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>

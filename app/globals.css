@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --palette-cloud: #f6e5ec;
-  --palette-ivory: #fff9fb;
-  --palette-oatmeal: #ead3dd;
+  --palette-cloud: #ffe4e5;
+  --palette-ivory: #fef9f5;
+  --palette-oatmeal: #f7c8c9;
   --palette-knit: #a89686;
   --palette-latte: #8c6f5e;
-  --palette-cocoa: #584550;
-  --palette-wood: #584550;
+  --palette-cocoa: #69484a;
+  --palette-wood: #69484a;
   --palette-caramel: #a67c6b;
-  --palette-rosewood: #f5c6d6;
+  --palette-rosewood: #fbd2d3;
   --font-sans: "Inter", "SF Pro Display", "Segoe UI", sans-serif;
-  --shell-charcoal: #584550;
-  --shell-sage: #584550;
-  --shell-pink: #f5c6d6;
-  --shell-mist: #f6e5ec;
-  --shell-foam: #fff9fb;
+  --shell-charcoal: #69484a;
+  --shell-sage: #69484a;
+  --shell-pink: #fbd2d3;
+  --shell-mist: #ffe4e5;
+  --shell-foam: #fef9f5;
 }
 
 * {
@@ -31,7 +31,7 @@ html {
 body {
   min-height: 100vh;
   color: var(--shell-charcoal);
-  background: #faf3f6;
+  background: #fef9f5;
 }
 
 button,
@@ -62,8 +62,8 @@ select {
 }
 
 ::selection {
-  background: #ead3dd;
-  color: #584550;
+  background: #f7c8c9;
+  color: #69484a;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -76,85 +76,85 @@ select {
 
 /* Palette supplied by the owner; Cinnamon is intentionally omitted. */
 :root {
-  --palette-ivory: #fff9fb; --palette-almond: #ead3dd;
-  --palette-peach: #f3cdb6; --palette-blush: #f5c6d6;
+  --palette-ivory: #fef9f5; --palette-almond: #f7c8c9;
+  --palette-peach: #f3cdb6; --palette-blush: #fbd2d3;
   --palette-rosewood: #d6968f; --palette-taupe: #c9aea4;
   --palette-oat: #bfa895; --palette-caramel: #a67c6b;
   --palette-cocoa: #7a5547; --palette-mist: #c0b3b8;
-  --palette-fog: #f6e5ec;
+  --palette-fog: #ffe4e5;
 }
-.bg-\[\#d8d6d2\] { background-color: #f6e5ec; }
-.hover\:bg-\[\#d8d6d2\]:hover { background-color: #f6e5ec; }
-.focus\:bg-\[\#d8d6d2\]:focus { background-color: #f6e5ec; }
-.text-\[\#d8d6d2\] { color: #f6e5ec; }
-.hover\:text-\[\#d8d6d2\]:hover { color: #f6e5ec; }
-.focus\:text-\[\#d8d6d2\]:focus { color: #f6e5ec; }
-.border-\[\#d8d6d2\] { border-color: #f6e5ec; }
-.hover\:border-\[\#d8d6d2\]:hover { border-color: #f6e5ec; }
-.focus\:border-\[\#d8d6d2\]:focus { border-color: #f6e5ec; }
-.ring-\[\#d8d6d2\] { --tw-ring-color: #f6e5ec; }
-.hover\:ring-\[\#d8d6d2\]:hover { --tw-ring-color: #f6e5ec; }
-.focus\:ring-\[\#d8d6d2\]:focus { --tw-ring-color: #f6e5ec; }
-.bg-\[\#f1e9e1\] { background-color: #fff9fb; }
-.hover\:bg-\[\#f1e9e1\]:hover { background-color: #fff9fb; }
-.focus\:bg-\[\#f1e9e1\]:focus { background-color: #fff9fb; }
-.text-\[\#f1e9e1\] { color: #fff9fb; }
-.hover\:text-\[\#f1e9e1\]:hover { color: #fff9fb; }
-.focus\:text-\[\#f1e9e1\]:focus { color: #fff9fb; }
-.border-\[\#f1e9e1\] { border-color: #fff9fb; }
-.hover\:border-\[\#f1e9e1\]:hover { border-color: #fff9fb; }
-.focus\:border-\[\#f1e9e1\]:focus { border-color: #fff9fb; }
-.ring-\[\#f1e9e1\] { --tw-ring-color: #fff9fb; }
-.hover\:ring-\[\#f1e9e1\]:hover { --tw-ring-color: #fff9fb; }
-.focus\:ring-\[\#f1e9e1\]:focus { --tw-ring-color: #fff9fb; }
-.bg-\[\#c8b7a7\] { background-color: #ead3dd; }
-.hover\:bg-\[\#c8b7a7\]:hover { background-color: #ead3dd; }
-.focus\:bg-\[\#c8b7a7\]:focus { background-color: #ead3dd; }
-.text-\[\#c8b7a7\] { color: #ead3dd; }
-.hover\:text-\[\#c8b7a7\]:hover { color: #ead3dd; }
-.focus\:text-\[\#c8b7a7\]:focus { color: #ead3dd; }
-.border-\[\#c8b7a7\] { border-color: #ead3dd; }
-.hover\:border-\[\#c8b7a7\]:hover { border-color: #ead3dd; }
-.focus\:border-\[\#c8b7a7\]:focus { border-color: #ead3dd; }
-.ring-\[\#c8b7a7\] { --tw-ring-color: #ead3dd; }
-.hover\:ring-\[\#c8b7a7\]:hover { --tw-ring-color: #ead3dd; }
-.focus\:ring-\[\#c8b7a7\]:focus { --tw-ring-color: #ead3dd; }
-.bg-\[\#c88d7d\] { background-color: #f5c6d6; }
-.hover\:bg-\[\#c88d7d\]:hover { background-color: #f5c6d6; }
-.focus\:bg-\[\#c88d7d\]:focus { background-color: #f5c6d6; }
-.text-\[\#c88d7d\] { color: #f5c6d6; }
-.hover\:text-\[\#c88d7d\]:hover { color: #f5c6d6; }
-.focus\:text-\[\#c88d7d\]:focus { color: #f5c6d6; }
-.border-\[\#c88d7d\] { border-color: #f5c6d6; }
-.hover\:border-\[\#c88d7d\]:hover { border-color: #f5c6d6; }
-.focus\:border-\[\#c88d7d\]:focus { border-color: #f5c6d6; }
-.ring-\[\#c88d7d\] { --tw-ring-color: #f5c6d6; }
-.hover\:ring-\[\#c88d7d\]:hover { --tw-ring-color: #f5c6d6; }
-.focus\:ring-\[\#c88d7d\]:focus { --tw-ring-color: #f5c6d6; }
-.bg-\[\#4f3325\] { background-color: #584550; }
-.hover\:bg-\[\#4f3325\]:hover { background-color: #584550; }
-.focus\:bg-\[\#4f3325\]:focus { background-color: #584550; }
-.text-\[\#4f3325\] { color: #584550; }
-.hover\:text-\[\#4f3325\]:hover { color: #584550; }
-.focus\:text-\[\#4f3325\]:focus { color: #584550; }
-.border-\[\#4f3325\] { border-color: #584550; }
-.hover\:border-\[\#4f3325\]:hover { border-color: #584550; }
-.focus\:border-\[\#4f3325\]:focus { border-color: #584550; }
-.ring-\[\#4f3325\] { --tw-ring-color: #584550; }
-.hover\:ring-\[\#4f3325\]:hover { --tw-ring-color: #584550; }
-.focus\:ring-\[\#4f3325\]:focus { --tw-ring-color: #584550; }
-.bg-\[\#6b4a3a\] { background-color: #584550; }
-.hover\:bg-\[\#6b4a3a\]:hover { background-color: #584550; }
-.focus\:bg-\[\#6b4a3a\]:focus { background-color: #584550; }
-.text-\[\#6b4a3a\] { color: #584550; }
-.hover\:text-\[\#6b4a3a\]:hover { color: #584550; }
-.focus\:text-\[\#6b4a3a\]:focus { color: #584550; }
-.border-\[\#6b4a3a\] { border-color: #584550; }
-.hover\:border-\[\#6b4a3a\]:hover { border-color: #584550; }
-.focus\:border-\[\#6b4a3a\]:focus { border-color: #584550; }
-.ring-\[\#6b4a3a\] { --tw-ring-color: #584550; }
-.hover\:ring-\[\#6b4a3a\]:hover { --tw-ring-color: #584550; }
-.focus\:ring-\[\#6b4a3a\]:focus { --tw-ring-color: #584550; }
+.bg-\[\#d8d6d2\] { background-color: #ffe4e5; }
+.hover\:bg-\[\#d8d6d2\]:hover { background-color: #ffe4e5; }
+.focus\:bg-\[\#d8d6d2\]:focus { background-color: #ffe4e5; }
+.text-\[\#d8d6d2\] { color: #ffe4e5; }
+.hover\:text-\[\#d8d6d2\]:hover { color: #ffe4e5; }
+.focus\:text-\[\#d8d6d2\]:focus { color: #ffe4e5; }
+.border-\[\#d8d6d2\] { border-color: #ffe4e5; }
+.hover\:border-\[\#d8d6d2\]:hover { border-color: #ffe4e5; }
+.focus\:border-\[\#d8d6d2\]:focus { border-color: #ffe4e5; }
+.ring-\[\#d8d6d2\] { --tw-ring-color: #ffe4e5; }
+.hover\:ring-\[\#d8d6d2\]:hover { --tw-ring-color: #ffe4e5; }
+.focus\:ring-\[\#d8d6d2\]:focus { --tw-ring-color: #ffe4e5; }
+.bg-\[\#f1e9e1\] { background-color: #fef9f5; }
+.hover\:bg-\[\#f1e9e1\]:hover { background-color: #fef9f5; }
+.focus\:bg-\[\#f1e9e1\]:focus { background-color: #fef9f5; }
+.text-\[\#f1e9e1\] { color: #fef9f5; }
+.hover\:text-\[\#f1e9e1\]:hover { color: #fef9f5; }
+.focus\:text-\[\#f1e9e1\]:focus { color: #fef9f5; }
+.border-\[\#f1e9e1\] { border-color: #fef9f5; }
+.hover\:border-\[\#f1e9e1\]:hover { border-color: #fef9f5; }
+.focus\:border-\[\#f1e9e1\]:focus { border-color: #fef9f5; }
+.ring-\[\#f1e9e1\] { --tw-ring-color: #fef9f5; }
+.hover\:ring-\[\#f1e9e1\]:hover { --tw-ring-color: #fef9f5; }
+.focus\:ring-\[\#f1e9e1\]:focus { --tw-ring-color: #fef9f5; }
+.bg-\[\#c8b7a7\] { background-color: #f7c8c9; }
+.hover\:bg-\[\#c8b7a7\]:hover { background-color: #f7c8c9; }
+.focus\:bg-\[\#c8b7a7\]:focus { background-color: #f7c8c9; }
+.text-\[\#c8b7a7\] { color: #f7c8c9; }
+.hover\:text-\[\#c8b7a7\]:hover { color: #f7c8c9; }
+.focus\:text-\[\#c8b7a7\]:focus { color: #f7c8c9; }
+.border-\[\#c8b7a7\] { border-color: #f7c8c9; }
+.hover\:border-\[\#c8b7a7\]:hover { border-color: #f7c8c9; }
+.focus\:border-\[\#c8b7a7\]:focus { border-color: #f7c8c9; }
+.ring-\[\#c8b7a7\] { --tw-ring-color: #f7c8c9; }
+.hover\:ring-\[\#c8b7a7\]:hover { --tw-ring-color: #f7c8c9; }
+.focus\:ring-\[\#c8b7a7\]:focus { --tw-ring-color: #f7c8c9; }
+.bg-\[\#c88d7d\] { background-color: #fbd2d3; }
+.hover\:bg-\[\#c88d7d\]:hover { background-color: #fbd2d3; }
+.focus\:bg-\[\#c88d7d\]:focus { background-color: #fbd2d3; }
+.text-\[\#c88d7d\] { color: #fbd2d3; }
+.hover\:text-\[\#c88d7d\]:hover { color: #fbd2d3; }
+.focus\:text-\[\#c88d7d\]:focus { color: #fbd2d3; }
+.border-\[\#c88d7d\] { border-color: #fbd2d3; }
+.hover\:border-\[\#c88d7d\]:hover { border-color: #fbd2d3; }
+.focus\:border-\[\#c88d7d\]:focus { border-color: #fbd2d3; }
+.ring-\[\#c88d7d\] { --tw-ring-color: #fbd2d3; }
+.hover\:ring-\[\#c88d7d\]:hover { --tw-ring-color: #fbd2d3; }
+.focus\:ring-\[\#c88d7d\]:focus { --tw-ring-color: #fbd2d3; }
+.bg-\[\#4f3325\] { background-color: #69484a; }
+.hover\:bg-\[\#4f3325\]:hover { background-color: #69484a; }
+.focus\:bg-\[\#4f3325\]:focus { background-color: #69484a; }
+.text-\[\#4f3325\] { color: #69484a; }
+.hover\:text-\[\#4f3325\]:hover { color: #69484a; }
+.focus\:text-\[\#4f3325\]:focus { color: #69484a; }
+.border-\[\#4f3325\] { border-color: #69484a; }
+.hover\:border-\[\#4f3325\]:hover { border-color: #69484a; }
+.focus\:border-\[\#4f3325\]:focus { border-color: #69484a; }
+.ring-\[\#4f3325\] { --tw-ring-color: #69484a; }
+.hover\:ring-\[\#4f3325\]:hover { --tw-ring-color: #69484a; }
+.focus\:ring-\[\#4f3325\]:focus { --tw-ring-color: #69484a; }
+.bg-\[\#6b4a3a\] { background-color: #69484a; }
+.hover\:bg-\[\#6b4a3a\]:hover { background-color: #69484a; }
+.focus\:bg-\[\#6b4a3a\]:focus { background-color: #69484a; }
+.text-\[\#6b4a3a\] { color: #69484a; }
+.hover\:text-\[\#6b4a3a\]:hover { color: #69484a; }
+.focus\:text-\[\#6b4a3a\]:focus { color: #69484a; }
+.border-\[\#6b4a3a\] { border-color: #69484a; }
+.hover\:border-\[\#6b4a3a\]:hover { border-color: #69484a; }
+.focus\:border-\[\#6b4a3a\]:focus { border-color: #69484a; }
+.ring-\[\#6b4a3a\] { --tw-ring-color: #69484a; }
+.hover\:ring-\[\#6b4a3a\]:hover { --tw-ring-color: #69484a; }
+.focus\:ring-\[\#6b4a3a\]:focus { --tw-ring-color: #69484a; }
 .bg-\[\#a46643\] { background-color: #a67c6b; }
 .hover\:bg-\[\#a46643\]:hover { background-color: #a67c6b; }
 .focus\:bg-\[\#a46643\]:focus { background-color: #a67c6b; }
@@ -167,4 +167,7 @@ select {
 .ring-\[\#a46643\] { --tw-ring-color: #a67c6b; }
 .hover\:ring-\[\#a46643\]:hover { --tw-ring-color: #a67c6b; }
 .focus\:ring-\[\#a46643\]:focus { --tw-ring-color: #a67c6b; }
-.bg-\[\#c88d7d\] { background-color: #f5c6d6; }
+.bg-\[\#c88d7d\] { background-color: #fbd2d3; }
+
+/* Pink diary illustration: cream, cover pink, rose edging, peach-gold details. */
+:root { --diary-cream: #fef9f5; --diary-pink: #fbd2d3; --diary-rose: #f3b1ae; --diary-gold: #f5c49c; }

@@ -27,7 +27,12 @@ export function AwakeFeedCard({ initialThread = null, initialToday = "" }: { ini
     document.addEventListener("visibilitychange", onVisible);
     return () => { alive = false; window.clearInterval(interval); document.removeEventListener("visibilitychange", onVisible); };
   }, []);
-  if (!thread) return null;
+  if (!thread) return <aside aria-label="Everyone’s Awake conversation" className="rounded-3xl border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
+    <div className="flex items-center gap-2 text-xs font-medium text-[#6b4a3a]"><Moon size={15} aria-hidden="true" /><span>Everyone’s Awake</span></div>
+    <h2 className="mt-3 font-serif text-xl leading-snug text-[#4f3325]">Tonight’s question is getting ready.</h2>
+    <p className="mt-2 text-sm leading-6 text-[#6b4a3a]">A little space for whatever’s on your mind. The question will appear here when it’s published.</p>
+    <Link href="/awake" className="mt-4 inline-flex rounded-full bg-[#c88d7d] px-4 py-2.5 text-sm font-medium text-[#4f3325]">Visit Everyone’s Awake →</Link>
+  </aside>;
   return <aside aria-label="Pinned Everyone’s Awake conversation" className="rounded-3xl border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
     <div className="flex items-center gap-2 text-xs font-medium text-[#6b4a3a]"><Moon size={15} aria-hidden="true" /><span>Everyone’s Awake · {thread.night === today ? "Tonight’s question" : "Latest conversation"}</span></div>
     <h2 className="mt-3 font-serif text-xl leading-snug text-[#4f3325]">{thread.prompt}</h2>

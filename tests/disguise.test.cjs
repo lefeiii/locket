@@ -35,7 +35,7 @@ test('PIN hashing uses salt, never stores the raw PIN, and validates settings',a
 test('locked routes conceal content; correct PIN opens it; leaving locks it; attempts are throttled',async()=>{
  const s=storage();const h=harness(s);s.setItem(h.lib.DISGUISE_KEY,JSON.stringify({salt:'salt',hash:await h.lib.hashPin('1234','salt'),ownerId:'owner',failures:0,retryAt:0}));
  assert(concealed(h.render()));await h.mount();assert(concealed(h.render()));
- async function attempt(pin){let tree=h.render();if(!pinInput(tree))findButton(tree,'Workspace access').props.onClick();tree=h.render();pinInput(tree).props.onChange({target:{value:pin}});tree=h.render();await tree.find(n=>n.type==='form'&&pinInput(nodes(n))).props.onSubmit(event);}
+ async function attempt(pin){let tree=h.render();if(!pinInput(tree))findButton(tree,'Unlock').props.onClick();tree=h.render();pinInput(tree).props.onChange({target:{value:pin}});tree=h.render();await tree.find(n=>n.type==='form'&&pinInput(nodes(n))).props.onSubmit(event);}
  await attempt('9999');assert(JSON.stringify(h.render()).includes('Incorrect PIN.'));await attempt('1234');assert(JSON.stringify(h.render()).includes('SECRET CONTENT'));h.listeners.blur();assert(concealed(h.render()));
  for(let i=0;i<5;i++)await attempt('0000');await attempt('1234');assert(JSON.stringify(h.render()).includes('Too many attempts'));assert(concealed(h.render()));
 });
@@ -50,6 +50,6 @@ test('setup requires matching four-digit PINs and binds the setting to the authe
 
 test('PIN recovery rejects other accounts and accepts only the enabling account',async()=>{
  for(const userId of ['other','owner']){
- const s=storage();const recovery={auth:{signInWithPassword:async()=>({data:{user:{id:userId}}}),signOut:async()=>({})}};const h=harness(s,undefined,{},recovery);s.setItem(h.lib.DISGUISE_KEY,JSON.stringify({salt:'salt',hash:'hash',ownerId:'owner',failures:0,retryAt:0}));h.render();await h.mount();findButton(h.render(),'Workspace access').props.onClick();findButton(h.render(),'Forgot PIN?').props.onClick();let tree=h.render();tree.find(n=>n.type==='input'&&n.props.type==='email').props.onChange({target:{value:'person@example.test'}});tree.find(n=>n.type==='input'&&n.props.type==='password').props.onChange({target:{value:'password'}});tree=h.render();await tree.find(n=>n.type==='form'&&nodes(n).some(x=>x.type==='input'&&x.props.type==='email')).props.onSubmit(event);assert.equal(s.getItem(h.lib.DISGUISE_KEY)===null,userId==='owner');
+ const s=storage();const recovery={auth:{signInWithPassword:async()=>({data:{user:{id:userId}}}),signOut:async()=>({})}};const h=harness(s,undefined,{},recovery);s.setItem(h.lib.DISGUISE_KEY,JSON.stringify({salt:'salt',hash:'hash',ownerId:'owner',failures:0,retryAt:0}));h.render();await h.mount();findButton(h.render(),'Unlock').props.onClick();findButton(h.render(),'Forgot PIN?').props.onClick();let tree=h.render();tree.find(n=>n.type==='input'&&n.props.type==='email').props.onChange({target:{value:'person@example.test'}});tree.find(n=>n.type==='input'&&n.props.type==='password').props.onChange({target:{value:'password'}});tree=h.render();await tree.find(n=>n.type==='form'&&nodes(n).some(x=>x.type==='input'&&x.props.type==='email')).props.onSubmit(event);assert.equal(s.getItem(h.lib.DISGUISE_KEY)===null,userId==='owner');
  }
 });

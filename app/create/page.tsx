@@ -149,16 +149,16 @@ export default function CreatePage() {
     <main className="pb-24">
       <BrandBar />
       <section className="mx-auto max-w-lg px-4 py-6">
-        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#514137]" href="/">
+        <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4f3325]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>
         <div className="mb-5">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">Anonymous post</p>
-          <h1 className="mt-2 text-3xl font-medium leading-tight text-[#514137]">Drop the story</h1>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">Anonymous post</p>
+          <h1 className="mt-2 text-3xl font-medium leading-tight text-[#4f3325]">Drop the story</h1>
         </div>
 
-        <form className="rounded-3xl border border-[#e5d5c2] bg-[#fffaf2] p-6 shadow-sm sm:p-7" onSubmit={submitStory}>
-          <div className="mb-5 rounded-2xl bg-[#fffaf2] p-4 text-sm font-medium leading-6 text-[#514137]">
+        <form className="rounded-3xl border border-[#c8b7a7] bg-[#f1e9e1] p-6 shadow-sm sm:p-7" onSubmit={submitStory}>
+          <div className="mb-5 rounded-2xl bg-[#f1e9e1] p-4 text-sm font-medium leading-6 text-[#4f3325]">
             <div className="mb-1 flex items-center gap-2 font-medium">
               <AlertTriangle size={18} />Safety first
             </div>
@@ -166,22 +166,22 @@ export default function CreatePage() {
           </div>
 
           {/* Posting as — no editable input */}
-          <div className="mb-5 rounded-2xl bg-[#eee2d3] px-4 py-3 text-sm font-medium text-[#514137]">
+          <div className="mb-5 rounded-2xl bg-[#d8d6d2] px-4 py-3 text-sm font-medium text-[#4f3325]">
             posting as <span className="font-semibold">@{username || "..."}</span>
           </div>
 
-          <label className="block text-sm font-medium text-[#514137]">
+          <label className="block text-sm font-medium text-[#4f3325]">
             Title
             <input
-              className="mt-2 min-h-12 w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 text-base font-medium outline-none ring-[#e9b3ad] focus:ring-4"
+              className="mt-2 min-h-12 w-full rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 text-base font-medium outline-none ring-[#c88d7d] focus:ring-4"
               maxLength={90} onChange={(e) => setTitle(e.target.value)} required value={title}
             />
           </label>
 
-          <label className="mt-5 block text-sm font-medium text-[#514137]">
+          <label className="mt-5 block text-sm font-medium text-[#4f3325]">
             Category
             <select
-              className="mt-2 min-h-12 w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 text-base font-medium outline-none ring-[#e9b3ad] focus:ring-4"
+              className="mt-2 min-h-12 w-full rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 text-base font-medium outline-none ring-[#c88d7d] focus:ring-4"
               onChange={(e) => setCategory(e.target.value as StoryCategory)} value={category}
             >
               {categories.map((item) => <option key={item}>{item}</option>)}
@@ -190,25 +190,25 @@ export default function CreatePage() {
 
           <ResponseModeSelect value={responseMode} onChange={setResponseMode} />
 
-          <label className="mt-5 block text-sm font-medium text-[#514137]">
+          <label className="mt-5 block text-sm font-medium text-[#4f3325]">
             Story
             <textarea
-              className="mt-2 min-h-64 w-full resize-none rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] p-4 text-base font-medium leading-7 outline-none ring-[#e9b3ad] focus:ring-4"
+              className="mt-2 min-h-64 w-full resize-none rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] p-4 text-base font-medium leading-7 outline-none ring-[#c88d7d] focus:ring-4"
               maxLength={1400} onChange={(e) => setBody(e.target.value)} required value={body}
             />
           </label>
 
-          <label className="mt-5 flex items-center justify-between gap-4 rounded-2xl bg-[#eee2d3] p-4 text-sm font-medium text-[#514137]">
+          <label className="mt-5 flex items-center justify-between gap-4 rounded-2xl bg-[#d8d6d2] p-4 text-sm font-medium text-[#4f3325]">
             This is an update
-            <input checked={isUpdate} className="h-5 w-5 accent-[#7d695a]" onChange={(e) => setIsUpdate(e.target.checked)} type="checkbox" />
+            <input checked={isUpdate} className="h-5 w-5 accent-[#6b4a3a]" onChange={(e) => setIsUpdate(e.target.checked)} type="checkbox" />
           </label>
 
           {isUpdate ? (
             <div className="mt-4 grid gap-3">
-              <label className="block text-sm font-medium text-[#514137]">
+              <label className="block text-sm font-medium text-[#4f3325]">
                 Which story are you updating?
                 <select
-                  className="mt-2 min-h-12 w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 text-base font-medium outline-none ring-[#e9b3ad] focus:ring-4"
+                  className="mt-2 min-h-12 w-full rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 text-base font-medium outline-none ring-[#c88d7d] focus:ring-4"
                   onChange={(e) => setPreviousStoryId(e.target.value)} value={previousStoryId}
                   disabled={storiesLoading || Boolean(storiesError) || previousStories.length === 0}
                   required
@@ -229,40 +229,40 @@ export default function CreatePage() {
                   }}>Try again</button>
                 </div>
               ) : !storiesLoading && previousStories.length === 0 ? (
-                <p className="text-sm text-[#7d695a]">You have no previous public stories yet. Uncheck “This is an update” to start a new story.</p>
+                <p className="text-sm text-[#6b4a3a]">You have no previous public stories yet. Uncheck “This is an update” to start a new story.</p>
               ) : null}
               {selectedStory && (
-                <div className="rounded-2xl bg-[#eee2d3] px-4 py-3 text-sm font-medium text-[#514137]">
+                <div className="rounded-2xl bg-[#d8d6d2] px-4 py-3 text-sm font-medium text-[#4f3325]">
                   Your update will join <span className="font-semibold">{selectedStory.arc_title || selectedStory.title}</span> and receive the next part number automatically.
                 </div>
               )}
             </div>
           ) : null}
 
-          <div className="mt-5 rounded-3xl bg-[#eee2d3] p-4 text-[#514137]">
+          <div className="mt-5 rounded-3xl bg-[#d8d6d2] p-4 text-[#4f3325]">
             <div className="flex items-center gap-2 text-sm font-medium"><Sparkles size={18} />Want to add a cliffhanger ending?</div>
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
               {cliffhangerIdeas.map((idea) => (
-                <button className="shrink-0 rounded-full bg-[#fffaf2] px-3 py-2 text-xs font-medium text-[#514137]" key={idea} onClick={() => setCliffhanger(idea)} type="button">{idea}</button>
+                <button className="shrink-0 rounded-full bg-[#f1e9e1] px-3 py-2 text-xs font-medium text-[#4f3325]" key={idea} onClick={() => setCliffhanger(idea)} type="button">{idea}</button>
               ))}
             </div>
             <input
-              className="mt-3 min-h-12 w-full rounded-2xl border border-[#eee2d3] bg-[#fffaf2] px-4 text-base font-medium text-[#514137] outline-none"
+              className="mt-3 min-h-12 w-full rounded-2xl border border-[#d8d6d2] bg-[#f1e9e1] px-4 text-base font-medium text-[#4f3325] outline-none"
               onChange={(e) => setCliffhanger(e.target.value)} placeholder="Optional" value={cliffhanger}
             />
           </div>
 
-          <div className="mt-5 rounded-3xl bg-[#eee2d3] p-4 text-[#514137]">
+          <div className="mt-5 rounded-3xl bg-[#d8d6d2] p-4 text-[#4f3325]">
             <p className="text-sm font-medium">Ask readers what you should do</p>
-            <p className="mt-1 text-xs font-medium leading-5 text-[#7d695a]">Optional. Add a quick vote if you want readers to help choose the next move.</p>
+            <p className="mt-1 text-xs font-medium leading-5 text-[#6b4a3a]">Optional. Add a quick vote if you want readers to help choose the next move.</p>
             <input
-              className="mt-3 min-h-12 w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 text-base font-medium outline-none ring-[#e9b3ad] focus:ring-4"
+              className="mt-3 min-h-12 w-full rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 text-base font-medium outline-none ring-[#c88d7d] focus:ring-4"
               maxLength={110} onChange={(e) => setPollQuestion(e.target.value)} placeholder="Should I text him back?" value={pollQuestion}
             />
             <div className="mt-3 grid gap-2">
               {pollOptions.map((option, index) => (
                 <input
-                  className="min-h-11 w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 text-sm font-medium outline-none ring-[#e9b3ad] focus:ring-4"
+                  className="min-h-11 w-full rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 text-sm font-medium outline-none ring-[#c88d7d] focus:ring-4"
                   key={index} maxLength={60}
                   onChange={(e) => { const next = [...pollOptions]; next[index] = e.target.value; setPollOptions(next); }}
                   placeholder={`Option ${index + 1}`} value={option}
@@ -270,28 +270,28 @@ export default function CreatePage() {
               ))}
             </div>
             <div className="mt-3 flex gap-2">
-              {pollOptions.length < 4 ? <button className="rounded-full bg-[#fffaf2] px-3 py-2 text-xs font-medium text-[#514137]" onClick={() => setPollOptions((c) => [...c, ""])} type="button">Add option</button> : null}
-              {pollOptions.length > 2 ? <button className="rounded-full bg-[#fffaf2] px-3 py-2 text-xs font-medium text-[#514137]" onClick={() => setPollOptions((c) => c.slice(0, -1))} type="button">Remove option</button> : null}
+              {pollOptions.length < 4 ? <button className="rounded-full bg-[#f1e9e1] px-3 py-2 text-xs font-medium text-[#4f3325]" onClick={() => setPollOptions((c) => [...c, ""])} type="button">Add option</button> : null}
+              {pollOptions.length > 2 ? <button className="rounded-full bg-[#f1e9e1] px-3 py-2 text-xs font-medium text-[#4f3325]" onClick={() => setPollOptions((c) => c.slice(0, -1))} type="button">Remove option</button> : null}
             </div>
           </div>
 
           {safetyIssues.length > 0 ? (
-            <p className="mt-4 rounded-2xl bg-[#eee2d3] p-3 text-sm font-medium text-[#514137]">Please remove possible identifying or unsafe terms: {safetyIssues.join(", ")}</p>
+            <p className="mt-4 rounded-2xl bg-[#d8d6d2] p-3 text-sm font-medium text-[#4f3325]">Please remove possible identifying or unsafe terms: {safetyIssues.join(", ")}</p>
           ) : null}
 
           <button
-            className="mt-5 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#e9b3ad] px-4 py-4 text-sm font-medium text-[#514137] disabled:opacity-60"
+            className="mt-5 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#c88d7d] px-4 py-4 text-sm font-medium text-[#4f3325] disabled:opacity-60"
             disabled={status === "saving" || safetyIssues.length > 0 || (isUpdate && (storiesLoading || Boolean(storiesError) || !selectedStory))} type="submit"
           >
             <Send size={18} />
             {status === "saving" ? "Posting..." : "Submit story"}
           </button>
 
-          {status === "saved" ? <p className="mt-3 text-center text-sm font-medium text-[#514137]">Story posted! Taking you there…</p> : null}
+          {status === "saved" ? <p className="mt-3 text-center text-sm font-medium text-[#4f3325]">Story posted! Taking you there…</p> : null}
           {status === "error" ? <p className="mt-3 text-center text-sm font-medium text-red-400">{errorMsg}</p> : null}
         </form>
 
-        <Link className="mt-5 block text-center text-sm font-medium text-[#514137]" href="/">Back to feed</Link>
+        <Link className="mt-5 block text-center text-sm font-medium text-[#4f3325]" href="/">Back to feed</Link>
       </section>
       <AppNav />
     </main>

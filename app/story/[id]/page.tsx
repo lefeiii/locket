@@ -120,15 +120,15 @@ export default async function StoryDetailPage({
       <main className="pb-24">
         <BrandBar />
         <section className="mx-auto max-w-md px-4 py-5">
-          <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#514137]" href="/">
+          <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4f3325]" href="/">
             <ArrowLeft size={18} />
             Back to feed
           </Link>
-          <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center shadow-sm">
+          <div className="rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-8 text-center shadow-sm">
             <p className="text-2xl">📭</p>
-            <p className="mt-3 text-lg font-medium text-[#514137]">Story not found</p>
-            <p className="mt-1 text-sm text-[#7d695a]">It may have been removed or never existed.</p>
-            <Link href="/" className="mt-4 inline-block rounded-2xl bg-[#e9b3ad] px-5 py-2 text-sm font-medium text-[#514137]">
+            <p className="mt-3 text-lg font-medium text-[#4f3325]">Story not found</p>
+            <p className="mt-1 text-sm text-[#6b4a3a]">It may have been removed or never existed.</p>
+            <Link href="/" className="mt-4 inline-block rounded-2xl bg-[#c88d7d] px-5 py-2 text-sm font-medium text-[#4f3325]">
               Back to feed →
             </Link>
           </div>
@@ -155,7 +155,7 @@ export default async function StoryDetailPage({
       <BrandBar />
       <section className="mx-auto max-w-md px-4 py-5">
         <Link
-          className="mb-4 flex items-center gap-2 text-sm font-medium text-[#514137]"
+          className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4f3325]"
           href="/"
         >
           <ArrowLeft size={18} />
@@ -174,7 +174,7 @@ export default async function StoryDetailPage({
             {prevPart && (
               <Link
                 href={`/story/${prevPart.id}`}
-                className="flex-1 rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 py-3 text-sm font-medium text-[#514137] text-center hover:bg-[#eee2d3] transition"
+                className="flex-1 rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 py-3 text-sm font-medium text-[#4f3325] text-center hover:bg-[#d8d6d2] transition"
               >
                 ← {prevPart.update_label ?? `Part ${prevPart.part_number ?? "?"}`}
               </Link>
@@ -182,7 +182,7 @@ export default async function StoryDetailPage({
             {nextPart && (
               <Link
                 href={`/story/${nextPart.id}`}
-                className="flex-1 rounded-2xl bg-[#e9b3ad] px-4 py-3 text-sm font-medium text-[#514137] text-center hover:opacity-90 transition"
+                className="flex-1 rounded-2xl bg-[#c88d7d] px-4 py-3 text-sm font-medium text-[#4f3325] text-center hover:opacity-90 transition"
               >
                 {nextPart.update_label ?? `Part ${nextPart.part_number ?? "?"}`} →
               </Link>
@@ -208,10 +208,10 @@ export default async function StoryDetailPage({
 
         {/* Story arc */}
         {arc.length > 1 && (
-          <section className="mt-6 rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-5 shadow-sm">
+          <section className="mt-6 rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <GitBranch size={20} />
-              <h2 className="text-xl font-medium text-[#514137]">
+              <h2 className="text-xl font-medium text-[#4f3325]">
                 {story.arc_title ?? "Story arc"}
               </h2>
             </div>
@@ -220,8 +220,8 @@ export default async function StoryDetailPage({
                 <Link
                   className={`rounded-3xl p-4 shadow-sm ${
                     item.id === story.id
-                      ? "bg-[#e9b3ad] text-[#514137]"
-                      : "bg-[#eee2d3] text-[#514137]"
+                      ? "bg-[#c88d7d] text-[#4f3325]"
+                      : "bg-[#d8d6d2] text-[#4f3325]"
                   }`}
                   href={`/story/${item.id}`}
                   key={item.id}
@@ -245,18 +245,18 @@ export default async function StoryDetailPage({
 
         {related.length > 0 && (
           <section className="mt-6">
-            <h2 className="mb-3 text-xl font-medium text-[#514137]">Related updates</h2>
+            <h2 className="mb-3 text-xl font-medium text-[#4f3325]">Related updates</h2>
             <div className="grid gap-3">
               {related.map((item) => (
                 <Link
-                  className="rounded-3xl bg-[#fffaf2] p-4 shadow-lg"
+                  className="rounded-3xl bg-[#f1e9e1] p-4 shadow-lg"
                   href={`/story/${item.id}`}
                   key={item.id}
                 >
-                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">
+                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">
                     {item.category}
                   </p>
-                  <h3 className="mt-1 text-lg font-medium text-[#514137]">{item.title}</h3>
+                  <h3 className="mt-1 text-lg font-medium text-[#4f3325]">{item.title}</h3>
                 </Link>
               ))}
             </div>

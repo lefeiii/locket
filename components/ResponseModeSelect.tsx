@@ -7,15 +7,15 @@ export function ResponseModeSelect({ value, onChange }: {
   onChange: (value: ResponseMode) => void;
 }) {
   return (
-    <label className="mt-5 block text-sm font-medium text-[#514137]">
+    <label className="mt-5 block text-sm font-medium text-[#4f3325]">
       What do you need from readers?
       <select value={value} onChange={event => onChange(event.target.value as ResponseMode)}
-        className="mt-2 min-h-12 w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 text-base outline-none ring-[#e9b3ad] focus:ring-4">
+        className="mt-2 min-h-12 w-full rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 text-base outline-none ring-[#c88d7d] focus:ring-4">
         {Object.entries(responseModes).map(([mode, option]) => (
           <option key={mode} value={mode}>{option.label}</option>
         ))}
       </select>
-      <span className="mt-2 block text-xs font-normal leading-5 text-[#7d695a]">
+      <span className="mt-2 block text-xs font-normal leading-5 text-[#6b4a3a]">
         {responseModes[value].description} You can change this later.
       </span>
     </label>

@@ -32,15 +32,15 @@ export function PollCard({ poll }: PollCardProps) {
   }
 
   return (
-    <section className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-5 shadow-sm">
+    <section className="rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">Choose the next move</p>
-          <h2 className="mt-2 text-2xl font-medium leading-tight text-[#514137]">{poll.question}</h2>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">Choose the next move</p>
+          <h2 className="mt-2 text-2xl font-medium leading-tight text-[#4f3325]">{poll.question}</h2>
         </div>
         <button
           aria-label="Report poll"
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#eee2d3] text-[#514137]"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#d8d6d2] text-[#4f3325]"
           type="button"
         >
           <Flag size={18} />
@@ -53,8 +53,8 @@ export function PollCard({ poll }: PollCardProps) {
           const percent = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
           return (
             <button
-              className={`overflow-hidden rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] text-left text-sm font-medium text-[#514137] ${
-                selected === option ? "ring-2 ring-[#e9b3ad]" : ""
+              className={`overflow-hidden rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] text-left text-sm font-medium text-[#4f3325] ${
+                selected === option ? "ring-2 ring-[#c88d7d]" : ""
               }`}
               disabled={Boolean(selected)}
               key={option}
@@ -64,7 +64,7 @@ export function PollCard({ poll }: PollCardProps) {
               <span className="relative block px-4 py-3">
                 {selected ? (
                   <span
-                    className="absolute inset-y-0 left-0 bg-[#e9b3ad]"
+                    className="absolute inset-y-0 left-0 bg-[#c88d7d]"
                     style={{ width: `${percent}%` }}
                   />
                 ) : null}
@@ -79,7 +79,7 @@ export function PollCard({ poll }: PollCardProps) {
       </div>
 
       {selected ? (
-        <div className="mt-4 rounded-2xl bg-[#eee2d3] p-4 text-sm font-medium leading-6 text-[#514137]">
+        <div className="mt-4 rounded-2xl bg-[#d8d6d2] p-4 text-sm font-medium leading-6 text-[#4f3325]">
           <div className="mb-1 flex items-center gap-2">
             <HeartHandshake size={17} />
             Follow to see what happens next

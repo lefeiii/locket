@@ -125,27 +125,27 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply, re
 
   return (
     <div className="mt-4 grid gap-2">
-      {responseModes[mode].reminder && <p className="text-xs leading-5 text-[#7d695a]">{responseModes[mode].reminder}</p>}
-      <div className="rounded-2xl bg-[#eee2d3] px-4 py-3 text-sm font-medium text-[#514137]">
+      {responseModes[mode].reminder && <p className="text-xs leading-5 text-[#6b4a3a]">{responseModes[mode].reminder}</p>}
+      <div className="rounded-2xl bg-[#d8d6d2] px-4 py-3 text-sm font-medium text-[#4f3325]">
         {username ? (
           <>commenting as <span className="font-semibold">@{username}</span></>
         ) : authLoaded ? (
-          <span className="text-[#7d695a]"><a href="/login" className="underline underline-offset-2 text-[#514137]">Log in</a> to comment.</span>
+          <span className="text-[#6b4a3a]"><a href="/login" className="underline underline-offset-2 text-[#4f3325]">Log in</a> to comment.</span>
         ) : (
-          <span className="text-[#7d695a]">loading…</span>
+          <span className="text-[#6b4a3a]">loading…</span>
         )}
       </div>
 
       {replyToName && (
-        <div className="flex items-center justify-between rounded-2xl bg-[#e9b3ad] px-4 py-2">
-          <p className="text-xs font-medium text-[#514137]">replying to <span className="font-semibold">@{replyToName}</span></p>
+        <div className="flex items-center justify-between rounded-2xl bg-[#c88d7d] px-4 py-2">
+          <p className="text-xs font-medium text-[#4f3325]">replying to <span className="font-semibold">@{replyToName}</span></p>
           {onCancelReply && (
-            <button onClick={onCancelReply} className="text-xs text-[#7d695a] underline underline-offset-2" type="button">cancel</button>
+            <button onClick={onCancelReply} className="text-xs text-[#6b4a3a] underline underline-offset-2" type="button">cancel</button>
           )}
         </div>
       )}
       <textarea
-        className="min-h-24 resize-none rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] p-4 text-sm font-medium text-[#514137] outline-none ring-[#e9b3ad] focus:ring-4"
+        className="min-h-24 resize-none rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] p-4 text-sm font-medium text-[#4f3325] outline-none ring-[#c88d7d] focus:ring-4"
         onChange={(e) => setBody(e.target.value)}
         placeholder={replyToName ? `Reply to @${replyToName}…` : responseModes[mode].placeholder}
         value={body}
@@ -153,7 +153,7 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply, re
       />
 
       <button
-        className="rounded-2xl bg-[#e9b3ad] px-4 py-3 text-sm font-medium text-[#514137] disabled:opacity-60"
+        className="rounded-2xl bg-[#c88d7d] px-4 py-3 text-sm font-medium text-[#4f3325] disabled:opacity-60"
         disabled={status === "saving" || !username || !body.trim()}
         onClick={submitComment}
         type="button"
@@ -162,7 +162,7 @@ export function CommentForm({ storyId, replyToId, replyToName, onCancelReply, re
       </button>
 
       {status === "saved" && (
-        <p className="text-center text-sm font-medium text-[#514137]">Comment added ✓</p>
+        <p className="text-center text-sm font-medium text-[#4f3325]">Comment added ✓</p>
       )}
       {status === "error" && (
         <p className="text-center text-sm font-medium text-red-400">{errorMessage || "Something went wrong. Try again."}</p>
@@ -245,42 +245,42 @@ export function InlineCommentForm({ storyId, onDone, onCommentAdded, responseMod
 
   if (status === "saved") {
     return (
-      <div className="rounded-2xl bg-[#eee2d3] px-4 py-3 text-center text-sm font-medium text-[#514137]">
+      <div className="rounded-2xl bg-[#d8d6d2] px-4 py-3 text-center text-sm font-medium text-[#4f3325]">
         Comment added ✓
       </div>
     );
   }
 
   return (
-    <div className="grid gap-2 rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-4 shadow-sm">
+    <div className="grid gap-2 rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-[#7d695a]">
-          {username ? <>as <span className="font-semibold text-[#514137]">@{username}</span></> : "loading…"}
+        <span className="text-xs font-medium text-[#6b4a3a]">
+          {username ? <>as <span className="font-semibold text-[#4f3325]">@{username}</span></> : "loading…"}
         </span>
         <button
-          className="text-xs font-medium text-[#7d695a] underline underline-offset-2"
+          className="text-xs font-medium text-[#6b4a3a] underline underline-offset-2"
           onClick={onDone}
           type="button"
         >
           cancel
         </button>
       </div>
-      {responseModes[mode].reminder && <p className="text-xs leading-5 text-[#7d695a]">{responseModes[mode].reminder}</p>}
+      {responseModes[mode].reminder && <p className="text-xs leading-5 text-[#6b4a3a]">{responseModes[mode].reminder}</p>}
       <textarea
         ref={textareaRef}
-        className="min-h-20 resize-none rounded-2xl border border-[#e5d5c2] bg-white p-3 text-sm font-medium text-[#514137] outline-none ring-[#e9b3ad] focus:ring-4"
+        className="min-h-20 resize-none rounded-2xl border border-[#c8b7a7] bg-white p-3 text-sm font-medium text-[#4f3325] outline-none ring-[#c88d7d] focus:ring-4"
         onChange={(e) => setBody(e.target.value)}
         placeholder={responseModes[mode].placeholder}
         value={body}
         autoComplete="off"
       />
       {!username ? (
-        <p className="text-center text-sm text-[#7d695a]">
-          <a href="/login" className="underline underline-offset-2 text-[#514137]">Log in</a> to comment.
+        <p className="text-center text-sm text-[#6b4a3a]">
+          <a href="/login" className="underline underline-offset-2 text-[#4f3325]">Log in</a> to comment.
         </p>
       ) : (
         <button
-          className="rounded-2xl bg-[#e9b3ad] px-4 py-3 text-sm font-medium text-[#514137] disabled:opacity-60"
+          className="rounded-2xl bg-[#c88d7d] px-4 py-3 text-sm font-medium text-[#4f3325] disabled:opacity-60"
           disabled={status === "saving" || !body.trim()}
           onClick={submit}
           type="button"

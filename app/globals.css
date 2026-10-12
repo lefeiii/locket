@@ -3,12 +3,21 @@
 @tailwind utilities;
 
 :root {
+  --palette-cloud: #d8d6d2;
+  --palette-ivory: #f1e9e1;
+  --palette-oatmeal: #c8b7a7;
+  --palette-knit: #a89686;
+  --palette-latte: #8c6f5e;
+  --palette-cocoa: #6b4a3a;
+  --palette-wood: #4f3325;
+  --palette-caramel: #a46643;
+  --palette-rosewood: #c88d7d;
   --font-sans: "Inter", "SF Pro Display", "Segoe UI", sans-serif;
-  --shell-charcoal: #514137;
-  --shell-sage: #705c4c;
-  --shell-pink: #e9b3ad;
-  --shell-mist: #eee2d3;
-  --shell-foam: #fffaf2;
+  --shell-charcoal: #4f3325;
+  --shell-sage: #6b4a3a;
+  --shell-pink: #c88d7d;
+  --shell-mist: #d8d6d2;
+  --shell-foam: #f1e9e1;
 }
 
 * {
@@ -22,7 +31,7 @@ html {
 body {
   min-height: 100vh;
   color: var(--shell-charcoal);
-  background: #faf4f5;
+  background: #d8d6d2;
 }
 
 button,
@@ -48,19 +57,19 @@ select {
 
 /* Quiet, visible focus feedback for keyboard navigation. */
 :where(a, button, input, textarea, select):focus-visible {
-  outline: 2px solid #a06d45;
+  outline: 2px solid #a46643;
   outline-offset: 3px;
 }
 
 ::selection {
-  background: #f1d5bf;
-  color: #514137;
+  background: #c8b7a7;
+  color: #4f3325;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
 
-/* Keep secondary text readable on beige and rose surfaces. */
-.text-\[\#7d695a\] { color: var(--shell-sage); }
-.bg-\[\#e9b3ad\] .text-\[\#7d695a\] { color: var(--shell-charcoal); }
+/* Keep secondary text readable on cloud and rosewood surfaces. */
+.text-\[\#6b4a3a\] { color: var(--shell-sage); }
+.bg-\[\#c88d7d\] .text-\[\#6b4a3a\] { color: var(--shell-charcoal); }

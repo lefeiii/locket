@@ -128,26 +128,26 @@ export function StoryOwnerActions({
   }
 
   return (
-    <div className="mt-4 rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-5 shadow-sm">
-      <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">
+    <div className="mt-4 rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
+      <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">
         Your story
       </p>
 
       {editing ? (
         <div className="grid gap-3">
-          <label className="block text-sm font-medium text-[#514137]">
+          <label className="block text-sm font-medium text-[#4f3325]">
             Title
             <input
-              className="mt-1 w-full rounded-2xl border border-[#e5d5c2] bg-white px-4 py-3 text-sm font-medium text-[#514137] outline-none ring-[#e9b3ad] focus:ring-4"
+              className="mt-1 w-full rounded-2xl border border-[#c8b7a7] bg-white px-4 py-3 text-sm font-medium text-[#4f3325] outline-none ring-[#c88d7d] focus:ring-4"
               maxLength={90}
               onChange={(e) => setTitle(e.target.value)}
               value={title}
             />
           </label>
-          <label className="block text-sm font-medium text-[#514137]">
+          <label className="block text-sm font-medium text-[#4f3325]">
             Category
             <select
-              className="mt-1 w-full rounded-2xl border border-[#e5d5c2] bg-white px-4 py-3 text-sm font-medium text-[#514137] outline-none ring-[#e9b3ad] focus:ring-4"
+              className="mt-1 w-full rounded-2xl border border-[#c8b7a7] bg-white px-4 py-3 text-sm font-medium text-[#4f3325] outline-none ring-[#c88d7d] focus:ring-4"
               onChange={(e) => setCategory(e.target.value as StoryCategory)}
               value={category}
             >
@@ -155,10 +155,10 @@ export function StoryOwnerActions({
             </select>
           </label>
           <ResponseModeSelect value={responseMode} onChange={setResponseMode} />
-          <label className="block text-sm font-medium text-[#514137]">
+          <label className="block text-sm font-medium text-[#4f3325]">
             Story
             <textarea
-              className="mt-1 min-h-48 w-full resize-none rounded-2xl border border-[#e5d5c2] bg-white p-4 text-sm font-medium leading-7 text-[#514137] outline-none ring-[#e9b3ad] focus:ring-4"
+              className="mt-1 min-h-48 w-full resize-none rounded-2xl border border-[#c8b7a7] bg-white p-4 text-sm font-medium leading-7 text-[#4f3325] outline-none ring-[#c88d7d] focus:ring-4"
               maxLength={1400}
               onChange={(e) => setBody(e.target.value)}
               value={body}
@@ -166,7 +166,7 @@ export function StoryOwnerActions({
           </label>
           <div className="flex gap-2">
             <button
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#e9b3ad] py-3 text-sm font-medium text-[#514137] disabled:opacity-60"
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#c88d7d] py-3 text-sm font-medium text-[#4f3325] disabled:opacity-60"
               disabled={saving}
               onClick={handleSave}
               type="button"
@@ -175,7 +175,7 @@ export function StoryOwnerActions({
               {saving ? "Saving…" : "Save changes"}
             </button>
             <button
-              className="flex items-center justify-center gap-2 rounded-2xl bg-[#eee2d3] px-4 py-3 text-sm font-medium text-[#514137]"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-[#d8d6d2] px-4 py-3 text-sm font-medium text-[#4f3325]"
               onClick={() => { setEditing(false); setTitle(savedTitle); setBody(savedBody); setCategory(savedCategory); setResponseMode(savedResponseMode); }}
               type="button"
             >
@@ -187,7 +187,7 @@ export function StoryOwnerActions({
       ) : (
         <div className="flex flex-wrap gap-2">
           <button
-            className="flex items-center gap-2 rounded-2xl bg-[#eee2d3] px-4 py-2.5 text-sm font-medium text-[#514137]"
+            className="flex items-center gap-2 rounded-2xl bg-[#d8d6d2] px-4 py-2.5 text-sm font-medium text-[#4f3325]"
             onClick={() => setEditing(true)}
             type="button"
           >
@@ -195,7 +195,7 @@ export function StoryOwnerActions({
             Edit
           </button>
           <button
-            className="flex items-center gap-2 rounded-2xl bg-[#eee2d3] px-4 py-2.5 text-sm font-medium text-[#514137]"
+            className="flex items-center gap-2 rounded-2xl bg-[#d8d6d2] px-4 py-2.5 text-sm font-medium text-[#4f3325]"
             onClick={handleToggleVisibility}
             type="button"
           >
@@ -214,7 +214,7 @@ export function StoryOwnerActions({
       )}
 
       {msg && (
-        <p className="mt-3 text-center text-sm font-medium text-[#514137]">{msg}</p>
+        <p className="mt-3 text-center text-sm font-medium text-[#4f3325]">{msg}</p>
       )}
     </div>
   );

@@ -111,24 +111,24 @@ export function StoryFeed({ initialStories, pinnedStoryId, updatesOnly }: {
 
   return (
     <div ref={sectionRef} className="flex flex-col gap-7" aria-busy={loading}>
-      <p className="text-center text-xs text-[#7d695a]" aria-live="polite">
+      <p className="text-center text-xs text-[#6b4a3a]" aria-live="polite">
         {loading ? "Loading older stories…" : pull >= PULL_THRESHOLD ? "Release to load older stories" :
           pull > 0 ? "Keep pulling to load older stories" : hasMore ? "Pull down at the top to discover older stories" : ""}
       </p>
       {stories.length === 0 ? (
-        <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-8 text-center">
-          <p className="text-base font-medium text-[#514137]">Nothing here yet.</p>
+        <div className="rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-8 text-center">
+          <p className="text-base font-medium text-[#4f3325]">Nothing here yet.</p>
         </div>
       ) : stories.map(story => (
         <StoryCard key={story.id} story={story} isGuest={false} isPinned={story.id === pinnedStoryId} />
       ))}
-      {error && <p role="alert" className="text-center text-sm text-[#7d695a]">{error}</p>}
+      {error && <p role="alert" className="text-center text-sm text-[#6b4a3a]">{error}</p>}
       {hasMore ? (
         <button type="button" onClick={() => void loadOlder()} disabled={loading}
-          className="rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] px-4 py-3 text-sm font-medium text-[#514137] disabled:opacity-50">
+          className="rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] px-4 py-3 text-sm font-medium text-[#4f3325] disabled:opacity-50">
           {loading ? "Loading…" : error ? "Try again" : "Load older stories"}
         </button>
-      ) : stories.length > 0 && <p className="text-center text-sm text-[#7d695a]">You’ve reached the oldest stories. Check back for new ones.</p>}
+      ) : stories.length > 0 && <p className="text-center text-sm text-[#6b4a3a]">You’ve reached the oldest stories. Check back for new ones.</p>}
     </div>
   );
 }

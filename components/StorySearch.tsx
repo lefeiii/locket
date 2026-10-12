@@ -71,10 +71,10 @@ export function StorySearch() {
     <div className="mx-auto max-w-lg px-4 pb-4" ref={containerRef}>
       <div className="relative">
         <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
-          <Search size={16} className="text-[#7d695a]" />
+          <Search size={16} className="text-[#6b4a3a]" />
         </div>
         <input
-          className="w-full rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] py-3 pl-10 pr-10 text-sm font-medium text-[#514137] outline-none ring-[#e9b3ad] focus:ring-4"
+          className="w-full rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] py-3 pl-10 pr-10 text-sm font-medium text-[#4f3325] outline-none ring-[#c88d7d] focus:ring-4"
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search stories to follow…"
           type="text"
@@ -83,7 +83,7 @@ export function StorySearch() {
         />
         {query && (
           <button
-            className="absolute inset-y-0 right-3 flex items-center px-1 text-[#7d695a]"
+            className="absolute inset-y-0 right-3 flex items-center px-1 text-[#6b4a3a]"
             onClick={() => { setQuery(""); setResults([]); setOpen(false); }}
             type="button"
             aria-label="Clear search"
@@ -94,23 +94,23 @@ export function StorySearch() {
       </div>
 
       {open && (
-        <div className="mt-2 overflow-hidden rounded-2xl border border-[#e5d5c2] bg-[#fffaf2] shadow-sm">
+        <div className="mt-2 overflow-hidden rounded-2xl border border-[#c8b7a7] bg-[#f1e9e1] shadow-sm">
           {loading ? (
-            <p className="px-4 py-3 text-sm text-[#7d695a]">Searching…</p>
+            <p className="px-4 py-3 text-sm text-[#6b4a3a]">Searching…</p>
           ) : results.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-[#7d695a]">No stories found for "{query}"</p>
+            <p className="px-4 py-3 text-sm text-[#6b4a3a]">No stories found for "{query}"</p>
           ) : (
             <ul>
               {results.map((result, i) => (
                 <li
                   key={result.id}
                   className={`flex items-center justify-between gap-3 px-4 py-3 ${
-                    i < results.length - 1 ? "border-b border-[#e5d5c2]" : ""
+                    i < results.length - 1 ? "border-b border-[#c8b7a7]" : ""
                   }`}
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-[#514137]">{result.title}</p>
-                    <p className="mt-0.5 text-xs text-[#7d695a]">
+                    <p className="truncate text-sm font-medium text-[#4f3325]">{result.title}</p>
+                    <p className="mt-0.5 text-xs text-[#6b4a3a]">
                       {result.category} · @{result.anonymous_name}
                     </p>
                   </div>

@@ -37,60 +37,60 @@ export default function SignupPage() {
     {showOnboarding && (
       <Onboarding onDone={() => router.push("/story/a8113f77-d500-468f-b360-e32beb0aba2e")} />
     )}
-    <main className="min-h-screen flex items-center justify-center bg-[#f5f3f0] px-4">
+    <main className="min-h-screen flex items-center justify-center bg-[#f1e9e1] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-medium text-[#514137]">locket</h1>
-          <p className="mt-1 text-sm font-medium text-[#7d695a] italic tracking-wide">an absolute trainwreck</p>
-          <p className="mt-2 text-xs font-medium tracking-widest uppercase text-[#7d695a]">anonymous venting & confessions</p>
+          <h1 className="text-4xl font-medium text-[#4f3325]">locket</h1>
+          <p className="mt-1 text-sm font-medium text-[#6b4a3a] italic tracking-wide">an absolute trainwreck</p>
+          <p className="mt-2 text-xs font-medium tracking-widest uppercase text-[#6b4a3a]">anonymous venting & confessions</p>
         </div>
-        <div className="rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-6 shadow-sm">
-          <h2 className="text-xl font-medium text-[#514137] mb-1">create your account</h2>
-          <p className="text-xs font-medium text-[#7d695a] mb-5">your username shows on stories. your email stays private.</p>
+        <div className="rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-6 shadow-sm">
+          <h2 className="text-xl font-medium text-[#4f3325] mb-1">create your account</h2>
+          <p className="text-xs font-medium text-[#6b4a3a] mb-5">your username shows on stories. your email stays private.</p>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label className="text-xs font-medium uppercase tracking-widest text-[#7d695a] block mb-1">username</label>
+              <label className="text-xs font-medium uppercase tracking-widest text-[#6b4a3a] block mb-1">username</label>
               <input
                 type="text" required value={username}
                 onChange={e => setUsername(e.target.value)}
-                className="w-full rounded-2xl border border-[#e5d5c2] bg-white px-4 py-3 text-sm font-medium text-[#514137] outline-none focus:border-[#e9b3ad]"
+                className="w-full rounded-2xl border border-[#c8b7a7] bg-white px-4 py-3 text-sm font-medium text-[#4f3325] outline-none focus:border-[#c88d7d]"
                 placeholder="DramaBunny"
                 maxLength={30}
               />
-              <p className={`mt-1 text-xs ${username.length > 0 && !usernameValid ? "text-red-400" : "text-[#7d695a]"}`}>
+              <p className={`mt-1 text-xs ${username.length > 0 && !usernameValid ? "text-red-400" : "text-[#6b4a3a]"}`}>
                 letters, numbers, . _ - only · 2–30 chars
               </p>
             </div>
             <div>
-              <label className="text-xs font-medium uppercase tracking-widest text-[#7d695a] block mb-1">email</label>
+              <label className="text-xs font-medium uppercase tracking-widest text-[#6b4a3a] block mb-1">email</label>
               <input
                 type="email" required value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full rounded-2xl border border-[#e5d5c2] bg-white px-4 py-3 text-sm font-medium text-[#514137] outline-none focus:border-[#e9b3ad]"
+                className="w-full rounded-2xl border border-[#c8b7a7] bg-white px-4 py-3 text-sm font-medium text-[#4f3325] outline-none focus:border-[#c88d7d]"
                 placeholder="your@email.com"
               />
             </div>
             <div>
-              <label className="text-xs font-medium uppercase tracking-widest text-[#7d695a] block mb-1">password</label>
+              <label className="text-xs font-medium uppercase tracking-widest text-[#6b4a3a] block mb-1">password</label>
               <input
                 type="password" required value={password}
                 onChange={e => setPassword(e.target.value)}
                 minLength={6}
-                className="w-full rounded-2xl border border-[#e5d5c2] bg-white px-4 py-3 text-sm font-medium text-[#514137] outline-none focus:border-[#e9b3ad]"
+                className="w-full rounded-2xl border border-[#c8b7a7] bg-white px-4 py-3 text-sm font-medium text-[#4f3325] outline-none focus:border-[#c88d7d]"
                 placeholder="at least 6 characters"
               />
             </div>
             {error && <p className="text-xs font-medium text-red-500 text-center">{error}</p>}
             <button
               type="submit" disabled={loading || (username.length > 0 && !usernameValid)}
-              className="w-full rounded-2xl bg-[#e9b3ad] py-3 text-sm font-medium text-[#514137] disabled:opacity-60"
+              className="w-full rounded-2xl bg-[#c88d7d] py-3 text-sm font-medium text-[#4f3325] disabled:opacity-60"
             >
               {loading ? "creating account..." : "create account"}
             </button>
           </form>
-          <p className="mt-4 text-center text-xs font-medium text-[#7d695a]">
+          <p className="mt-4 text-center text-xs font-medium text-[#6b4a3a]">
             already have one?{" "}
-            <Link href="/login" className="text-[#514137] underline">log in</Link>
+            <Link href="/login" className="text-[#4f3325] underline">log in</Link>
           </p>
         </div>
       </div>

@@ -29,14 +29,14 @@ export function UpdateAlarmButton({ label = "Turn On Update Alarm" }: UpdateAlar
   return (
     <div className="grid gap-2">
       <button
-        className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#e9b3ad] px-4 text-sm font-medium text-[#514137]"
+        className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#c88d7d] px-4 text-sm font-medium text-[#4f3325]"
         onClick={enableAlarm}
         type="button"
       >
         <BellRing size={18} />
         {label}
       </button>
-      {message ? <p className="text-center text-xs font-medium leading-5 text-[#7d695a]">{message}</p> : null}
+      {message ? <p className="text-center text-xs font-medium leading-5 text-[#6b4a3a]">{message}</p> : null}
     </div>
   );
 }

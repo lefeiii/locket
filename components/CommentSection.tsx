@@ -45,19 +45,19 @@ export function CommentSection({ comments, storyId, responseMode }: Props) {
 
   return (
     <>
-    <section className="mt-6 rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-5 shadow-sm">
+    <section className="mt-6 rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <MessageCircle size={20} />
-        <h2 className="text-xl font-medium text-[#514137]">
+        <h2 className="text-xl font-medium text-[#4f3325]">
           Comments{" "}
           {comments.length > 0 && (
-            <span className="text-[#7d695a]">({comments.length})</span>
+            <span className="text-[#6b4a3a]">({comments.length})</span>
           )}
         </h2>
       </div>
 
       {topLevel.length === 0 ? (
-        <p className="rounded-2xl bg-[#eee2d3] p-4 text-sm font-medium text-[#7d695a]">
+        <p className="rounded-2xl bg-[#d8d6d2] p-4 text-sm font-medium text-[#6b4a3a]">
           No comments yet. Be the first 👀
         </p>
       ) : (
@@ -65,14 +65,14 @@ export function CommentSection({ comments, storyId, responseMode }: Props) {
           {topLevel.map((comment) => (
             <div key={comment.id}>
               {/* Parent comment */}
-              <div className="rounded-2xl bg-[#eee2d3] p-4">
+              <div className="rounded-2xl bg-[#d8d6d2] p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">
                     @{comment.anonymous_name}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
-                      className="text-xs font-medium text-[#7d695a] underline underline-offset-2"
+                      className="text-xs font-medium text-[#6b4a3a] underline underline-offset-2"
                       onClick={() =>
                         setReplyingTo(
                           replyingTo?.id === comment.id
@@ -86,7 +86,7 @@ export function CommentSection({ comments, storyId, responseMode }: Props) {
                     </button>
                     <button
                       aria-label="Report comment"
-                      className="text-[#7d695a]"
+                      className="text-[#6b4a3a]"
                       onClick={() => setReportingComment(comment.id)}
                       type="button"
                     >
@@ -94,7 +94,7 @@ export function CommentSection({ comments, storyId, responseMode }: Props) {
                     </button>
                   </div>
                 </div>
-                <p className="mt-1 text-sm font-medium leading-6 text-[#514137]">
+                <p className="mt-1 text-sm font-medium leading-6 text-[#4f3325]">
                   {comment.body}
                 </p>
               </div>
@@ -115,25 +115,25 @@ export function CommentSection({ comments, storyId, responseMode }: Props) {
               {/* Replies to this comment */}
               {(replyMap[comment.id] ?? []).map((reply) => (
                 <div key={reply.id} className="ml-6 mt-2 flex gap-2">
-                  <CornerDownRight size={14} className="mt-3 shrink-0 text-[#7d695a]" />
-                  <div className="flex-1 rounded-2xl bg-[#fffaf2] border border-[#e5d5c2] p-4">
+                  <CornerDownRight size={14} className="mt-3 shrink-0 text-[#6b4a3a]" />
+                  <div className="flex-1 rounded-2xl bg-[#f1e9e1] border border-[#c8b7a7] p-4">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">
+                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">
                         @{reply.anonymous_name}
                         {reply.reply_to_name && (
-                          <span className="ml-1 text-[#e9b3ad]">→ @{reply.reply_to_name}</span>
+                          <span className="ml-1 text-[#c88d7d]">→ @{reply.reply_to_name}</span>
                         )}
                       </p>
                       <button
                         aria-label="Report comment"
-                        className="text-[#7d695a]"
+                        className="text-[#6b4a3a]"
                         onClick={() => setReportingComment(reply.id)}
                         type="button"
                       >
                         <Flag size={14} />
                       </button>
                     </div>
-                    <p className="mt-1 text-sm font-medium leading-6 text-[#514137]">
+                    <p className="mt-1 text-sm font-medium leading-6 text-[#4f3325]">
                       {reply.body}
                     </p>
                   </div>

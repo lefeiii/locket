@@ -18,7 +18,7 @@ function getSeasonWindows() {
       slug: "winter-wildin",
       season_name: "Winter Wildin'",
       description: "September to December school-year chaos.",
-      color: "bg-[#e9b3ad]",
+      color: "bg-[#c88d7d]",
       from: new Date(`${year - 1}-09-01T00:00:00.000Z`).toISOString(),
       to: new Date(`${year - 1}-12-31T23:59:59.999Z`).toISOString(),
     },
@@ -27,7 +27,7 @@ function getSeasonWindows() {
       slug: "summer-special",
       season_name: "Summer Special",
       description: "January to June recaps for finals, prom, and summer lore.",
-      color: "bg-[#eee2d3]",
+      color: "bg-[#d8d6d2]",
       from: new Date(`${year}-01-01T00:00:00.000Z`).toISOString(),
       to: new Date(`${year}-06-30T23:59:59.999Z`).toISOString(),
     },
@@ -312,12 +312,12 @@ export default async function WrappedPage() {
       <BrandBar />
       <section className="mx-auto max-w-md px-4 py-6">
         <div className="mb-5">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">Seasonal Wrapped</p>
-          <h1 className="mt-2 text-3xl font-medium leading-tight text-[#514137]">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">Seasonal Wrapped</p>
+          <h1 className="mt-2 text-3xl font-medium leading-tight text-[#4f3325]">
             Your drama era, screenshot-ready
           </h1>
           {!isLoggedIn && (
-            <p className="mt-2 text-sm text-[#7d695a]">
+            <p className="mt-2 text-sm text-[#6b4a3a]">
               <Link className="underline underline-offset-2" href="/login">
                 Log in
               </Link>{" "}
@@ -327,13 +327,13 @@ export default async function WrappedPage() {
         </div>
 
         {/* Season jump links */}
-        <section className="mb-5 rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7d695a]">Wrapped categories</p>
+        <section className="mb-5 rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">Wrapped categories</p>
           <div className="mt-4 grid gap-3">
             {recaps.map((recap) => (
               <a
                 key={recap.id}
-                className={`rounded-2xl ${recap.color} p-4 text-[#514137]`}
+                className={`rounded-2xl ${recap.color} p-4 text-[#4f3325]`}
                 href={`#${recap.slug}`}
               >
                 <h2 className="text-xl font-medium">{recap.season_name}</h2>
@@ -349,10 +349,10 @@ export default async function WrappedPage() {
             <article
               key={recap.id}
               id={recap.slug}
-              className="overflow-hidden rounded-[2rem] border border-[#e5d5c2] bg-[#fffaf2] shadow-sm"
+              className="overflow-hidden rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] shadow-sm"
             >
               {/* Header */}
-              <div className="bg-[#e9b3ad] p-5 text-[#514137]">
+              <div className="bg-[#c88d7d] p-5 text-[#4f3325]">
                 <p className="text-xs font-medium uppercase tracking-[0.2em]">{recap.season_name}</p>
                 <h2 className="mt-3 text-4xl font-medium leading-tight">{recap.headline}</h2>
               </div>
@@ -360,17 +360,17 @@ export default async function WrappedPage() {
               <div className="p-5">
                 {recap.storiesRead === 0 ? (
                   /* ── Empty state ── */
-                  <div className="rounded-2xl bg-[#eee2d3] px-5 py-8 text-center">
+                  <div className="rounded-2xl bg-[#d8d6d2] px-5 py-8 text-center">
                     <p className="text-2xl">📭</p>
-                    <p className="mt-3 text-sm font-medium text-[#514137]">
+                    <p className="mt-3 text-sm font-medium text-[#4f3325]">
                       No drama logged for this season yet.
                     </p>
-                    <p className="mt-1 text-xs text-[#7d695a]">
+                    <p className="mt-1 text-xs text-[#6b4a3a]">
                       Read some stories and come back — your recap builds itself.
                     </p>
                     <Link
                       href="/"
-                      className="mt-4 inline-block rounded-2xl bg-[#e9b3ad] px-5 py-2 text-xs font-medium text-[#514137]"
+                      className="mt-4 inline-block rounded-2xl bg-[#c88d7d] px-5 py-2 text-xs font-medium text-[#4f3325]"
                     >
                       Browse the feed →
                     </Link>
@@ -379,24 +379,24 @@ export default async function WrappedPage() {
                   <>
                     {/* Stats row */}
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-2xl bg-[#eee2d3] p-4">
-                        <p className="text-3xl font-medium text-[#514137]">{recap.storiesRead}</p>
-                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">Read</p>
+                      <div className="rounded-2xl bg-[#d8d6d2] p-4">
+                        <p className="text-3xl font-medium text-[#4f3325]">{recap.storiesRead}</p>
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">Read</p>
                       </div>
-                      <div className="rounded-2xl bg-[#eee2d3] p-4">
-                        <p className="text-3xl font-medium text-[#514137]">{recap.votescast}</p>
-                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">Votes</p>
+                      <div className="rounded-2xl bg-[#d8d6d2] p-4">
+                        <p className="text-3xl font-medium text-[#4f3325]">{recap.votescast}</p>
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">Votes</p>
                       </div>
                       {recap.commentsLeft > 0 && (
-                        <div className="rounded-2xl bg-[#eee2d3] p-4">
-                          <p className="text-3xl font-medium text-[#514137]">{recap.commentsLeft}</p>
-                          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">Comments left</p>
+                        <div className="rounded-2xl bg-[#d8d6d2] p-4">
+                          <p className="text-3xl font-medium text-[#4f3325]">{recap.commentsLeft}</p>
+                          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">Comments left</p>
                         </div>
                       )}
                       {recap.followed > 0 && (
-                        <div className="rounded-2xl bg-[#eee2d3] p-4">
-                          <p className="text-3xl font-medium text-[#514137]">{recap.followed}</p>
-                          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">Stories followed</p>
+                        <div className="rounded-2xl bg-[#d8d6d2] p-4">
+                          <p className="text-3xl font-medium text-[#4f3325]">{recap.followed}</p>
+                          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">Stories followed</p>
                         </div>
                       )}
                     </div>
@@ -406,7 +406,7 @@ export default async function WrappedPage() {
                       {recap.lines.map((line) => (
                         <p
                           key={line}
-                          className="rounded-2xl bg-[#eee2d3] p-4 text-sm font-medium leading-6 text-[#514137]"
+                          className="rounded-2xl bg-[#d8d6d2] p-4 text-sm font-medium leading-6 text-[#4f3325]"
                         >
                           {line}
                         </p>
@@ -415,28 +415,28 @@ export default async function WrappedPage() {
 
                     {/* Most dramatic week */}
                     {recap.mostDramaticWeek && (
-                      <div className="mt-4 rounded-2xl border border-[#e5d5c2] p-4">
-                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">🔥 Most dramatic week</p>
-                        <p className="mt-1 text-base font-medium text-[#514137]">{recap.mostDramaticWeek}</p>
+                      <div className="mt-4 rounded-2xl border border-[#c8b7a7] p-4">
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">🔥 Most dramatic week</p>
+                        <p className="mt-1 text-base font-medium text-[#4f3325]">{recap.mostDramaticWeek}</p>
                       </div>
                     )}
 
                     {/* Personality type */}
                     {recap.personalityType && (
-                      <div className="mt-4 rounded-2xl bg-[#e9b3ad] p-4">
-                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#514137]">✨ Your drama personality</p>
-                        <p className="mt-1 text-sm font-medium leading-6 text-[#514137]">{recap.personalityType}</p>
+                      <div className="mt-4 rounded-2xl bg-[#c88d7d] p-4">
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#4f3325]">✨ Your drama personality</p>
+                        <p className="mt-1 text-sm font-medium leading-6 text-[#4f3325]">{recap.personalityType}</p>
                       </div>
                     )}
 
                     {/* Top drama era */}
                     {(recap.topDramaLabel || recap.topDramaArc) && (
-                      <div className="mt-4 rounded-2xl border border-[#e5d5c2] p-4">
-                        <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-[#7d695a]">
+                      <div className="mt-4 rounded-2xl border border-[#c8b7a7] p-4">
+                        <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-[#6b4a3a]">
                           <Sparkles size={15} />
                           Top drama era
                         </p>
-                        <p className="mt-2 text-xl font-medium leading-tight text-[#514137]">
+                        <p className="mt-2 text-xl font-medium leading-tight text-[#4f3325]">
                           {recap.topDramaLabel ?? ""}
                           {recap.topDramaLabel && recap.topDramaArc ? " in " : ""}
                           {recap.topDramaArc ?? ""}
@@ -447,21 +447,21 @@ export default async function WrappedPage() {
                     {/* Action buttons */}
                     <div className="mt-4 grid grid-cols-3 gap-2">
                       <button
-                        className="flex min-h-11 items-center justify-center gap-1 rounded-2xl bg-[#e9b3ad] px-2 text-xs font-medium text-[#514137]"
+                        className="flex min-h-11 items-center justify-center gap-1 rounded-2xl bg-[#c88d7d] px-2 text-xs font-medium text-[#4f3325]"
                         type="button"
                       >
                         <Download size={15} />
                         Save Card
                       </button>
                       <button
-                        className="flex min-h-11 items-center justify-center gap-1 rounded-2xl bg-[#eee2d3] px-2 text-xs font-medium text-[#514137]"
+                        className="flex min-h-11 items-center justify-center gap-1 rounded-2xl bg-[#d8d6d2] px-2 text-xs font-medium text-[#4f3325]"
                         type="button"
                       >
                         <Share size={15} />
                         Share Recap
                       </button>
                       <Link
-                        className="flex min-h-11 items-center justify-center rounded-2xl bg-[#eee2d3] px-2 text-center text-xs font-medium text-[#514137]"
+                        className="flex min-h-11 items-center justify-center rounded-2xl bg-[#d8d6d2] px-2 text-center text-xs font-medium text-[#4f3325]"
                         href="/"
                       >
                         Read More

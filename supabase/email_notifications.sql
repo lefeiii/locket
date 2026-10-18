@@ -45,9 +45,9 @@ begin
    (kind_name='replies' and p.replies and (p.user_id=s.user_id or (s.user_id is null and exists(select 1 from public.users owner where owner.id=p.user_id and owner.username=s.anonymous_name))) and
       exists(select 1 from public.users u where u.id=auth.uid() and u.username=new.anonymous_name) and auth.uid()<>p.user_id)
    or (kind_name='story_updates' and p.story_updates and p.user_id<>s.user_id and exists(
-    select 1 from public.story_follows f join public.stories followed on followed.id=f.story_id
-    where f.user_id=p.user_id and followed.anonymous_name=s.anonymous_name
-      and coalesce(nullif(followed.story_arc_id,''),followed.id::text)=s.story_arc_id))
+    select 1 from public.story_follows f join public.stories followed on followed.id::text=f.story_id::text
+    where f.user_id::text=p.user_id::text and followed.anonymous_name=s.anonymous_name
+      and coalesce(nullif(followed.story_arc_id::text,''),followed.id::text)=s.story_arc_id::text))
  loop
   insert into public.email_delivery_queue(user_id,story_id,kind,due_at)
   values(recipient,s.id,kind_name,now()+case when kind_name='replies' then interval '1 hour' else interval '0 minutes' end)
@@ -81,7 +81,7 @@ language sql security definer set search_path='' as $$
  and not coalesce((to_jsonb(s)->>'is_hidden')::boolean,false)
  and not coalesce((to_jsonb(s)->>'is_private')::boolean,false)
  and not coalesce((to_jsonb(s)->>'is_diary_only')::boolean,false)
- and (q.kind='replies' or exists(select 1 from public.story_follows f join public.stories fs on fs.id=f.story_id where f.user_id=q.user_id and fs.anonymous_name=s.anonymous_name and coalesce(nullif(fs.story_arc_id,''),fs.id::text)=s.story_arc_id))
+ and (q.kind='replies' or exists(select 1 from public.story_follows f join public.stories fs on fs.id::text=f.story_id::text where f.user_id::text=q.user_id::text and fs.anonymous_name=s.anonymous_name and coalesce(nullif(fs.story_arc_id::text,''),fs.id::text)=s.story_arc_id::text))
  order by q.due_at limit 20 for update of q skip locked
  ), claimed as (
  update public.email_delivery_queue q set status='claimed',claimed_at=now() from picked where q.id=picked.id returning q.*
@@ -101,7 +101,7 @@ language sql security definer set search_path='' as $$
  and not coalesce((to_jsonb(s)->>'is_hidden')::boolean,false)
  and not coalesce((to_jsonb(s)->>'is_private')::boolean,false)
  and not coalesce((to_jsonb(s)->>'is_diary_only')::boolean,false)
- and (q.kind='replies' or exists(select 1 from public.story_follows f join public.stories fs on fs.id=f.story_id where f.user_id=q.user_id and fs.anonymous_name=s.anonymous_name and coalesce(nullif(fs.story_arc_id,''),fs.id::text)=s.story_arc_id)));
+ and (q.kind='replies' or exists(select 1 from public.story_follows f join public.stories fs on fs.id::text=f.story_id::text where f.user_id::text=q.user_id::text and fs.anonymous_name=s.anonymous_name and coalesce(nullif(fs.story_arc_id::text,''),fs.id::text)=s.story_arc_id::text)));
 $$;
 revoke all on function public.locket_email_still_allowed(uuid) from public,anon,authenticated;
 grant execute on function public.locket_email_still_allowed(uuid) to service_role;

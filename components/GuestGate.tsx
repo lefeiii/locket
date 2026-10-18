@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { EmailNotificationPrompt } from "@/components/EmailNotificationPrompt";
 import { FeedFilters } from "@/components/FeedFilters";
 import { StorySearch } from "@/components/StorySearch";
 import { FollowingFeed } from "@/components/FollowingFeed";
@@ -63,6 +64,7 @@ export function GuestGate({ activeFilter, allStories, pinnedStory, pinnedStoryId
   // Logged-in view — full feed
   return (
     <>
+      <EmailNotificationPrompt />
       <FeedFilters active={activeFilter} />
       <StorySearch />
       <section className="mx-auto flex max-w-lg flex-col gap-7 px-4 pt-6 pb-28">

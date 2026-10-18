@@ -16,10 +16,25 @@ class NotificationEmailTests(unittest.TestCase):
         message = sender.message_for(JOB)
         self.assertEqual(message['To'], JOB['email'])
         self.assertNotIn('4', message['Subject'])
-        self.assertIn('4 new replies', message.get_content())
-        self.assertIn('/story/456', message.get_content())
-        self.assertIn('/email/unsubscribe#token=', message.get_content())
+        self.assertIn('4 new replies', message.get_body(preferencelist=('plain',)).get_content())
+        self.assertIn('/story/456', message.get_body(preferencelist=('plain',)).get_content())
+        self.assertIn('/email/unsubscribe#token=', message.get_body(preferencelist=('plain',)).get_content())
         self.assertIn('new part', sender.message_for({**JOB, 'kind': 'story_updates'})['Subject'])
+
+    def test_html_poster_has_embedded_logo_and_private_links(self):
+        message = sender.message_for(JOB)
+        html = message.get_body(preferencelist=('html',)).get_content()
+        self.assertIn('bgcolor="#fce2e9"', html)
+        self.assertIn('you’ve got<br>replies.', html)
+        self.assertIn('/story/456', html)
+        self.assertIn('Unsubscribe', html)
+        self.assertNotIn(JOB['email'], html)
+        self.assertNotIn('<script', html)
+        self.assertTrue(any(p['Content-ID'] == '<locket-logo>' for p in message.walk()))
+        update = sender.html_for({**JOB, 'kind': 'story_updates'})
+        self.assertIn('Catch me up', update)
+        self.assertIn('wait, there’s<br>an update.', update)
+        self.assertIn('&quot;', sender.html_for({**JOB, 'story_id': '\" onmouseover=\"x'}))
 
     def test_disabled_sends_nothing(self):
         with patch.dict(os.environ, {'EMAIL_NOTIFICATIONS_ENABLED': 'false'}), patch.object(sender, 'api') as api:

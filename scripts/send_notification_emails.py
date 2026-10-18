@@ -1,4 +1,7 @@
 """Send claimed notifications. Never log email addresses, tokens, or credentials."""
+from html import escape
+from pathlib import Path
+from string import Template
 import json
 import os
 import smtplib
@@ -22,6 +25,24 @@ def api(path, payload, method='POST'):
         return json.loads(content) if content else None
 
 
+def html_for(job):
+    update = job['kind'] == 'story_updates'
+    count = int(job['event_count'])
+    values = {
+        'preheader': 'A little update is waiting. Read it whenever you feel like it.',
+        'eyebrow': 'THE NEXT CHAPTER' if update else 'A LITTLE CONNECTION',
+        'headline': 'wait, there’s<br>an update.' if update else ('you’ve got<br>a reply.' if count == 1 else 'you’ve got<br>replies.'),
+        'description': 'The story you’re following just got a new part. Get comfy and catch up.' if update else (
+            'Someone left a reply on your story. Pop back in whenever you feel like it.' if count == 1 else
+            f'{count} new replies have found their way to your story. Pop back in whenever you feel like it.'),
+        'button': 'Catch me up' if update else 'Read my replies',
+        'story_url': escape(f"{SITE}/story/{job['story_id']}", quote=True),
+        'settings_url': f'{SITE}/settings',
+        'unsubscribe_url': escape(f"{SITE}/email/unsubscribe#token={job['token']}", quote=True),
+    }
+    return Template(Path(__file__).with_name('notification_email.html').read_text()).substitute(values)
+
+
 def message_for(job):
     message = EmailMessage()
     message['From'] = 'Locket <' + SENDER + '>'
@@ -36,6 +57,10 @@ def message_for(job):
         f"Hey,\n\n{note}\n\nRead it when you're ready:\n{SITE}/story/{job['story_id']}\n\n"
         f"You chose these notifications in Locket. Change your choices: {SITE}/settings\n"
         f"Unsubscribe: {SITE}/email/unsubscribe#token={job['token']}\n\nLocket\n")
+    message.add_alternative(html_for(job), subtype='html')
+    # Embed the real logo so it needs no external image request or tracking pixel.
+    logo = Path(__file__).resolve().parents[1] / 'public' / 'locket-logo-focused.png'
+    message.get_payload()[-1].add_related(logo.read_bytes(), maintype='image', subtype='png', cid='<locket-logo>')
     return message
 
 

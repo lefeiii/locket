@@ -2,7 +2,8 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {PGlite}=require('@electric-sql/pglite');
-test('email queue respects consent, arcs, grouping, privacy, unsubscribe and exclusive claims',async()=>{
+for (const followIdType of ['uuid', 'text']) {
+test(`follow IDs ${followIdType}: email queue respects consent, arcs, grouping, privacy, unsubscribe and exclusive claims`,async()=>{
  const db=new PGlite();
  try{
  await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
@@ -12,7 +13,7 @@ test('email queue respects consent, arcs, grouping, privacy, unsubscribe and exc
  create table public.users(id uuid primary key,username text);
  create table public.stories(id uuid primary key,user_id uuid,anonymous_name text,story_arc_id text,is_update boolean,part_number integer,is_hidden boolean default false,is_private boolean default false,is_diary_only boolean default false);
  create table public.comments(id uuid primary key,story_id uuid,anonymous_name text);
- create table public.story_follows(user_id uuid,story_id uuid);
+ create table public.story_follows(user_id ${followIdType},story_id ${followIdType});
  `);
  // PGlite has no pgcrypto; substitute only cryptographic token generation in this test.
  let sql=fs.readFileSync('supabase/email_notifications.sql','utf8').replace('create extension if not exists pgcrypto;','').replace("encode(gen_random_bytes(32), 'hex')","replace(gen_random_uuid()::text,'-','') || replace(gen_random_uuid()::text,'-','')");
@@ -57,3 +58,5 @@ test('email queue respects consent, arcs, grouping, privacy, unsubscribe and exc
  await db.query('select public.unsubscribe_locket_email($1)',[token]);
  }finally{await db.close();}
 });
+
+}

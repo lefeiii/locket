@@ -1,0 +1,27 @@
+name: Locket notification emails
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: notification-email-delivery
+  cancel-in-progress: false
+jobs:
+  send:
+    if: vars.EMAIL_NOTIFICATIONS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Deliver opted-in notifications
+        env:
+          EMAIL_NOTIFICATIONS_ENABLED: ${{ vars.EMAIL_NOTIFICATIONS_ENABLED }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python scripts/send_notification_emails.py

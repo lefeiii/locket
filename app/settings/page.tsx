@@ -1,5 +1,6 @@
 "use client";
 
+import { EmailNotificationSettings } from "@/components/EmailNotificationSettings";
 import { BellRing, Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -63,6 +64,7 @@ export default function NotificationSettingsPage() {
     <main className="pb-24">
       <BrandBar />
       <section className="mx-auto max-w-md px-4 py-6">
+        <EmailNotificationSettings />
         <div className="rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">Update Alarm</p>
           <h1 className="mt-2 text-3xl font-medium leading-tight text-[#4f3325]">Choose what pulls you back in</h1>

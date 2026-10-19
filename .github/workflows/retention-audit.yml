@@ -1,0 +1,90 @@
+name: One-time Locket retention audit
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/retention-audit.yml']
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read-only aggregate audit approved by owner
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python - <<'PY'
+          import os,json,urllib.request,urllib.error,datetime,collections
+          base=os.environ['SUPABASE_URL'].rstrip('/')
+          key=os.environ['SUPABASE_SERVICE_ROLE_KEY']
+          def get(path):
+              req=urllib.request.Request(base+path,headers={'apikey':key,'Authorization':'Bearer '+key})
+              try:
+                  with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
+              except urllib.error.HTTPError as e:
+                  raise RuntimeError('Audit read failed with HTTP '+str(e.code)+' on '+path.split('?')[0]) from None
+          def rows(table,fields,order='id'):
+              out=[]
+              for offset in range(0,100000,1000):
+                  page=get('/rest/v1/'+table+'?select='+fields+'&order='+order+'&limit=1000&offset='+str(offset))
+                  out.extend(page)
+                  if len(page)<1000:return out
+              raise RuntimeError('Audit exceeded pagination limit')
+          users=[]
+          for page in range(1,101):
+              batch=get('/auth/v1/admin/users?page='+str(page)+'&per_page=1000')['users']
+              users.extend(batch)
+              if len(batch)<1000:break
+          profiles=rows('users','id,username')
+          stories=rows('stories','id,user_id,anonymous_name,created_at,is_hidden,is_private,is_diary_only')
+          comments=rows('comments','id,story_id,anonymous_name,created_at')
+          prefs=rows('email_delivery_preferences','user_id,story_updates,replies','user_id')
+          now=datetime.datetime.now(datetime.timezone.utc)
+          def date(s):
+              try:return datetime.datetime.fromisoformat(s.replace('Z','+00:00')) if s else None
+              except (ValueError,AttributeError):return None
+          name_id={p['username']:p['id'] for p in profiles}
+          auth={u['id']:u for u in users}
+          posts=collections.defaultdict(list)
+          for s in stories:
+              if s.get('is_private') or s.get('is_diary_only') or s.get('is_hidden'):continue
+              uid=s.get('user_id') or name_id.get(s['anonymous_name'])
+              if uid in auth:posts[uid].append(s)
+          comment_map=collections.defaultdict(list)
+          for c in comments:comment_map[c['story_id']].append(c)
+          mature=[]
+          for uid,items in posts.items():
+              items.sort(key=lambda s:(s['created_at'],s['id']))
+              first=items[0]; started=date(first['created_at'])
+              if not started or (now-started).total_seconds()<86400:continue
+              replies=[c for c in comment_map[first['id']] if c['anonymous_name']!=first['anonymous_name'] and date(c['created_at']) and date(c['created_at'])>=started]
+              earliest=min([date(c['created_at']) for c in replies],default=None)
+              next_posts=[s for s in items[1:] if date(s['created_at']) and date(s['created_at'])>started]
+              mature.append({'replied':bool(replies),'second':bool(next_posts),'second_after_reply':bool(earliest and any(date(s['created_at'])>earliest for s in next_posts)),'within_24h':bool(earliest and (earliest-started).total_seconds()<=86400)})
+          def cohort(flag):
+              c=[x for x in mature if x['replied']==flag]
+              return {'first_posters':len(c),'posted_again':sum(x['second'] for x in c),'posted_again_after_first_reply':sum(x['second_after_reply'] for x in c),'received_reply_within_24h':sum(x['within_24h'] for x in c)}
+          ages=collections.Counter()
+          for u in users:
+              created=date(u.get('created_at'))
+              days=(now-created).days if created else None
+              ages['unknown' if days is None else '0-6 days' if days<7 else '7-29 days' if days<30 else '30-179 days' if days<180 else '180+ days']+=1
+          dates=[u['created_at'][:10] for u in users if u.get('created_at')]
+          result={
+            'auth_accounts':len(users),'profile_accounts':len(profiles),'verified_email_accounts':sum(bool(u.get('email_confirmed_at')) for u in users),
+            'signup_age':dict(ages),'oldest_signup':min(dates) if dates else None,'newest_signup':max(dates) if dates else None,
+            'accounts_with_public_posts':len(posts),'accounts_with_multiple_public_posts':sum(len(s)>1 for s in posts.values()),
+            'accounts_without_public_posts':len(users)-len(posts),'public_posts_total':sum(map(len,posts.values())),
+            'first_posts_at_least_24h_old_with_reply':cohort(True),'first_posts_at_least_24h_old_without_reply':cohort(False),
+            'email_preferences_rows':len(prefs),'reply_email_optins':sum(bool(p.get('replies')) for p in prefs),'story_update_email_optins':sum(bool(p.get('story_updates')) for p in prefs),
+            'accounts_with_no_email_preferences':len(users)-len([p for p in prefs if p['user_id'] in auth]),
+            'limits':['No session history: cannot measure visits or churn.','Reply/repeat-post comparisons are observational, not causal.','Deleted content absent; hidden, private and diary-only posts excluded.','Activity preferences do not establish consent for general campaigns.']
+          }
+          print('AUDIT_RESULT:'+json.dumps(result,sort_keys=True))
+          PY

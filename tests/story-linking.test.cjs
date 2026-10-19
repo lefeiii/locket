@@ -179,7 +179,7 @@ test("posting route overrides forged client ownership and numbering", async () =
 });
 
 test("dropdown loads every page of the author's public stories and submits the selected ID", async () => {
-  let slots = [], index = 0, effect, posted;
+  let slots = [], index = 0, effect, posted, publishSucceeds = false;
   const ranges = [];
   const records = Array.from({ length: 205 }, (_, i) => ({
     ...root(), id: `story-${i}`, created_at: "2026-10-10T00:00:00Z",
@@ -220,14 +220,15 @@ test("dropdown loads every page of the author's public stories and submits the s
     "lucide-react": {}, "next/link": { default: "link" },
     "next/navigation": { useRouter: () => router },
     "@/components/AppNav": {},
-    "@/components/PostReplyEmailChoice": {},
+    "@/components/PostReplyEmailChoice": { PostReplyEmailChoice: "reply-email-choice" },
+    "@/components/SomeoneLikeMe": { SomeoneLikeMe: "someone-like-me" },
     "@/lib/sample-data": { categories: [], emptyReactions: () => ({}) },
     "@/lib/safety": { findSafetyIssues: () => [] },
     "@/lib/supabase": { supabase: client },
   }, {
     fetch: async (_url, options) => {
       posted = JSON.parse(options.body);
-      return { ok: false, json: async () => ({ error: "Test complete" }) };
+      return publishSucceeds ? { ok: true, json: async () => ({ id: newId }) } : { ok: false, json: async () => ({ error: "Test complete" }) };
     },
   });
   function nodes(tree) {
@@ -255,6 +256,14 @@ test("dropdown loads every page of the author's public stories and submits the s
   assert.equal(posted.previousStoryId, "story-204");
   assert.equal("story_arc_id" in posted.payload, false);
   assert.equal("part_number" in posted.payload, false);
+  assert.equal(render().some(n => n.type === "someone-like-me"), false, "failed publishing never offers matching");
+  publishSucceeds = true;
+  await render().find(n => n.type === "form").props.onSubmit({ preventDefault() {} });
+  const success = render();
+  assert.equal(success.find(n => n.type === "someone-like-me").props.storyId, newId);
+  assert(success.some(n => n.type === "reply-email-choice"), "existing optional email choice remains");
+  assert(success.some(n => n.props?.href === `/story/${newId}`), "story can be viewed without joining");
+  assert(success.some(n => n.type === "button" && n.props.children === "Save feeling and view story"), "feeling flow remains");
 });
 
 

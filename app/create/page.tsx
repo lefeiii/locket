@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppNav, BrandBar } from "@/components/AppNav";
+import { SomeoneLikeMe } from "@/components/SomeoneLikeMe";
 import { PostReplyEmailChoice } from "@/components/PostReplyEmailChoice";
 import { ResponseModeSelect } from "@/components/ResponseModeSelect";
 import type { ResponseMode } from "@/lib/response-mode";
@@ -171,6 +172,7 @@ export default function CreatePage() {
   if (postedId) return <main className="pb-24"><BrandBar />
     <section className="locket-page-panel mx-auto max-w-lg px-6 py-8">
       <p className="text-sm text-[#6b4a3a]" role="status">Your story is posted.</p>
+      <SomeoneLikeMe storyId={postedId} />
       {postedAcceptsReplies && <PostReplyEmailChoice />}
       <h1 className="mt-3 font-serif text-2xl">What feeling is underneath this?</h1>
       <p className="mt-2 text-sm text-[#6b4a3a]">Optional. Pick what fits, or head straight to your story.</p>

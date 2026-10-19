@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { SlmReturnObserver } from "@/components/SlmReturnObserver";
 import { DisguiseProvider } from "@/components/DisguiseMode";
 import { Analytics } from '@vercel/analytics/next';
 
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="pb-24">
   <DisguiseProvider>
+  <SlmReturnObserver />
   {children}
   <footer className="text-center py-6 text-sm text-gray-400">
     <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>

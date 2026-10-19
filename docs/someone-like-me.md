@@ -1,12 +1,14 @@
 # Someone Like Me — waitlist-only pilot
 
+This documents the original waitlist stage. The separately gated extension is documented in [moderated introductions and conversations](someone-like-me-connections.md). Its installation does not open live contact; waitlist consent alone never authorizes it.
+
 ## What ships
 
 An optional invitation appears **only after a successful public story publication** on the existing success screen. The story is already saved; choosing Maybe later, failing to save preferences, or leaving never affects publication. Feelings, email choices and view-story links remain available. There is also a permanent entry in `/settings` → Someone Like Me (`/someone-like-me`).
 
 Participants choose whom they hope to hear from, 1–3 experience topics, their self-described stage, optional encouragement offering, and a broad age band. A separate, initially unchecked informed-consent checkbox is required. No stories are analyzed or copied into matching records. Pilot participation does not opt anyone into email. Existing users are never enrolled automatically.
 
-The review page (`/someone-like-me/review`) uses database-assigned moderator roles. It shows private IDs and volunteered selections, with separate age-band sections. It never loads stories, names or email addresses. Reviewing/pausing an entry does not approve a match. All matching, contact, invitations, DMs, groups, AI analysis and outbound notifications are absent, not merely hidden behind UI buttons.
+The review page (`/someone-like-me/review`) uses database-assigned moderator roles. It shows private IDs and volunteered selections, with separate age-band sections. It never loads stories, names or email addresses. Reviewing/pausing an entry does not approve a match. In the original waitlist stage, matching, contact, invitations, DMs, groups, AI analysis and outbound notifications are absent. The separately installed contact extension has independent consent and safety gates; reviewing this queue alone does not enable it.
 
 ## Installation and activation
 

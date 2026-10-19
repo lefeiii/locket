@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SlmReturnObserver } from "@/components/SlmReturnObserver";
 import { DisguiseProvider } from "@/components/DisguiseMode";
-import { Analytics } from '@vercel/analytics/next';
+import { PrivateAwareAnalytics } from "@/components/PrivateAwareAnalytics";
 
 export const metadata: Metadata = {
   title: "Locket",
@@ -30,7 +30,7 @@ export default function RootLayout({
     <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>
   </footer>
   </DisguiseProvider>
-  <Analytics />
+  <PrivateAwareAnalytics />
 </body>
     </html>
   );

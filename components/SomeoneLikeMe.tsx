@@ -93,7 +93,7 @@ export function SomeoneLikeMe({ storyId }: { storyId?: string }) {
       });
       if (error) throw new Error("We couldn’t save your choices. Check your selections and verified login, or try again in a moment.");
       await refresh(); setEditing(false);
-      setMessage("You’re on the waitlist. No introductions or messages will be sent in this pilot.");
+      setMessage("You’re on the waitlist. Waitlist consent alone never starts an introduction or conversation.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not save. Please try again."); }
     finally { setBusy(false); }
   }
@@ -140,7 +140,7 @@ export function SomeoneLikeMe({ storyId }: { storyId?: string }) {
     </>}
     {saved && !editing && <div className="mt-4 text-sm leading-6">
       <p className="font-medium">{saved.review_status === "paused" ? "Your participation is paused for moderator review." : saved.review_status === "reviewed_waitlist" ? "A moderator has reviewed your waitlist entry." : "You’re on the waitlist for moderator review."}</p>
-      <p className="mt-2">No one can see your entry or contact you through this pilot. A reviewed entry is still only a waitlist entry.</p>
+      <p className="mt-2">Other participants cannot see your waitlist entry. Reviewing it does not authorize contact; introductions require separate consent and safety checks.</p>
       <dl className="mt-3"><dt className="font-medium">You’d like to hear from</dt><dd>{connectionLabels[saved.connection_preference]}</dd>
         <dt className="mt-2 font-medium">You described yourself as</dt><dd>{stageLabels[saved.experience_stage]}</dd>
         <dt className="mt-2 font-medium">Your topics</dt><dd>{saved.topics.map(t => slmTopics.find(([key]) => key === t)?.[1]).join(", ")}</dd>
@@ -165,7 +165,7 @@ export function SomeoneLikeMe({ storyId }: { storyId?: string }) {
       {age === "under_13" && <p role="alert" className="text-sm">This pilot is only for people aged 13 or older. You can’t join this waitlist.</p>}
       <div className="rounded-2xl bg-[#fffdfa] p-4 text-xs leading-6">
         <p>We use your chosen topics, preferences, age band and consent for moderator review. Your story isn’t analyzed. Other participants see none of your story, username, email or choices.</p>
-        <p className="mt-2">Age is self-reported, not verified. Introductions and chats stay off, including adult–minor contact. Future contact needs new consent and safety checks.</p>
+        <p className="mt-2">Age here is self-reported, not verified. This waitlist choice cannot open contact. Separate introductions require external age checks, new consent and same-band safeguards.</p>
         <p className="mt-2">We count invitation views and, after opt-in, your return days during the first seven days. Leaving deletes your preferences and linked activity. Anonymous counts and safety reports may remain. <Link href="/someone-like-me/privacy" className="underline">Read the pilot privacy notice</Link>.</p>
       </div>
       <label className="flex items-start gap-3 text-sm leading-6"><input type="checkbox" className="mt-1 h-5 w-5 shrink-0" checked={consent} onChange={e => setConsent(e.target.checked)} required disabled={busy}/>I choose to join this reviewed waitlist and agree to the use of these selections and pilot activity records described above. I understand this does not start a conversation.</label>
@@ -181,6 +181,7 @@ export function SomeoneLikeMe({ storyId }: { storyId?: string }) {
     </div>}
     {message && <p role="status" className="mt-4 text-sm leading-6">{message}</p>}
     {storyId && <Link href="/someone-like-me" className="mt-4 inline-block text-xs underline">Manage participation and report a concern</Link>}
+    {!storyId && <Link href="/someone-like-me/connections" className="mt-4 block text-sm underline">Introductions and conversation choices →</Link>}
     {state.moderator && <Link href="/someone-like-me/review" className="mt-4 block text-xs underline">Moderator review</Link>}
   </section>;
 }

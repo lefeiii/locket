@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppNav, BrandBar } from "@/components/AppNav";
+import { PostReplyEmailChoice } from "@/components/PostReplyEmailChoice";
 import { ResponseModeSelect } from "@/components/ResponseModeSelect";
 import type { ResponseMode } from "@/lib/response-mode";
 import { categories, emptyReactions } from "@/lib/sample-data";
@@ -37,6 +38,7 @@ export default function CreatePage() {
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [postedId, setPostedId] = useState("");
+  const [postedAcceptsReplies, setPostedAcceptsReplies] = useState(true);
   const [feeling, setFeeling] = useState("");
   const [feelingBusy, setFeelingBusy] = useState(false);
   const [feelingError, setFeelingError] = useState("");
@@ -145,6 +147,7 @@ export default function CreatePage() {
     }
 
     setStatus("saved");
+    setPostedAcceptsReplies(responseMode !== "listen");
     setTitle(""); setBody(""); setPreviousStoryId(""); setCliffhanger(""); setPollQuestion(""); setPollOptions(["", ""]); setIsUpdate(false); setResponseMode("anything");
     setPostedId(json.id);
   }
@@ -168,6 +171,7 @@ export default function CreatePage() {
   if (postedId) return <main className="pb-24"><BrandBar />
     <section className="locket-page-panel mx-auto max-w-lg px-6 py-8">
       <p className="text-sm text-[#6b4a3a]" role="status">Your story is posted.</p>
+      {postedAcceptsReplies && <PostReplyEmailChoice />}
       <h1 className="mt-3 font-serif text-2xl">What feeling is underneath this?</h1>
       <p className="mt-2 text-sm text-[#6b4a3a]">Optional. Pick what fits, or head straight to your story.</p>
       <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label="Choose a feeling">

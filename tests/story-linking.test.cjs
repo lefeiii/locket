@@ -220,6 +220,7 @@ test("dropdown loads every page of the author's public stories and submits the s
     "lucide-react": {}, "next/link": { default: "link" },
     "next/navigation": { useRouter: () => router },
     "@/components/AppNav": {},
+    "@/components/PostReplyEmailChoice": {},
     "@/lib/sample-data": { categories: [], emptyReactions: () => ({}) },
     "@/lib/safety": { findSafetyIssues: () => [] },
     "@/lib/supabase": { supabase: client },

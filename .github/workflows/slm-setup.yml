@@ -1,0 +1,71 @@
+name: One-time Someone Like Me setup
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/slm-setup.yml']
+permissions:
+  contents: read
+concurrency:
+  group: slm-owner-setup
+  cancel-in-progress: false
+jobs:
+  setup:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply explicitly approved owner setup
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OWNER_EMAIL: ${{ github.event.head_commit.author.email }}
+        run: |
+          python - <<'PY'
+          import os,json,hashlib,urllib.request,urllib.error
+          base=os.environ['SUPABASE_URL'].rstrip('/')
+          key=os.environ['SUPABASE_SERVICE_ROLE_KEY']
+          owner=os.environ['OWNER_EMAIL'].strip().lower()
+          if hashlib.sha256(owner.encode()).hexdigest()!='c0395a9d89f43ea02c2da4041fcc35d40be7b021832a6eb23eb51f72bd5bd49f':
+              raise RuntimeError('Owner identity did not match the approved account. No changes made.')
+          def api(path,payload=None,method='GET',prefer=None):
+              headers={'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json'}
+              if prefer:headers['Prefer']=prefer
+              req=urllib.request.Request(base+path,data=json.dumps(payload).encode() if payload is not None else None,headers=headers,method=method)
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  body=r.read()
+                  return json.loads(body) if body else None
+          try:
+              config=api('/rest/v1/slm_config?select=id,enabled&id=eq.true')
+          except urllib.error.HTTPError as e:
+              if e.code==404:
+                  print('SETUP_RESULT:'+json.dumps({'status':'migration_required','changed':False}))
+                  raise SystemExit(0)
+              raise RuntimeError('Could not check pilot schema; HTTP '+str(e.code)) from None
+          if len(config)!=1:
+              raise RuntimeError('Pilot configuration is incomplete. No changes made.')
+          matches=[]
+          for page in range(1,101):
+              users=api('/auth/v1/admin/users?page='+str(page)+'&per_page=1000')['users']
+              matches.extend(u for u in users if (u.get('email') or '').strip().lower()==owner)
+              if len(users)<1000:break
+          if len(matches)!=1 or not matches[0].get('email_confirmed_at'):
+              raise RuntimeError('A unique verified owner account was not found. No changes made.')
+          uid=matches[0]['id']
+          profiles=api('/rest/v1/users?select=id&id=eq.'+uid)
+          if len(profiles)!=1:
+              raise RuntimeError('Owner account has no matching Locket profile. No changes made.')
+          existing=api('/rest/v1/slm_moderators?select=user_id&user_id=eq.'+uid)
+          if not existing:
+              api('/rest/v1/slm_moderators',{'user_id':uid},'POST','resolution=ignore-duplicates,return=minimal')
+          confirmed=api('/rest/v1/slm_moderators?select=user_id&user_id=eq.'+uid)
+          if len(confirmed)!=1:
+              raise RuntimeError('Moderator assignment could not be verified. Intake was not opened.')
+          api('/rest/v1/slm_config?id=eq.true',{'enabled':True},'PATCH','return=minimal')
+          final=api('/rest/v1/slm_config?select=enabled&id=eq.true')
+          if len(final)!=1 or final[0]['enabled'] is not True:
+              raise RuntimeError('Could not verify activation.')
+          print('SETUP_RESULT:'+json.dumps({'status':'configured','owner_moderator':True,'waitlist_enabled':True,'private_conversations_enabled':False,'invitations_enabled':False}))
+          PY

@@ -64,7 +64,7 @@ export default function NotificationSettingsPage() {
     <main className="pb-24">
       <BrandBar />
       <section className="mx-auto max-w-md px-4 py-6">
-        <Link href="/someone-like-me" className="mb-5 block rounded-3xl border border-[#ead4dc] bg-[#fff7f8] p-5 text-[#513940]"><span className="block font-serif text-xl">someone like me</span><span className="mt-2 block text-sm">Your waitlist, optional introductions and privacy choices →</span></Link>
+        <Link href="/someone-like-me" className="mb-5 block rounded-3xl border border-[#ead4dc] bg-[#fff7f8] p-5 text-[#513940]"><span className="block font-serif text-xl">someone like me</span><span className="mt-2 block text-sm">Familiar stories, your reading choices and optional story offers →</span></Link>
         <EmailNotificationSettings />
         <div className="rounded-[2rem] border border-[#c8b7a7] bg-[#f1e9e1] p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#6b4a3a]">Update Alarm</p>

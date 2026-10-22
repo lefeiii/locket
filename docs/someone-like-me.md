@@ -1,5 +1,7 @@
 # Someone Like Me — waitlist-only pilot
 
+**Current launch:** [voluntary public-story discovery](someone-like-me-stories.md). Private chat remains disabled. This document describes the earlier waitlist stage.
+
 This documents the original waitlist stage. The separately gated extension is documented in [moderated introductions and conversations](someone-like-me-connections.md). Its installation does not open live contact; waitlist consent alone never authorizes it.
 
 ## What ships

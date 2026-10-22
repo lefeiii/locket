@@ -1,5 +1,7 @@
 # Someone Like Me — moderated introductions and conversations
 
+**Current launch:** [voluntary public-story discovery](someone-like-me-stories.md). Private chat remains disabled. This document describes the earlier gated contact stage.
+
 This extends the waitlist pilot. Installation does **not** open contact. No emails, automatic matching, groups, AI, attachments or unrestricted DMs are added. Existing users must separately consent to this stage. Every message requires independent moderator approval before the other participant can read it.
 
 ## Install

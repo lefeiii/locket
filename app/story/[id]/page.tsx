@@ -7,6 +7,7 @@ import { PollCard } from "@/components/PollCard";
 import { StoryCard } from "@/components/StoryCard";
 import { StorytimeExport } from "@/components/StorytimeExport";
 import { samplePolls, sampleStories } from "@/lib/sample-data";
+import { PublicStoryFeedback } from "@/components/PublicStoryFeedback";
 import { StoryOwnerActions } from "@/components/StoryOwnerActions";
 import { supabase } from "@/lib/supabase";
 import { commentsAllowed } from "@/lib/response-mode";
@@ -238,6 +239,7 @@ export default async function StoryDetailPage({
 
         {/* Comments with replies */}
         <CommentSection comments={comments} storyId={story.id} responseMode={story.response_mode} />
+        <PublicStoryFeedback storyId={story.id} />
 
         <section className="mt-6">
           <StorytimeExport story={story} />

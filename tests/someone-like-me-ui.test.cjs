@@ -10,7 +10,7 @@ function harness({enrollment=null,available=true,failure=false}={}){
   if(name==='slm_withdraw')current={...current,enrollment:null};return{data:null};
  }};
  const jsx=(type,props)=>({type,props});const labels=load('lib/someone-like-me.ts',{});
- const mod=load('components/SomeoneLikeMe.tsx',{'react':{useState:v=>{const i=index++;if(!(i in states))states[i]=v;return[states[i],v=>{states[i]=typeof v==='function'?v(states[i]):v;}];},useRef:()=>({current:null}),useEffect:f=>{if(!mounted)effects.push(f);}},'react/jsx-runtime':{jsx,jsxs:jsx},'next/link':{default:'link'},'@/lib/supabase':{supabase:client},'@/lib/someone-like-me':labels});
+ const mod=load('components/WaitlistPreferences.tsx',{'react':{useState:v=>{const i=index++;if(!(i in states))states[i]=v;return[states[i],v=>{states[i]=typeof v==='function'?v(states[i]):v;}];},useRef:()=>({current:null}),useEffect:f=>{if(!mounted)effects.push(f);}},'react/jsx-runtime':{jsx,jsxs:jsx},'next/link':{default:'link'},'@/lib/supabase':{supabase:client},'@/lib/someone-like-me':labels});
  return{calls,logout(){currentUser=null;authListener('SIGNED_OUT');},render(storyId){index=0;const n=nodes(mod.SomeoneLikeMe({storyId}));mounted=true;return n;},async mount(){for(const f of effects)f();await new Promise(setImmediate);}};
 }
 const button=(tree,label)=>tree.find(n=>n.type==='button'&&n.props.children===label);

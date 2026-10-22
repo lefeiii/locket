@@ -1,7 +1,7 @@
 export default function PrivacyPolicy() {
   return (
     <main className="max-w-4xl mx-auto px-4 py-12">
-      <p className="mb-6 rounded-2xl border border-[#ead4dc] bg-[#fff7f8] p-4 text-sm">Someone Like Me is an optional, reviewed waitlist. <a href="/someone-like-me/privacy" className="underline">Read its additional privacy notice and manage your participation.</a></p>
+      <p className="mb-6 rounded-2xl border border-[#ead4dc] bg-[#fff7f8] p-4 text-sm">Someone Like Me offers optional public-story recommendations with separate reader and author consent. Private introductions remain disabled. <a href="/someone-like-me/privacy" className="underline">Read its additional privacy notice and manage your participation.</a></p>
       <div
         dangerouslySetInnerHTML={{
           __html: `<style>

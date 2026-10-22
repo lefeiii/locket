@@ -15,7 +15,7 @@ export function SlmReturnObserver() {
     async function record() {
       if (!active || document.hidden || !surface.current?.getClientRects().length) return;
       const { data: { user } } = await client!.auth.getUser();
-      if (active && user && !document.hidden && surface.current?.getClientRects().length) await client!.rpc("slm_record_return");
+      if (active && user && !document.hidden && surface.current?.getClientRects().length) await Promise.allSettled([client!.rpc("slm_record_return"),client!.rpc("slm_public_record_return")]);
     }
     void record().catch(() => {});
     const onVisible = () => { void record().catch(() => {}); };

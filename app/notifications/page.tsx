@@ -78,7 +78,7 @@ export default function NotificationsPage() {
     <>
       <BrandBar />
       <main className="locket-page-panel mx-auto max-w-md px-3 py-6">
-        <Link href="/someone-like-me/connections" className="mb-5 block rounded-3xl border border-[#ead4dc] bg-[#fff7f8] p-4 text-sm text-[#513940]">Someone Like Me · your optional introductions and conversations →</Link>
+        <Link href="/someone-like-me" className="mb-5 block rounded-3xl border border-[#ead4dc] bg-[#fff7f8] p-4 text-sm text-[#513940]">Someone Like Me · find a public story that feels familiar →</Link>
         <Link className="mb-4 flex items-center gap-2 text-sm font-medium text-[#4f3325]" href="/">
           <ArrowLeft size={18} /> Back to feed
         </Link>

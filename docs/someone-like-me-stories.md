@@ -12,6 +12,8 @@ The existing GitHub connection can deploy source but cannot execute arbitrary Su
 
 ## Normal use
 
+The after-post card shows a short invitation, reading choices and up to three results. Longer explanations use closed, expandable details; consent remains explicit and unchecked. Story-offering controls and withdrawal/privacy management are available on the main Someone Like Me page rather than stacked into the vulnerable post-success moment. This presentation update needs no SQL or new consent purpose.
+
 - After successful story publication: the gentle optional invitation appears. “Maybe later” leaves the saved story and its view link available.
 - `/someone-like-me`: save reading preferences with a fresh unchecked consent box. This never offers the reader's own stories. At least 13 is explicitly acknowledged; no date of birth is collected or age assurance claimed.
 - On the same page, **Choose a story to offer** opens separate author controls. Select one of the account's most recent public stories (up to 30 are shown, including the just-posted story when supplied), 1–3 topics, experience stage and optional encouragement willingness. A second unchecked checkbox clearly explains public visibility. At most 20 stories may be offered per author.
